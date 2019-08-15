@@ -8,7 +8,8 @@
     "clean": "rm -rf dist/*",
     "start": "set DEBUG=http:* && node ./dist/index.js",
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "./node_modules/.bin/eslint src"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,9 @@
     "trim-request-body": "^1.0.1"
   },
   "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "nodemon": "^1.19.1"
   }
 }

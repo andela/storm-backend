@@ -25,15 +25,13 @@ app.use(trimmer);
 
 // Handle base route
 app.get('/', (req, res) => response(res, 200, 'success', {
-    message: messages.welcome,
+  message: messages.welcome,
 }));
 
 // Handle routes not found
 app.use('*', (req, res) => response(res, 404, 'error', {
-    message: messages.notFound,
+  message: messages.notFound,
 }));
 
 // Finally, start server...
-const server = app.listen(process.env.PORT || 3000, () =>
-    infoLog("Listening on port " + server.address().port)
-);
+const server = app.listen(process.env.PORT || 3000, () => infoLog(`Listening on port ${server.address().port}`));
