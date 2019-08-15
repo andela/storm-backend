@@ -1,0 +1,39 @@
+{
+  "name": "barefoot-nomad",
+  "version": "1.0.0",
+  "description": "An app for making company global travel and accommodation easy and convenient",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d dist",
+    "clean": "rm -rf dist/*",
+    "start": "set DEBUG=http:* && node ./dist/index.js",
+    "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela/storm-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela/storm-backend/issues"
+  },
+  "homepage": "https://github.com/andela/storm-backend#readme",
+  "dependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "trim-request-body": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
