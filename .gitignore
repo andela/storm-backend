@@ -7,5 +7,6 @@ node_modules
 # package-lock.json
 package-lock.json
 
-# env variables
-.env
+# test build
+.nyc_output
+coverage

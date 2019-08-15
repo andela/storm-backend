@@ -35,3 +35,5 @@ app.use('*', (req, res) => response(res, 404, 'error', {
 
 // Finally, start server...
 const server = app.listen(process.env.PORT || 3000, () => infoLog(`Listening on port ${server.address().port}`));
+
+export default app;
