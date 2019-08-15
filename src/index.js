@@ -4,6 +4,7 @@ import cors from 'cors';
 import debug from 'debug';
 import messages from './utils/messages';
 import response from './utils/response';
+import _ from './config/env';
 
 // Instance of express app
 const app = express();
