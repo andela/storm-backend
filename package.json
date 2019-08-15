@@ -6,6 +6,8 @@
   "scripts": {
     "build": "babel src -d dist",
     "clean": "rm -rf dist/*",
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate",
+    "db:unmigrate": "./node_modules/.bin/sequelize db:migrate:undo:all",
     "start": "set DEBUG=http:* && node ./dist/index.js",
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
     "test": "set DEBUG=http:* && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --timeout 120000 --require @babel/polyfill src/test --exit",
@@ -33,6 +35,10 @@
     "debug": "^4.1.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.15.0",
+    "sequelize-cli": "^5.5.0",
     "trim-request-body": "^1.0.1"
   },
   "devDependencies": {

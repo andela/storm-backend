@@ -13,3 +13,29 @@ Make company global travel and accommodation easy and convenient for the strong 
 - Change to application root directory
 - Build a docker image with the following command `docker build -t storm-backend .`
 - Run `docker-compose up`
+
+## How To Run The App
+- Clone the app and cd into it
+```
+git clone https://github.com/andela/storm-backend.git
+cd storm-backend
+```
+
+- Install all dependencies
+```
+npm install
+```
+
+- Install PostgreSQL (if you don't have)
+- Create a .env file using .env-sample as a guide
+- Run migration to create required database tables
+```
+npm run db:migrate
+```
+
+- Start the app
+```
+npm run start:dev
+```
+
+---
