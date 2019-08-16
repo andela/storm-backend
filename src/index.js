@@ -4,7 +4,7 @@ import cors from 'cors';
 import debug from 'debug';
 import messages from './utils/messages';
 import response from './utils/response';
-import _ from './config/env';
+import './config/env';
 
 // Instance of express app
 const app = express();
@@ -35,3 +35,5 @@ app.use('*', (req, res) => response(res, 404, 'error', {
 
 // Finally, start server...
 const server = app.listen(process.env.PORT || 3000, () => infoLog(`Listening on port ${server.address().port}`));
+
+export default app;
