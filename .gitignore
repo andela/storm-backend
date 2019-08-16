@@ -9,3 +9,7 @@ package-lock.json
 
 # env variables
 .env
+
+# test build
+.nyc_output
+coverage
