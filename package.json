@@ -10,14 +10,14 @@
     "db:unmigrate": "./node_modules/.bin/sequelize db:migrate:undo:all",
     "start": "set DEBUG=http:* && node ./dist/index.js",
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
-    "test": "set DEBUG=http:* && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --timeout 120000 --require @babel/polyfill src/test --exit",
+    "test": "set DEBUG=http:* && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --timeout 120000 --require @babel/polyfill src/test/** --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andela/storm-backend.git"
   },
-  "author": "",
+  "author": "Kola Akindoju <kolaakindoju@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/andela/storm-backend/issues"
@@ -39,6 +39,8 @@
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.15.0",
     "sequelize-cli": "^5.5.0",
+    "swagger-jsdoc": "^3.4.0",
+    "swagger-ui-express": "^4.0.7",
     "trim-request-body": "^1.0.1"
   },
   "devDependencies": {
