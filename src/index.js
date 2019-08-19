@@ -21,7 +21,6 @@ routes(router);
 // Pass router to swagger middleware
 swaggerDoc(router);
 
-app.use('/api/v1', router, swaggerUi.serve);
 
 // Allow cross origin access
 app.use(cors());
@@ -40,6 +39,7 @@ app.get('/', (req, res) => response(res, 200, 'success', {
   message: messages.welcome,
 }));
 
+app.use('/api/v1', router, swaggerUi.serve);
 // Handle routes not found
 app.use('*', (req, res) => response(res, 404, 'error', {
   message: messages.notFound,

@@ -30,7 +30,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['src/routes/*.js'],
+  apis: ['src/routes/api/*.js', 'src/routes/*.js'],
 };
 
 

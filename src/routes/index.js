@@ -1,5 +1,6 @@
 import messages from '../utils/messages';
 import response from '../utils/response';
+import userRoute from './api/user';
 
 const routes = (router) => {
   router
@@ -35,6 +36,8 @@ const routes = (router) => {
     .get((req, res) => response(res, 200, 'success', {
       message: messages.apiV1Welcome,
     }));
+  // user routes
+  userRoute(router);
 };
 
 export default routes;
