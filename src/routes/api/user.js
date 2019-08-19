@@ -1,10 +1,12 @@
 
 import userController from '../../controllers/userController';
+import validate from '../../middlewares/validator';
+import { signUpSchema, signInSchema } from '../../validation/userSchema';
 
 const {
-  signUp,
-  signIn,
+  signUp, signIn
 } = userController;
+
 const userRoute = (router) => {
   router.route('/user/signup')
 
@@ -49,7 +51,7 @@ const userRoute = (router) => {
  *         description: Internal Server error
  */
 
-    .post(signUp);
+    .post(validate(signUpSchema), signUp);
 
   router.route('/user/signin')
 
@@ -88,6 +90,6 @@ const userRoute = (router) => {
    *         description: Internal Server error
   */
 
-    .post(signIn);
+    .post(validate(signInSchema), signIn);
 };
 export default userRoute;

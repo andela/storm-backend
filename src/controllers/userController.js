@@ -1,4 +1,3 @@
-
 import models from '../database/models';
 import authHelper from '../utils/authHelper';
 import response from '../utils/response';
@@ -26,9 +25,7 @@ const signUp = async (req, res) => {
 
     const emailExists = await findByEmail(email);
     if (emailExists) return response(res, 400, 'error', { message: messages.emailExists });
-
     const createdUser = await create(User, user);
-
     const userData = {
       user: {
         id: createdUser.id,
