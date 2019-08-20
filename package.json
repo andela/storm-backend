@@ -4,6 +4,7 @@
   "description": "An app for making company global travel and accommodation easy and convenient",
   "main": "index.js",
   "scripts": {
+    "db:setup": "NODE_ENV=test sequelize db:migrate:undo:all && NODE_ENV=test sequelize db:migrate && npm run seed",
     "build": "babel src -d dist",
     "clean": "rm -rf dist/*",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
@@ -12,8 +13,9 @@
     "lint:fix": "./node_modules/.bin/eslint --fix",
     "start": "set DEBUG=http:* && node ./dist/index.js",
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
-    "test": "set DEBUG=http:* && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --timeout 120000 --require @babel/polyfill src/test/** --exit",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "npm run db:setup && set DEBUG=http:* && cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --require @babel/register --timeout 120000 --require @babel/polyfill src/test/** --exit",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "seed": "NODE_ENV=test sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
@@ -28,15 +30,16 @@
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
     "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "@babel/runtime": "^7.5.5",
+    "bcrypt": "^3.0.6",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.15.0",
@@ -46,6 +49,7 @@
     "trim-request-body": "^1.0.1"
   },
   "devDependencies": {
+    "@babel/node": "^7.5.5",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "coveralls": "^3.0.6",
