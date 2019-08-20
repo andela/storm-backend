@@ -1,0 +1,26 @@
+{
+  "addons": [
+    "heroku-postgresql",
+    "heroku-postgresql"
+  ],
+  "buildpacks": [
+
+  ],
+  "env": {
+    "NPM_CONFIG_PRODUCTION": {
+      "required": true
+    },
+    "SECRET_KEY": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "storm-backend",
+  "scripts": {
+  },
+  "stack": "container"
+}
