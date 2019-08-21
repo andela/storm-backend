@@ -2,9 +2,12 @@
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
 import { signUpSchema, signInSchema } from '../../validation/userSchema';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
 
 const {
-  signUp, signIn
+  signUp,
+  signIn,
+  logout
 } = userController;
 
 const userRoute = (router) => {
@@ -91,5 +94,28 @@ const userRoute = (router) => {
   */
 
     .post(validate(signInSchema), signIn);
+  router.route('/user/logout')
+
+  /**
+   * @swagger
+   * /api/v1/user/logout:
+   *   post:
+   *     tags:
+   *       - Users
+   *     description: Logout user
+   *     security:
+   *       - bearerAuth: []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Logged out successfully
+   *       401:
+   *         description: Token missing, you need a token to have access
+   *       500:
+   *         description: You are already logged out!
+   */
+
+    .post(checkBlacklist, logout);
 };
 export default userRoute;

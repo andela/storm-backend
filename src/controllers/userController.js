@@ -1,3 +1,4 @@
+import Redis from 'ioredis';
 import models from '../database/models';
 import authHelper from '../utils/authHelper';
 import response from '../utils/response';
@@ -62,7 +63,29 @@ const signIn = async (req, res) => {
   }
 };
 
+/**
+ * User logout Function
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} - custom response
+ */
+
+const logout = async (req, res) => {
+  const redis = new Redis();
+  const token = req.headers.authorization.split(' ')[1];
+
+  try {
+    await redis.set(token, token, 'EX', 604800000);
+    return response(res, 200, 'success', { message: messages.loggedOut });
+  } catch (e) {
+    return response(res, 500, 'error', {
+      errors: e
+    });
+  }
+};
+
 export default {
   signUp,
   signIn,
+  logout
 };

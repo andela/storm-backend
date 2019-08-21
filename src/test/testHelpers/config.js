@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import { mockRequest, mockResponse } from 'mock-req-res';
 import app from '../../index';
 import messages from '../../utils/messages';
 
@@ -17,5 +18,7 @@ export {
   messages,
   chai,
   expect,
-  sinon
+  sinon,
+  mockRequest,
+  mockResponse
 };
