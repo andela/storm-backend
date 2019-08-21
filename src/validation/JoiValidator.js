@@ -24,6 +24,14 @@ const JoiValidation = {
   */
   validateDate() {
     return Joi.date();
+  },
+
+  /**
+   * number schema creator
+   * @returns {Object} - number schema
+  */
+  validateNumber() {
+    return Joi.number().required();
   }
 };
 

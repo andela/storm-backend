@@ -1,7 +1,7 @@
 import requestController from '../../controllers/requestController';
 import validate from '../../middlewares/validator';
 import requestSchema from '../../validation/requestSchema';
-import { verifyToken } from '../../middlewares/userMiddlewares';
+import { checkToken } from '../../middlewares/userMiddlewares';
 
 const { requestTrip } = requestController;
 const { requestTripSchema } = requestSchema;
@@ -91,7 +91,7 @@ const requestRoute = (router) => {
    *     security:
    *       - bearerAuth: []
   */
-    .post(verifyToken, validate(requestTripSchema), requestTrip);
+    .post(checkToken, validate(requestTripSchema), requestTrip);
 };
 
 export default requestRoute;

@@ -1,13 +1,16 @@
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
-import { signUpSchema, signInSchema } from '../../validation/userSchema';
+import { signUpSchema, signInSchema, updateUserSchema } from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import verifyEmailController from '../../controllers/emailVerificationController';
+import { checkUserId, checkToken } from '../../middlewares/userMiddlewares';
 
 const {
   signUp,
   signIn,
   logout,
+  getUserDetailsById,
+  updateUserDetails
 } = userController;
 
 const {
@@ -150,5 +153,65 @@ const userRoute = (router) => {
    */
 
     .get(verifyEmail);
+  router.route('/users/:userId')
+  /**
+   * @swagger
+   * paths:
+   *  /api/v1/users/{userId}:
+   *    get:
+   *     tags:
+   *       - Users
+   *     summary: Get one user's details
+   *     parameters:
+   *       - in: path
+   *         name: userId
+   *         schema:
+   *           type: string
+   *         required: true
+   *     responses:
+   *       200:
+   *         description: User deatails fetched successfully
+   *       404:
+   *         description: User not found
+   *       500:
+   *         description: Internal Server error
+   *     security:
+   *       - bearerAuth: [ ]
+  */
+    .get(checkToken, checkUserId, getUserDetailsById)
+    /**
+     * @swagger
+     *  paths:
+     *    /api/v1/users/{userId}:
+     *      put:
+     *        tags:
+     *          - Users
+     *        summary: Get one user's details
+     *        parameters:
+     *          - in: path
+     *            name: userId
+     *            schema:
+     *              type: string
+     *            required: true
+     *        requestBody:
+     *          description: User data object
+     *          required: true
+     *          content:
+     *            application/json:
+     *              schema:
+     *                $ref: '#/components/schemas/User'
+     *        responses:
+     *          200:
+     *            description: User deatails fetched successfully
+     *          403:
+     *            description: Unauthorized
+     *          404:
+     *            description: User not found
+     *          500:
+     *            description: Internal Server error
+     *        security:
+     *          - bearerAuth: [ ]
+    */
+    .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
 };
 export default userRoute;

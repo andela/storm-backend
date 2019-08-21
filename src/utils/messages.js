@@ -15,7 +15,11 @@ const messages = {
   noToken: 'Token missing, you need a token to have access',
   blacklisted: 'The token has been blacklisted',
   loggedOut: 'Logged out successfully',
+  userNotFoundId: 'User not found',
+  serverError: 'Internal server error',
+  unauthorizedUserProfile: 'You are not authorized to edit this profile',
   invalidToken: 'Token you provided is invalid',
+  invalidUserId: 'userId provided is not a valid uuid string',
 };
 
 export default messages;

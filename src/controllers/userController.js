@@ -1,4 +1,6 @@
 import Redis from 'ioredis';
+import { Op } from 'sequelize';
+import models from '../database/models';
 import authHelper from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
@@ -9,6 +11,11 @@ import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 
+import DbServices from '../services/dbServices';
+
+const { User } = models;
+const { getById, update, getByOptions } = DbServices;
+const { unauthorizedUserProfile, serverError, phoneExists } = messages;
 
 /**
  * user signup controller
@@ -87,8 +94,74 @@ const logout = async (req, res) => {
   }
 };
 
+/**
+ * get user details by id
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ * @description get's details of logged in user
+ */
+const getUserDetailsById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const options = { attributes: { exclude: ['password'] } };
+    const user = await getById(User, userId, options);
+    return response(res, 200, 'success', { user });
+  } catch (error) {
+    return response(res, 500, 'error', { message: serverError });
+  }
+};
+
+/**
+ * update user details
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ * @description updates details of logged in user
+ */
+const updateUserDetails = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { id } = req.decoded;
+    if (userId !== id) {
+      return response(res, 403, 'error', { message: unauthorizedUserProfile });
+    }
+    const {
+      firstName, lastName, phoneNo, birthDate, preferredLanguage,
+      preferredCurrency, gender, lineManager, currentLocation
+    } = req.body;
+    const phoneNoExists = await getByOptions(User, {
+      where: { id: { [Op.not]: userId }, phoneNo }
+    });
+    if (phoneNoExists) return response(res, 409, 'error', { message: phoneExists });
+    const userInfo = {
+      firstName,
+      lastName,
+      phoneNo,
+      birthDate,
+      preferredLanguage,
+      preferredCurrency,
+      gender,
+      lineManager,
+      currentLocation
+    };
+    const options = { returning: true, where: { id: userId } };
+    const updatedUser = await update(User, userInfo, options);
+    const { email, role, updatedAt } = updatedUser[1][0];
+    return response(res, 202, 'success', {
+      updatedUser: {
+        id, email, role, updatedAt, ...userInfo
+      }
+    });
+  } catch (error) {
+    return response(res, 500, 'error', { message: serverError });
+  }
+};
+
 export default {
   signUp,
   signIn,
-  logout
+  logout,
+  getUserDetailsById,
+  updateUserDetails
 };

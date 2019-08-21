@@ -30,6 +30,34 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.STRING
     },
+    birthDate: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    preferredCurrency: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    preferredLanguage: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    currentLocation: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    gender: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    role: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
+    lineManager: {
+      allowNull: true,
+      type: DataTypes.STRING
+    },
     createdAt: {
       allowNull: true,
       type: DataTypes.DATE,

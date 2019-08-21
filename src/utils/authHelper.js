@@ -12,4 +12,14 @@ const generateToken = (payload) => {
   return token;
 };
 
+/**
+ * @function verifyToken
+ * @param {String} token jwt token
+ * @returns {Object} decoded object
+ */
+export const verifyToken = async (token) => {
+  const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+  return decoded;
+};
+
 export default { generateToken };
