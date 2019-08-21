@@ -7,7 +7,7 @@ import checkBlacklist from '../../middlewares/blacklistMiddleware';
 const {
   signUp,
   signIn,
-  logout
+  logout,
 } = userController;
 
 const userRoute = (router) => {
@@ -17,7 +17,7 @@ const userRoute = (router) => {
  * @swagger
  * components:
  *  schemas:
- *    SignUp:
+ *    User:
  *      properties:
  *        email:
  *          type: string
@@ -46,7 +46,7 @@ const userRoute = (router) => {
  *      content:
  *       application/json:
  *          schema:
- *            $ref: '#/components/schemas/SignUp'
+ *            $ref: '#/components/schemas/User'
  *     responses:
  *       200:
  *         description: User created successfully
