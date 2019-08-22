@@ -11,6 +11,9 @@ const messages = {
   validPassword: 'Minimum of 6 letters, a character and number required',
   label: 'error',
   joiError: 'child \"body\" fails because [child \"error\" fails because ',
+  noToken: 'Token missing, you need a token to have access',
+  blacklisted: 'The token has been blacklisted',
+  loggedOut: 'Logged out successfully'
 };
 
 export default messages;

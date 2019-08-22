@@ -1,5 +1,5 @@
 import {
-  app, chai, expect, sinon
+  app, chai, expect, sinon, messages
 } from '../testHelpers/config';
 import models from '../../database/models';
 import mockData from '../mockData';
@@ -9,7 +9,7 @@ const { User } = models;
 const { userMock } = mockData;
 
 const BASE_URL = '/api/v1';
-
+let user = null;
 describe('AUTH', () => {
   describe('POST /user/signup', () => {
     const signupEndpoint = `${BASE_URL}/user/signup`;
@@ -20,6 +20,7 @@ describe('AUTH', () => {
         .send(userMock.validUser)
         .end((err, res) => {
           const { data } = res.body;
+          user = data.user;
           expect(data.user).property('token');
           expect(data.user).property('email');
           done(err);
@@ -113,6 +114,60 @@ describe('AUTH', () => {
           expect(res.body).to.have.property('status').that.equal('error');
           done(err);
           stub.restore();
+        });
+    });
+  });
+  describe('POST /user/logout', () => {
+    const logoutEndpoint = `${BASE_URL}/user/logout`;
+    it('should logout user', (done) => {
+      chai
+        .request(app)
+        .post(logoutEndpoint)
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${user.token}`)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(200);
+          expect(data).property('message');
+          done(err);
+        });
+    });
+    it('should throw no token error', (done) => {
+      chai
+        .request(app)
+        .post(logoutEndpoint)
+        .set('Content-Type', 'application/json')
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(401);
+          expect(data).property('message');
+          expect(res.body.data.message).to.equal(messages.noToken);
+          done(err);
+        });
+    });
+    it('should throw bad token error', (done) => {
+      chai
+        .request(app)
+        .post(logoutEndpoint)
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${user.token} wrong`)
+        .end((err, res) => {
+          expect(res.status).to.equal(500);
+          done(err);
+        });
+    });
+    it('should throw user already logged out', (done) => {
+      chai
+        .request(app)
+        .post(logoutEndpoint)
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${user.token}`)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(500);
+          expect(data).property('message');
+          expect(res.body.data.message).to.equal(messages.blacklisted);
+          done(err);
         });
     });
   });
