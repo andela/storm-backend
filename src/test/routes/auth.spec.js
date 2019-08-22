@@ -49,7 +49,7 @@ describe('AUTH', () => {
         });
     });
 
-    it('should not allow duplicate email address when creating a user', (done) => {
+    it('should not allow duplicate email address & phone number when creating a user', (done) => {
       chai
         .request(app)
         .post(signupEndpoint)
@@ -59,6 +59,20 @@ describe('AUTH', () => {
           expect(res.body).to.have.property('status').that.equal('error');
           expect(res.body.data).to.not.have.property('token');
           done(err);
+        });
+    });
+
+    it('should return an internal server error', (done) => {
+      const stub = sinon.stub(User, 'create').callsFake(() => Promise.reject(new Error('Internal server error')));
+      chai
+        .request(app)
+        .post(signupEndpoint)
+        .send(userMock.validUser2)
+        .end((err, res) => {
+          expect(res.status).to.equal(500);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+          stub.restore();
         });
     });
   });
