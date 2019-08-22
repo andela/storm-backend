@@ -1,11 +1,29 @@
-version: '3'
+version: "3"
 services:
-  backend:
-    image: storm-backend:latest
+  db:
+    restart: always
+    env_file:
+      - .env
+    image: postgres
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
     volumes:
-      - /var/app/node_modules
-    build: 
-      context: .
-      dockerfile: Dockerfile
+      - ./pgdata:/var/lib/postgresql/data
     ports:
-      - "3000:3000"
+      - ${DB_PORT}:${DB_PORT}
+    networks:
+      - webnet
+  backend:
+    build:
+      context: .
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    entrypoint: ["/bin/bash", "./entrypoint.sh"]
+    depends_on:
+      - db
+    networks:
+      - webnet
+networks:
+  webnet:
