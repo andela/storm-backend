@@ -8,6 +8,7 @@ import messages from '../../utils/messages';
 
 // Define the expect assertion
 const { expect } = chai;
+const BASE_URL = '/api/v1';
 
 // chai middleware
 chai.use(chaiHttp);
@@ -20,5 +21,6 @@ export {
   expect,
   sinon,
   mockRequest,
-  mockResponse
+  mockResponse,
+  BASE_URL,
 };
