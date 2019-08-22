@@ -26,6 +26,28 @@ describe('AUTH', () => {
         });
     });
 
+    it('should not signup user if password length is less than 8', (done) => {
+      chai
+        .request(app)
+        .post(signupEndpoint)
+        .send(userMock.inValidUser)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done(err);
+        });
+    });
+
+    it('should not #create a user with wrong email', (done) => {
+      chai
+        .request(app)
+        .post(signupEndpoint)
+        .send(userMock.inValidEmail)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          done(err);
+        });
+    });
+
     it('should not allow duplicate email address when creating a user', (done) => {
       chai
         .request(app)
