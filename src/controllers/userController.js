@@ -1,32 +1,30 @@
 import Redis from 'ioredis';
-import models from '../database/models';
 import authHelper from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
-import create from '../services/dbServices';
-import { findByEmail, comparePasswords } from '../services/userServices';
-
-const { User } = models;
+import {
+  create, findByEmail, comparePasswords, findByEmailOrPhone
+} from '../services/userServices';
 
 /**
-   * user signup controller
-   * @param {Object} req - server request
-   * @param {Object} res - server response
-   * @returns {Object} - custom response
-   */
-
+ * user signup controller
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ */
 const signUp = async (req, res) => {
-  const {
-    firstName, lastName, email, password, phoneNo
-  } = req.body;
   try {
+    const {
+      firstName, lastName, email, password, phoneNo
+    } = req.body;
     const user = {
       firstName, lastName, email, phoneNo, password
     };
 
-    const emailExists = await findByEmail(email);
-    if (emailExists) return response(res, 400, 'error', { message: messages.emailExists });
-    const createdUser = await create(User, user);
+    const exists = await findByEmailOrPhone(email, phoneNo);
+    if (exists) return response(res, 400, 'error', { message: 'Email address or phone number already in use' });
+
+    const createdUser = await create(user);
     const userData = {
       user: {
         id: createdUser.id,
@@ -36,8 +34,8 @@ const signUp = async (req, res) => {
     };
 
     return response(res, 200, 'success', userData);
-  } catch (e) {
-    return response(res, 500, 'error', { errors: e });
+  } catch (error) {
+    return response(res, 500, 'error', { errors: error.message });
   }
 };
 
@@ -47,7 +45,6 @@ const signUp = async (req, res) => {
  * @param {Object} res - server response
  * @returns {Object} - custom response
 */
-
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;

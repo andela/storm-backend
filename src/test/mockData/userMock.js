@@ -7,6 +7,14 @@ export default {
     password: 'Password'
   },
 
+  validUser2: {
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'jd@gmail.com',
+    phoneNo: '08077777772',
+    password: 'Password2',
+  },
+
   inValidUser: {
     firstName: 'Annie',
     lastName: 'Skywalker',
