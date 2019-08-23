@@ -5,6 +5,10 @@ import messages from '../utils/messages';
 import {
   create, findByEmail, comparePasswords, findByEmailOrPhone
 } from '../services/userServices';
+import verifyEmailMessage from '../config/verifyEmailMessage';
+import createTemplate from '../utils/createTemplate';
+import sendMail from '../utils/sendMail';
+
 
 /**
  * user signup controller
@@ -32,7 +36,9 @@ const signUp = async (req, res) => {
         token: authHelper.generateToken({ id: createdUser.id }),
       }
     };
-
+    const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
+    const message = createTemplate(verifyEmailMessage, link);
+    await sendMail(userData.user.email, 'VERIFY EMAIL', message);
     return response(res, 200, 'success', userData);
   } catch (error) {
     return response(res, 500, 'error', { errors: error.message });

@@ -37,6 +37,7 @@ const routes = (router) => {
     .get((req, res) => response(res, 200, 'success', {
       message: messages.apiV1Welcome,
     }));
+
   // user routes
   userRoute(router);
   // request routes
