@@ -16,6 +16,18 @@ const signInSchema = Joi.object({
   password: JoiValidator.validatePassword().required(),
 });
 
+const updateUserSchema = Joi.object({
+  firstName: JoiValidator.validateString().required(),
+  lastName: JoiValidator.validateString().required(),
+  phoneNo: JoiValidator.validateNumber().required(),
+  gender: JoiValidator.validateString().required(),
+  lineManager: JoiValidator.validateString().required(),
+  birthDate: JoiValidator.validateDate().required(),
+  preferredCurrency: JoiValidator.validateString().required(),
+  preferredLanguage: JoiValidator.validateString().required(),
+  currentLocation: JoiValidator.validateString().required(),
+});
+
 export {
-  signUpSchema, signInSchema
+  signUpSchema, signInSchema, updateUserSchema
 };

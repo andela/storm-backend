@@ -29,6 +29,34 @@ module.exports = {
           type: Sequelize.STRING,
           unique: true
         },
+        birthDate: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        preferredCurrency: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        preferredLanguage: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        currentLocation: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        gender: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        role: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
+        lineManager: {
+          allowNull: true,
+          type: Sequelize.STRING
+        },
         createdAt: {
           allowNull: true,
           type: Sequelize.DATE,

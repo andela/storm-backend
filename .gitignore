@@ -19,3 +19,5 @@ coverage
 
 # editor files
 .editorconfig
+# editor files
+.vscode/

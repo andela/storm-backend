@@ -1,24 +1,46 @@
-import jwt from 'jsonwebtoken';
 import models from '../database/models';
 import DbServices from '../services/dbServices';
 import response from '../utils/response';
 import messages from '../utils/messages';
+import { verifyToken } from '../utils/authHelper';
 
 const { User } = models;
 const { getById } = DbServices;
 const {
-  invalidToken, noToken
+  userNotFoundId, invalidToken, noToken, serverError, invalidUserId
 } = messages;
 
 /**
- * @method verifyToken
+   * @method checkUserId
+   * @param {object} req request object
+   * @param {object} res request object
+   * @param {function} next next function
+   * @returns {object} custom response
+   * @description checks if userId passed to params is valid
+   */
+export const checkUserId = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await getById(User, userId, {});
+    if (!user) {
+      return response(res, 404, 'error', { message: userNotFoundId });
+    }
+    return next();
+  } catch (error) {
+    if (error.parent.routine === 'string_to_uuid') {
+      return response(res, 401, 'error', { message: invalidUserId });
+    }
+    return response(res, 500, 'error', { message: serverError });
+  }
+};
+/**
+ * @method checkToken
  * @param {*} req
  * @param {*} res
  * @param {*} next
  * @returns {Object} response object
  */
-// eslint-disable-next-line import/prefer-default-export
-export const verifyToken = async (req, res, next) => {
+export const checkToken = async (req, res, next) => {
   let token = req.headers.authorization;
   if (token && token.startsWith('Bearer ')) {
     // Remove Bearer from string
@@ -27,7 +49,7 @@ export const verifyToken = async (req, res, next) => {
   }
   try {
     if (token) {
-      const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+      const decoded = await verifyToken(token);
       const user = await getById(User, decoded.id, {});
       if (!user) {
         return response(res, 401, 'error', { message: invalidToken });
