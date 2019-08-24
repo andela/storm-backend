@@ -17,6 +17,14 @@ const JoiValidation = {
     return Joi.string().min(8).strict()
       .required();
   },
+
+  /**
+   * date schema creator
+   * @returns {Object} - date schema
+  */
+  validateDate() {
+    return Joi.date();
+  }
 };
 
 export default JoiValidation;

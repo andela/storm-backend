@@ -8,6 +8,7 @@ import response from './utils/response';
 import './config/env';
 import routes from './routes';
 import swaggerDoc from './config/swaggerDoc';
+import db from './database/models';
 
 // Instance of express app
 const app = express();
@@ -45,7 +46,20 @@ app.use('*', (req, res) => response(res, 404, 'error', {
   message: messages.notFound,
 }));
 
-// Finally, start server...
-const server = app.listen(process.env.PORT || 3000, () => infoLog(`Listening on port ${server.address().port}`));
+// Finally, check db connection then start the server...
+const { sequelize } = db;
+sequelize
+  .authenticate()
+  .then(() => {
+    infoLog('connection to database successful');
+    const server = app.listen(
+      process.env.PORT || 3000,
+      () => infoLog(`Listening on port ${server.address().port}`)
+    );
+  })
+  .catch((e) => {
+    infoLog('Failed to connect to the database');
+    throw e.message;
+  });
 
 export default app;

@@ -29,5 +29,5 @@ export default {
     email: 'testtest.com',
     phoneNo: '08077777777',
     password: 'Pas'
-  }
+  },
 };

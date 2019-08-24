@@ -1,6 +1,7 @@
 import messages from '../utils/messages';
 import response from '../utils/response';
 import userRoute from './api/user';
+import requestRoute from './api/request';
 
 const routes = (router) => {
   router
@@ -38,6 +39,8 @@ const routes = (router) => {
     }));
   // user routes
   userRoute(router);
+  // request routes
+  requestRoute(router);
 };
 
 export default routes;
