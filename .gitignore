@@ -1,6 +1,6 @@
 # dist directory
 dist
-
+pgdata
 # node modules
 node_modules
 
