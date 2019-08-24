@@ -1,14 +1,18 @@
-
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
 import { signUpSchema, signInSchema } from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
+import verifyEmailController from '../../controllers/emailVerificationController';
 
 const {
   signUp,
   signIn,
   logout,
 } = userController;
+
+const {
+  verifyEmail
+} = verifyEmailController;
 
 const userRoute = (router) => {
   router.route('/user/signup')
@@ -117,5 +121,34 @@ const userRoute = (router) => {
    */
 
     .post(checkBlacklist, logout);
+
+  // Email verification endpoint
+  router
+    .route('/user/verify/:token')
+
+  /**
+   * @swagger
+   * /api/v1/user/verify/{token}:
+   *   get:
+   *     tags:
+   *       - Users
+   *     summary: Verify email address
+   *     description: Verify email address
+   *     parameters:
+   *      - name: token
+   *        in: path
+   *        required: true
+   *        schema:
+   *          type: string
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       403:
+   *         description: Unauthorized
+   *       500:
+   *         description: Internal Server error
+   */
+
+    .get(verifyEmail);
 };
 export default userRoute;

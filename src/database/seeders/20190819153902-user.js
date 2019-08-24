@@ -10,7 +10,8 @@ module.exports = {
         phoneNo: '2347032123304',
         password: 'jammy11',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        verified: true
       },
       {
         id: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
@@ -20,7 +21,8 @@ module.exports = {
         password: 'samman',
         phoneNo: null,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        verified: true
       }, {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         firstName: 'Police',
@@ -29,7 +31,8 @@ module.exports = {
         password: 'polly',
         phoneNo: '2347032123404',
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        verified: true
       }
     ], {});
   },

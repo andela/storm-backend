@@ -31,12 +31,19 @@ export default (Sequelize, DataTypes) => {
       type: DataTypes.STRING
     },
     createdAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+      allowNull: true,
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW')
     },
     updatedAt: {
-      allowNull: false,
-      type: DataTypes.DATE
+      allowNull: true,
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.fn('NOW')
+    },
+    verified: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {});
   //  hash user password before creating user

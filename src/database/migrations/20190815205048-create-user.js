@@ -30,12 +30,19 @@ module.exports = {
           unique: true
         },
         createdAt: {
-          allowNull: false,
-          type: Sequelize.DATE
+          allowNull: true,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.fn('NOW')
         },
         updatedAt: {
-          allowNull: false,
-          type: Sequelize.DATE
+          allowNull: true,
+          type: Sequelize.DATE,
+          defaultValue: Sequelize.fn('NOW')
+        },
+        verified: {
+          allowNull: true,
+          type: Sequelize.BOOLEAN,
+          defaultValue: false
         }
        })
   },
