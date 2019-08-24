@@ -5,7 +5,7 @@ import messages from '../utils/messages';
 import {
   create, findByEmail, comparePasswords, findByEmailOrPhone
 } from '../services/userServices';
-import verifyEmailMessage from '../config/verifyEmailMessage';
+import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 
