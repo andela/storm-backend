@@ -8,7 +8,7 @@ import response from './utils/response';
 import './config/env';
 import routes from './routes';
 import swaggerDoc from './config/swaggerDoc';
-import db from './database/models';
+import db from './models';
 
 // Instance of express app
 const app = express();

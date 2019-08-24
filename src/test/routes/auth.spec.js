@@ -1,7 +1,7 @@
 import {
   app, chai, expect, sinon, messages
 } from '../testHelpers/config';
-import models from '../../database/models';
+import models from '../../models';
 import mockData from '../mockData';
 
 const { User } = models;

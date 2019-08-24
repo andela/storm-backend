@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  Request.associate = function(models) {
+  Request.associate = (models) => {
     Request.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'User',

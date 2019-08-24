@@ -1,7 +1,7 @@
 import {
   app, chai, expect, messages, sinon
 } from '../testHelpers/config';
-import models from '../../database/models';
+import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 
