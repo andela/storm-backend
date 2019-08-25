@@ -15,6 +15,7 @@ const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
   const requestTripEndpoint = `${BASE_URL}/requests`;
+  const searchRequestTripEndpoint = `${BASE_URL}/search/requests`;
   let token;
 
   before(async () => {
@@ -181,6 +182,62 @@ describe('REQUESTS', () => {
       expect(response.status).to.equal(200);
       expect(status).to.equal('success');
       expect(message).to.equal(messages.noRequests);
+    });
+  });
+
+  describe('GET /requests', () => {
+    it('should able to search for request successfully', (done) => {
+      chai.request(app)
+        .post(searchRequestTripEndpoint)
+        .set('authorization', token)
+        .send({ type: 'return' })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done(err);
+        });
+    });
+
+    it('should able to search for request successfully using origin and destination', (done) => {
+      chai.request(app)
+        .post(searchRequestTripEndpoint)
+        .set('authorization', token)
+        .send({ originCity: 'lagos', destinationCity: 'Istanbul' })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done(err);
+        });
+    });
+
+    it('should able to search for request successfully using approvalstatus', (done) => {
+      chai.request(app)
+        .post(searchRequestTripEndpoint)
+        .set('authorization', token)
+        .send({ originCity: 'Lagos', approvalStatus: true })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done(err);
+        });
+    });
+
+    it('should able to search for request successfully using multiCity', (done) => {
+      chai.request(app)
+        .post(searchRequestTripEndpoint)
+        .set('authorization', token)
+        .send({ originCity: 'Lagos', multiCity: true })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done(err);
+        });
+    });
+
+    it('should return 200 for ilike search', (done) => {
+      chai.request(app)
+        .post('/api/v1/search/requests/?originCity=LAGOS')
+        .set('authorization', token)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done(err);
+        });
     });
   });
 });

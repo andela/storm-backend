@@ -25,6 +25,10 @@ const JoiValidation = {
     return Joi.string();
   },
 
+  validateAlphabet() {
+    return Joi.string().regex(/^[a-zA-Z ]+$/);
+  },
+
   validateEmail() {
     return Joi.string().email();
   },
@@ -47,7 +51,7 @@ const JoiValidation = {
    * @returns {Object} - number schema
   */
   validateNumber() {
-    return Joi.number().required();
+    return Joi.number();
   },
 
   /**
@@ -64,6 +68,14 @@ const JoiValidation = {
   */
   validateArray() {
     return Joi.array().items(subTrip);
+  },
+
+  /**
+   * object schema creator
+   * @returns {Object} - object schema
+  */
+  validateBoolean() {
+    return Joi.boolean();
   }
 };
 

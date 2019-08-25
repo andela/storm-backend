@@ -23,22 +23,6 @@ export default {
     password: 'Pas'
   },
 
-  inValidEmail: {
-    firstName: 'Annie',
-    lastName: 'Skywalker',
-    email: 'testtest.com',
-    phoneNo: '08077777777',
-    password: 'Pas'
-  },
-
-  undefinedPhone: {
-    firstName: 'Annie',
-    lastName: 'Skywalker',
-    email: 'testtest.com',
-    phoneNo: '',
-    password: 'Pas'
-  },
-
   updateUser: {
     firstName: 'Luke',
     lastName: 'Skywalker',
