@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import response from '../utils/response';
 import '../config/env';
-import models from '../database/models';
+import models from '../models';
 
 /**
  * mail controller

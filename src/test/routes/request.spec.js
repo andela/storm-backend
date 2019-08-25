@@ -1,5 +1,7 @@
-import { app, chai, expect, sinon, BASE_URL } from '../testHelpers/config';
-import models from '../../database/models';
+import {
+  app, chai, expect, sinon, BASE_URL
+} from '../testHelpers/config';
+import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 

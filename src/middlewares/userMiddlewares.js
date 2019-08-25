@@ -1,4 +1,4 @@
-import models from '../database/models';
+import models from '../models';
 import DbServices from '../services/dbServices';
 import response from '../utils/response';
 import messages from '../utils/messages';

@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import { Op } from 'sequelize';
-import models from '../database/models';
+import models from '../models';
 import authHelper from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
