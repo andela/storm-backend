@@ -14,5 +14,32 @@ export default {
     departureDate: '2019-08-21 17:59:04.305+00',
     reason: 'Holiday',
     accommodation: 'Transcorp Hotel'
+  },
+  oneWayTripRequestWithReturnDate: {
+    type: 'one-way',
+    originCity: 'Abuja',
+    destinationCity: 'New Delhi',
+    departureDate: '2019-09-21 17:59:04.305+00',
+    returnDate: '2020-08-21 17:59:04.305+00',
+    reason: 'Holiday',
+    accommodation: 'Transcorp Hotel'
+  },
+  validReturnTripRequest: {
+    type: 'return',
+    originCity: 'Abuja',
+    destinationCity: 'New Delhi',
+    departureDate: '2019-09-21 17:59:04.305+00',
+    returnDate: '2020-08-21 17:59:04.305+00',
+    reason: 'Holiday',
+    accommodation: 'Transcorp Hotel'
+  },
+  returnTripRequestWithDepartureGreaterThanReturnDate: {
+    type: 'return',
+    originCity: 'Abuja',
+    destinationCity: 'New Delhi',
+    departureDate: '2020-09-21 17:59:04.305+00',
+    returnDate: '2019-08-21 17:59:04.305+00',
+    reason: 'Holiday',
+    accommodation: 'Transcorp Hotel'
   }
 };

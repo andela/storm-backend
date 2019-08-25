@@ -18,7 +18,7 @@ const requestTrip = async (req, res) => {
     const { body, decoded } = req;
     const { id: userId } = decoded;
     const {
-      type, originCity, destinationCity, departureDate, reason, accommodation
+      type, originCity, destinationCity, departureDate, returnDate, reason, accommodation
     } = body;
 
     const tripToBeRequested = {
@@ -26,6 +26,7 @@ const requestTrip = async (req, res) => {
       originCity,
       destinationCity,
       departureDate,
+      returnDate,
       reason,
       accommodation,
       userId,

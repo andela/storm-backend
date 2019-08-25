@@ -6,7 +6,10 @@ import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 
 const { Request } = models;
-const { validTripRequest, badInputTripRequest } = mockData.requestMock;
+const {
+  validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
+  validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate
+} = mockData.requestMock;
 const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
@@ -26,7 +29,7 @@ describe('REQUESTS', () => {
         .end((err, res) => {
           const { data } = res.body;
           expect(res.status).to.equal(201);
-          expect(data).to.have.property('type');
+          expect(data).to.have.property('type', 'one-way');
           expect(data).to.have.property('originCity');
           expect(data).to.have.property('destinationCity');
           expect(data).to.have.property('departureDate');
@@ -36,11 +39,54 @@ describe('REQUESTS', () => {
         });
     });
 
-    it('should show validation error', (done) => {
+    it('should request a return trip successfully', (done) => {
+      chai.request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', token)
+        .send(validReturnTripRequest)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(201);
+          expect(data).to.have.property('type', validReturnTripRequest.type);
+          expect(data).to.have.property('originCity', validReturnTripRequest.originCity);
+          expect(data).to.have.property('destinationCity', validReturnTripRequest.destinationCity);
+          expect(data).to.have.property('departureDate');
+          expect(data).to.have.property('returnDate');
+          expect(data).to.have.property('reason', validReturnTripRequest.reason);
+          expect(data).to.have.property('accommodation', validReturnTripRequest.accommodation);
+          done(err);
+        });
+    });
+
+    it('should show missing key validation error', (done) => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
         .send(badInputTripRequest)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+        });
+    });
+
+    it('should show daparture date is greater than return date validation error', (done) => {
+      chai.request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', token)
+        .send(returnTripRequestWithDepartureGreaterThanReturnDate)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+        });
+    });
+
+    it('should show validation error', (done) => {
+      chai.request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', token)
+        .send(oneWayTripRequestWithReturnDate)
         .end((err, res) => {
           expect(res.status).to.equal(400);
           expect(res.body).to.have.property('status').that.equal('error');
