@@ -106,6 +106,26 @@ describe('User route', () => {
       expect(response.body.data.message).to.equal(messages.invalidUserId);
     });
 
+    it('should return an error if user email is not valid', async () => {
+      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.inValidEmail}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send(userMock.updateUser);
+      expect(response.status).to.equal(401);
+      expect(response.body.status).to.equal('error');
+    });
+
+    it('should return an error if user email is not valid', async () => {
+      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.undefinedPhone}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send(userMock.updateUser);
+      expect(response.status).to.equal(401);
+      expect(response.body.status).to.equal('error');
+    });
+
     it('should return an internal server error', async () => {
       const stub = sinon.stub(User, 'findOne').callsFake(() => Promise.reject(new Error('Internal server error')));
       const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
