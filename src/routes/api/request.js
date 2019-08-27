@@ -1,10 +1,10 @@
 import requestController from '../../controllers/requestController';
 import validate from '../../middlewares/validator';
 import requestSchema from '../../validation/requestSchema';
-import { checkToken } from '../../middlewares/userMiddlewares';
+import { checkToken, checkUserId } from '../../middlewares/userMiddlewares';
 
-const { requestTrip } = requestController;
-const { requestTripSchema } = requestSchema;
+const { requestTrip, getUserRequest } = requestController;
+const { requestTripSchema, getUserRequestSchema } = requestSchema;
 
 const requestRoute = (router) => {
   router.route('/requests')
@@ -109,6 +109,67 @@ const requestRoute = (router) => {
      *       - bearerAuth: []
     */
     .post(checkToken, validate(requestTripSchema), requestTrip);
+
+  router.route('/requests/user/:userId')
+  /**
+     * @swagger
+     * /api/v1/requests/user/{userId}:
+     *   get:
+     *     tags:
+     *       - Requests
+     *     description: Get all requests for a user
+     *     produces:
+     *       - application/json
+     *     parameters:
+     *       - in: path
+     *         name: userId
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *         required: true
+     *       - in: query
+     *         name: page
+     *         schema:
+     *           type: number
+     *         required: false
+     *       - in: query
+     *         name: perPage
+     *         schema:
+     *           type: number
+     *         required: false
+     *     responses:
+     *       200:
+     *         description: Get request successful
+     *         content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: string
+     *                  example: success
+     *                data:
+     *                  type: object
+     *                  properties:
+     *                    requests:
+     *                      type: array
+     *                      description: array of requests
+     *                      items:
+     *                        $ref: '#/components/schemas/RequestTrip'
+     *       403:
+     *         description: Unauthorized
+     *       404:
+     *          description: User not found
+     *       500:
+     *         description: Internal Server error
+     *         content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/ErrorResponse'
+     *     security:
+     *       - bearerAuth: []
+    */
+    .get(checkToken, validate(getUserRequestSchema), checkUserId, getUserRequest);
 };
 
 export default requestRoute;

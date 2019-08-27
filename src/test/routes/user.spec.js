@@ -35,7 +35,7 @@ describe('User route', () => {
       const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
-        .set('authorization', token)
+        .set('authorization', `Bearer ${token}`)
         .send(userMock.updateUser);
       expect(response.status).to.equal(202);
       expect(response.body.status).to.equal('success');
@@ -101,28 +101,7 @@ describe('User route', () => {
         .set('Content-Type', 'application/json')
         .set('authorization', token)
         .send(userMock.updateUser);
-      expect(response.status).to.equal(401);
-      expect(response.body.status).to.equal('error');
-      expect(response.body.data.message).to.equal(messages.invalidUserId);
-    });
-
-    it('should return an error if user email is not valid', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.inValidEmail}`)
-        .type('form')
-        .set('Content-Type', 'application/json')
-        .set('authorization', token)
-        .send(userMock.updateUser);
-      expect(response.status).to.equal(401);
-      expect(response.body.status).to.equal('error');
-    });
-
-    it('should return an error if user email is not valid', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.undefinedPhone}`)
-        .type('form')
-        .set('Content-Type', 'application/json')
-        .set('authorization', token)
-        .send(userMock.updateUser);
-      expect(response.status).to.equal(401);
+      expect(response.status).to.equal(400);
       expect(response.body.status).to.equal('error');
     });
 

@@ -17,6 +17,7 @@ const signInSchema = Joi.object({
 });
 
 const updateUserSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
   firstName: JoiValidator.validateString().required(),
   lastName: JoiValidator.validateString().required(),
   phoneNo: JoiValidator.validateNumber().required(),
@@ -28,6 +29,10 @@ const updateUserSchema = Joi.object({
   currentLocation: JoiValidator.validateString().required(),
 });
 
+const getUserSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
+});
+
 export {
-  signUpSchema, signInSchema, updateUserSchema
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema
 };

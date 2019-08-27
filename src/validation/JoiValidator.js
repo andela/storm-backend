@@ -32,6 +32,14 @@ const JoiValidation = {
   */
   validateNumber() {
     return Joi.number().required();
+  },
+
+  /**
+   * uuidV4 schema creator
+   * @returns {Object} - uuidV4 schema
+  */
+  validateUuidV4() {
+    return Joi.string().guid({ version: 'uuidv4' });
   }
 };
 
