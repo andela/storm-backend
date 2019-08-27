@@ -1,22 +1,19 @@
+'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Requests', {
+    return queryInterface.createTable('Subrequests', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      userId: {
+      requestId: {
         type: Sequelize.UUID,
         references: {
-          model: 'Users',
+          model: 'Requests',
           key: 'id',
         },
-      },
-      type: {
-        type: Sequelize.ENUM,
-        allowNull: false,
-        values: ['one-way', 'return'],
       },
       originCity: {
         type: Sequelize.STRING,
@@ -30,25 +27,12 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      returnDate: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
       reason: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       accommodation: {
         type: Sequelize.STRING,
-      },
-      approvalStatus: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
-      multiCity: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -60,7 +44,8 @@ module.exports = {
       },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Requests');
+    return queryInterface.dropTable('Subrequests');
   }
 };

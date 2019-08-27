@@ -53,6 +53,16 @@ const DbServices = {
    */
   getAll(model, options) {
     return model.findAndCountAll(options);
+  },
+
+  /**
+   * Database create service funcion
+   * @param {Object} model - Defined model
+   * @param {Array} data - Data to be created
+   * @returns {Promise} - Promise response
+   */
+  bulkCreate(model, data) {
+    return model.bulkCreate(data, { returning: true });
   }
 };
 

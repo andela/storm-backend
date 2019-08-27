@@ -1,10 +1,12 @@
 import Joi from '@hapi/joi';
 import JoiValidator from './JoiValidator';
 
+const validateRequiredString = JoiValidator.validateString().required();
+
 const requestTripSchema = Joi.object({
   type: JoiValidator.validateString().valid('one-way', 'return').required(),
-  originCity: JoiValidator.validateString().required(),
-  destinationCity: JoiValidator.validateString().required(),
+  originCity: validateRequiredString,
+  destinationCity: validateRequiredString,
   departureDate: JoiValidator.validateDate().required().when('returnDate', {
     is: Joi.required(),
     then: Joi.date().less(Joi.ref('returnDate')),
@@ -14,8 +16,9 @@ const requestTripSchema = Joi.object({
     then: Joi.required(),
     otherwise: Joi.forbidden(),
   }),
-  reason: JoiValidator.validateString().required(),
-  accommodation: JoiValidator.validateString().required(),
+  reason: validateRequiredString,
+  accommodation: validateRequiredString,
+  subRequest: JoiValidator.validateArray()
 });
 
 const getUserRequestSchema = Joi.object({
