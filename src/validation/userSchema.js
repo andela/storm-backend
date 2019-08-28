@@ -28,6 +28,14 @@ const updateUserSchema = Joi.object({
   currentLocation: JoiValidator.validateString().required(),
 });
 
+const emailSchema = Joi.object({
+  email: JoiValidator.validateEmail().required(),
+});
+
+const passwordSchema = Joi.object({
+  password: JoiValidator.validatePassword().min(7).alphanum().required(),
+});
+
 export {
-  signUpSchema, signInSchema, updateUserSchema
+  signUpSchema, signInSchema, updateUserSchema, emailSchema, passwordSchema
 };

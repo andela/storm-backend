@@ -21,5 +21,15 @@ export const verifyToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY);
   return decoded;
 };
+/**
+   * Generate JWT
+   * @param {Object} payload - object literal resource to be encoded
+   * @returns {String} - jwt token
+   */
+const resetPasswordToken = (payload) => {
+  const token = jwt.sign({ ...payload }, secret, { expiresIn: '1h' });
+  return token;
+};
 
-export default { generateToken };
+
+export default { generateToken, resetPasswordToken };

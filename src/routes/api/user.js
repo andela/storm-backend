@@ -1,6 +1,8 @@
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
-import { signUpSchema, signInSchema, updateUserSchema } from '../../validation/userSchema';
+import {
+  signUpSchema, signInSchema, updateUserSchema, emailSchema, passwordSchema
+} from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import verifyEmailController from '../../controllers/emailVerificationController';
 import { checkUserId, checkToken } from '../../middlewares/userMiddlewares';
@@ -10,7 +12,9 @@ const {
   signIn,
   logout,
   getUserDetailsById,
-  updateUserDetails
+  updateUserDetails,
+  resetPassword,
+  updatePassword
 } = userController;
 
 const {
@@ -213,5 +217,61 @@ const userRoute = (router) => {
      *          - bearerAuth: [ ]
     */
     .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
+  router.route('/reset/password')
+  /**
+ * @swagger
+ * /api/v1/reset/password:
+ *  post:
+ *     tags:
+ *       - Users
+ *     name: Reset Password Link
+ *     summary: Reset Password Link
+ *     consumes:
+ *       - application/json
+ *     requestBody:
+ *      description: User data object
+ *      required: true
+ *      content:
+ *       application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/User'
+ *     responses:
+ *       '200':
+ *         description: Check your mail to reset your password
+ *       '403':
+ *         description: Password reset link is invalid or has expired
+ */
+    .post(validate(emailSchema), resetPassword);
+  router.route('/password/reset/:userId')
+  /**
+     * @swagger
+     *  paths:
+     *    /api/v1/password/reset/:userId:
+     *      patch:
+     *        tags:
+     *          - Users
+     *        summary: Update Password
+     *        parameters:
+     *          - in: path
+     *            name: userId
+     *            schema:
+     *              type: string
+     *            required: true
+     *        requestBody:
+     *          description: User data object
+     *          required: true
+     *          content:
+     *            application/json:
+     *              schema:
+     *                $ref: '#/components/schemas/User'
+     *        responses:
+     *          200:
+     *            description: Password updated successfully
+     *          404:
+     *            description: "password is required"
+     *          500:
+     *            description: Internal Server error
+    */
+    .patch(validate(passwordSchema), updatePassword);
 };
 export default userRoute;

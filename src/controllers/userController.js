@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 import models from '../models';
 import authHelper from '../utils/authHelper';
@@ -8,6 +9,7 @@ import {
   create, findByEmail, comparePasswords, findByEmailOrPhone
 } from '../services/userServices';
 import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
+import resetPasswordMessage from '../utils/templates/resetPasswordMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 
@@ -157,11 +159,59 @@ const updateUserDetails = async (req, res) => {
     return response(res, 500, 'error', { message: serverError });
   }
 };
+/**
+  * Handles user reset password
+  *
+  * @function
+  * @param {Object} req - request object to the server
+  * @param {Object} res - response object from the server
+  *
+  * @returns {Object} - password reset link
+*/
+const resetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await findByEmail(email);
+    const token = authHelper.resetPasswordToken({ id: user.id });
+    const link = `${process.env.BASE_URL}/password/reset/${user.id}/${token}`;
+    const message = createTemplate(resetPasswordMessage, link);
+    await sendMail(user.email, 'Reset Password', message);
+    return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
+  } catch (error) {
+    response(res, 500, 'error', { error: error.message });
+  }
+};
+/**
+  * Handles user update password
+  *
+  * @function
+  * @param {Object} req - The request object to the server
+  * @param {Object} res - The response object from the server
+  *
+  * @returns {void} - no data returned
+*/
+const updatePassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { password } = req.body;
+
+    const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
+
+    const newPassword = bcrypt.hashSync(password, salt);
+    const options = { returning: true, where: { id: userId } };
+    const updatedUser = await update(User, { password: newPassword }, options);
+    return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
+  } catch (error) {
+    response(res, 500, 'error', { error: error.message });
+  }
+};
 
 export default {
   signUp,
   signIn,
   logout,
   getUserDetailsById,
-  updateUserDetails
+  updateUserDetails,
+  resetPassword,
+  updatePassword
 };
