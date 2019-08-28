@@ -20,7 +20,9 @@ const messages = {
   invalidUserId: 'userId provided is not a valid uuid string',
   noRequests: 'No requests to display',
   error: 'An unexpected error occur...',
-  noResult: 'No request result found'
+  noResult: 'No request result found',
+  roleChanged: 'The staff role has been successfully set to a',
+  forbidden: 'You are not authorized to perform this operation',
 };
 
 export default messages;

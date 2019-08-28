@@ -1,3 +1,4 @@
+import roles from '../utils/roles';
 import { hashPassword } from '../utils/authHelper';
 
 export default (Sequelize, DataTypes) => {
@@ -49,9 +50,10 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.STRING
     },
-    role: {
+    roleId: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.UUID,
+      defaultValue: roles.REQUESTER,
     },
     lineManager: {
       allowNull: true,

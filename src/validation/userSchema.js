@@ -33,6 +33,12 @@ const getUserSchema = Joi.object({
   userId: JoiValidator.validateUuidV4().required(),
 });
 
+const setUserRoleSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
+  role: JoiValidator.validateString()
+    .valid('requester', 'travel-admin', 'travel-team-member', 'manager', 'super-admin').required(),
+});
+
 export {
-  signUpSchema, signInSchema, updateUserSchema, getUserSchema
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema, setUserRoleSchema,
 };

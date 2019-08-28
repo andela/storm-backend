@@ -5,18 +5,19 @@ import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 
-const { userMock } = mockData;
+const { userMock, roleMock } = mockData;
 const { generateToken } = authHelper;
 const { User } = models;
 
 const BASE_URL = '/api/v1';
 
-let token, invalidToken, user;
+let token, invalidToken, user, managerToken;
 
 before(async () => {
   const jwtToken = generateToken({ id: userMock.userId });
   token = jwtToken;
   invalidToken = generateToken({ id: userMock.wrongId });
+  managerToken = generateToken({ id: userMock.anotherUserId });
 });
 
 describe('User route', () => {
@@ -110,6 +111,76 @@ describe('User route', () => {
       const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
         .set('authorization', token)
         .send(userMock.updateUser);
+      expect(response.status).to.equal(500);
+      expect(response.body).to.have.property('status').that.equal('error');
+      stub.restore();
+    });
+  });
+
+  describe('PATCH /users/:userId', () => {
+    it('should return unauthorize error', async () => {
+      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.anotherUserId}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', managerToken)
+        .send(roleMock.unAuthorizeRole);
+
+      expect(response).to.have.status(403);
+      const { status, data } = response.body;
+      expect(status).to.equal('error');
+      expect(data).to.be.a('object');
+      expect(data).to.have.property('message');
+    });
+
+    it('should return validation error', async () => {
+      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.userId}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send({});
+
+      expect(response).to.have.status(400);
+      const { status, data } = response.body;
+      expect(status).to.equal('error');
+      expect(data).to.be.a('object');
+    });
+
+    it('should succesfully set user role', async () => {
+      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.anotherUserId}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send(roleMock.validRole);
+
+      expect(response).to.have.status(200);
+      const { status, data } = response.body;
+      expect(status).to.equal('success');
+      expect(data).to.be.a('object');
+      expect(data).to.have.property('message');
+    });
+
+    it('should return incorrect staff id error', async () => {
+      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.wrongId}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send(roleMock.incorrectStaffId);
+
+      expect(response).to.have.status(404);
+      const { status, data } = response.body;
+      expect(status).to.equal('error');
+      expect(data).to.be.a('object');
+      expect(data).to.have.property('message');
+    });
+
+    it('should return an internal server error', async () => {
+      const stub = sinon.stub(User, 'findOne').callsFake(() => Promise.reject(new Error('Internal server error')));
+      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.userId}`)
+        .type('form')
+        .set('Content-Type', 'application/json')
+        .set('authorization', token)
+        .send(roleMock.validRole);
+
       expect(response.status).to.equal(500);
       expect(response.body).to.have.property('status').that.equal('error');
       stub.restore();

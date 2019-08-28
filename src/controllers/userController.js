@@ -7,15 +7,17 @@ import {
   create, findByEmail, comparePasswords, findByEmailOrPhone
 } from '../services/userServices';
 import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
+import roleEmailMessage from '../utils/templates/roleEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
-
 import DbServices from '../services/dbServices';
 import redis from '../config/redis';
 
-const { User } = models;
+const { User, Role } = models;
 const { getById, update, getByOptions } = DbServices;
-const { unauthorizedUserProfile, serverError, phoneExists } = messages;
+const {
+  unauthorizedUserProfile, serverError, phoneExists, roleChanged,
+} = messages;
 
 /**
  * user signup controller
@@ -146,12 +148,36 @@ const updateUserDetails = async (req, res) => {
     };
     const options = { returning: true, where: { id: userId } };
     const updatedUser = await update(User, userInfo, options);
-    const { email, role, updatedAt } = updatedUser[1][0];
+    const { email, roleId, updatedAt } = updatedUser[1][0];
     return response(res, 202, 'success', {
       updatedUser: {
-        id, email, role, updatedAt, ...userInfo
+        id, email, roleId, updatedAt, ...userInfo
       }
     });
+  } catch (error) {
+    return response(res, 500, 'error', { message: error.message });
+  }
+};
+
+/**
+ * set user role
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ * @description set user role
+ */
+const setUserRole = async (req, res) => {
+  try {
+    const { role: type } = req.body;
+    const { id: roleId } = await getByOptions(Role, { where: { type }, attributes: ['id'] });
+
+    const { userId: staffId } = req.params;
+    const options = { returning: true, where: { id: staffId } };
+    const [, [{ email: staffEmail }]] = await update(User, { roleId }, options);
+
+    const message = createTemplate(roleEmailMessage, type);
+    await sendMail(staffEmail, 'User Role Set', message);
+    return response(res, 200, 'success', { message: `${roleChanged} ${type}` });
   } catch (error) {
     return response(res, 500, 'error', { message: error.message });
   }
@@ -162,5 +188,6 @@ export default {
   signIn,
   logout,
   getUserDetailsById,
-  updateUserDetails
+  updateUserDetails,
+  setUserRole,
 };
