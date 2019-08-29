@@ -46,6 +46,7 @@
     "mock-req-res": "^1.1.1",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
+    "pusher": "^2.2.2",
     "sequelize": "^5.15.0",
     "sequelize-cli": "^5.5.0",
     "swagger-jsdoc": "^3.4.0",

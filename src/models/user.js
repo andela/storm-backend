@@ -55,7 +55,7 @@ export default (Sequelize, DataTypes) => {
     },
     lineManager: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.UUID
     },
     createdAt: {
       allowNull: true,
@@ -71,8 +71,21 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    emailNotificationEnabled: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
   }, {});
+
+  User.associate = (models) => {
+    User.hasOne(models.User, {
+      foreignKey: 'lineManager',
+      as: 'User',
+    });
+  };
+
   //  hash user password before creating user
   User.beforeCreate((user) => {
     user.password = hashPassword(user.password);

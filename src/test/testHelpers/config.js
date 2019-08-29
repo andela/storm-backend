@@ -13,6 +13,7 @@ const BASE_URL = '/api/v1';
 // chai middleware
 chai.use(chaiHttp);
 chai.use(sinonChai);
+chai.should();
 
 export {
   app,

@@ -15,6 +15,7 @@ before_script:
 install:
   # install deps
   - npm install
+
 script:
   - npm test
   - npm build
