@@ -18,6 +18,13 @@ const requestTripSchema = Joi.object({
   accommodation: JoiValidator.validateString().required(),
 });
 
+const getUserRequestSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
+  page: Joi.number().min(1),
+  perPage: Joi.number().min(1)
+});
+
 export default {
-  requestTripSchema
+  requestTripSchema,
+  getUserRequestSchema
 };

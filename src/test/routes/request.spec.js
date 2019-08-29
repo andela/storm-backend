@@ -1,5 +1,5 @@
 import {
-  app, chai, expect, sinon, BASE_URL
+  app, chai, expect, sinon, BASE_URL, messages
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
@@ -107,6 +107,35 @@ describe('REQUESTS', () => {
           done(err);
           stub.restore();
         });
+    });
+  });
+
+  describe('GET /requests/user/:userId', () => {
+    it('should get a users requests', async () => {
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}`)
+        .set('authorization', token);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a users requests when "page" and "perPage" are passed to the req.query', async () => {
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}?page=2&perPage=1`)
+        .set('authorization', token);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should return a message if result is empty', async () => {
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}?page=5&perPage=2`)
+        .set('authorization', token);
+      const { body: { data: { message }, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(message).to.equal(messages.noRequests);
     });
   });
 });

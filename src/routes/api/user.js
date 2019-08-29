@@ -1,6 +1,8 @@
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
-import { signUpSchema, signInSchema, updateUserSchema } from '../../validation/userSchema';
+import {
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema
+} from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import verifyEmailController from '../../controllers/emailVerificationController';
 import { checkUserId, checkToken } from '../../middlewares/userMiddlewares';
@@ -178,7 +180,7 @@ const userRoute = (router) => {
    *     security:
    *       - bearerAuth: [ ]
   */
-    .get(checkToken, checkUserId, getUserDetailsById)
+    .get(checkToken, validate(getUserSchema), checkUserId, getUserDetailsById)
     /**
      * @swagger
      *  paths:

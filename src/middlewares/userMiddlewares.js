@@ -7,7 +7,7 @@ import { verifyToken } from '../utils/authHelper';
 const { User } = models;
 const { getById } = DbServices;
 const {
-  userNotFoundId, invalidToken, noToken, serverError, invalidUserId
+  userNotFoundId, invalidToken, noToken, serverError
 } = messages;
 
 /**
@@ -27,9 +27,6 @@ export const checkUserId = async (req, res, next) => {
     }
     return next();
   } catch (error) {
-    if (error.parent.routine === 'string_to_uuid') {
-      return response(res, 401, 'error', { message: invalidUserId });
-    }
     return response(res, 500, 'error', { message: serverError });
   }
 };
