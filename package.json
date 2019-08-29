@@ -4,7 +4,7 @@
   "description": "An app for making company global travel and accommodation easy and convenient",
   "main": "index.js",
   "scripts": {
-    "db:setup": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && npm run seed",
+    "db:setup": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && cross-env NODE_ENV=test npm run seed",
     "build": "babel src -d dist",
     "clean": "rm -rf dist/*",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
@@ -15,7 +15,7 @@
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
     "test": "npm run db:setup && set DEBUG=http:* && cross-env NODE_ENV=test nyc mocha --timeout 120000 src/test/** --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "seed": "cross-env NODE_ENV=test sequelize db:seed:all"
+    "seed": "babel-node ./node_modules/.bin/sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
