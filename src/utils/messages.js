@@ -23,6 +23,8 @@ const messages = {
   noResult: 'No request result found',
   roleChanged: 'The staff role has been successfully set to a',
   forbidden: 'You are not authorized to perform this operation',
+  unauthorized: 'You do not have authorization',
+  rejectedTripRequest: 'Trip request successfully rejected'
 };
 
 export default messages;

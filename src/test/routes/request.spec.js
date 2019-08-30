@@ -7,23 +7,26 @@ import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 
 const { Request, User } = models;
+const { userMock } = mockData;
 const {
   validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
-  validMultiCityRequest, multiCityBadRequest
+  validMultiCityRequest, multiCityBadRequest, requestToBeRejected
 } = mockData.requestMock;
 const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
-  let user, token, unassignedUser, unassignedUserToken;
+  let user, token, unassignedUser, unassignedUserToken, validManagerToken;
   const requestTripEndpoint = `${BACKEND_BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BACKEND_BASE_URL}/search/requests`;
+  const rejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.requestId}`;
 
   before(async () => {
     user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
     unassignedUser = await User.findOne({ where: { lineManager: { [Op.eq]: null } } });
     token = `Bearer ${generateToken({ id: user.id })}`;
     unassignedUserToken = `Bearer ${generateToken({ id: unassignedUser.id })}`;
+    validManagerToken = generateToken({ id: `${userMock.validLineManager}` });
   });
 
   describe('POST /requests', () => {
@@ -220,7 +223,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(searchRequestTripEndpoint)
         .set('authorization', token)
-        .send({ originCity: 'Lagos', approvalStatus: true })
+        .send({ originCity: 'Lagos', approvalStatus: 'accepted' })
         .end((err, res) => {
           expect(res.status).to.equal(200);
           done(err);
@@ -246,6 +249,15 @@ describe('REQUESTS', () => {
           expect(res.status).to.equal(200);
           done(err);
         });
+
+      describe('LINE MANAGER REJECTS A TRIP REQUEST', () => {
+        it('should return 201 response when trip is rejected', async () => {
+          const response = await chai.request(app)
+            .patch(rejectRequestTripEndpoint)
+            .set('Authorization', `Bearer ${validManagerToken}`);
+          expect(response.status).to.equal(201);
+        });
+      });
     });
   });
 });

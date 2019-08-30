@@ -8,8 +8,12 @@ import { findById } from '../services/userServices';
 import { createNotification } from '../services/notificationServices';
 
 const { Request, Subrequest } = models;
-const { serverError, unauthorizedUserRequest, noRequests } = messages;
-const { create, getAll, bulkCreate } = DbServices;
+const {
+  serverError, unauthorizedUserRequest, noRequests, rejectedTripRequest
+} = messages;
+const {
+  create, getAll, bulkCreate, update
+} = DbServices;
 
 /**
  * request trip controller
@@ -119,8 +123,37 @@ const searchRequest = async (req, res) => {
   }
 };
 
+/**
+ * reject request controller
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const updateApprovalStatus = async (req, res) => {
+  try {
+    let approvalStatusValue, approvalStatusMessage;
+    const { requestId } = req.params;
+    const options = { returning: true, where: { id: requestId } };
+    const action = await req.url.match(/\/requests\/([a-z]+).*/);
+    if (action[1] === 'reject') {
+      approvalStatusValue = 'rejected';
+      approvalStatusMessage = rejectedTripRequest;
+    }
+    const updateColumn = { approvalStatus: approvalStatusValue };
+    await update(Request, updateColumn, options);
+    return response(res, 201, 'success', {
+      message: approvalStatusMessage
+    });
+  } catch (error) {
+    return response(res, 500, 'error', {
+      message: serverError,
+    });
+  }
+};
+
 export default {
   requestTrip,
   getUserRequest,
-  searchRequest
+  searchRequest,
+  updateApprovalStatus
 };
