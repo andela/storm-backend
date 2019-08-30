@@ -23,7 +23,7 @@ export default (Sequelize, DataTypes) => {
       unique: true
     },
     password: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.STRING
     },
     phoneNo: {
@@ -90,7 +90,7 @@ export default (Sequelize, DataTypes) => {
 
   //  hash user password before creating user
   User.beforeCreate((user) => {
-    user.password = hashPassword(user.password);
+    if (user.password) { user.password = hashPassword(user.password); }
   });
   return User;
 };

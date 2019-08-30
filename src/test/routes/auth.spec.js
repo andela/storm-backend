@@ -3,16 +3,20 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
+import mockProfile from '../mockData/mockProfile';
+import { findByEmail } from '../../services/userServices';
 
 const { User } = models;
 
 const { userMock } = mockData;
+const { facebook, google } = mockProfile;
 
-const BASE_URL = '/api/v1';
+const BACKEND_BASE_URL = '/api/v1';
+
 let user = null;
 describe('AUTH', () => {
   describe('POST /user/signup', () => {
-    const signupEndpoint = `${BASE_URL}/user/signup`;
+    const signupEndpoint = `${BACKEND_BASE_URL}/user/signup`;
     it('should #create a user and #generate jwt', (done) => {
       chai
         .request(app)
@@ -78,7 +82,7 @@ describe('AUTH', () => {
   });
 
   describe('POST /user/signin', () => {
-    const signinEndpoint = `${BASE_URL}/user/signin`;
+    const signinEndpoint = `${BACKEND_BASE_URL}/user/signin`;
     it('should authenticate a user with their email address and password', (done) => {
       chai
         .request(app)
@@ -132,7 +136,7 @@ describe('AUTH', () => {
     });
   });
   describe('POST /user/logout', () => {
-    const logoutEndpoint = `${BASE_URL}/user/logout`;
+    const logoutEndpoint = `${BACKEND_BASE_URL}/user/logout`;
     it('should logout user', (done) => {
       chai
         .request(app)
@@ -183,6 +187,28 @@ describe('AUTH', () => {
           expect(res.body.data.message).to.equal(messages.blacklisted);
           done(err);
         });
+    });
+  });
+
+  describe('GET /auth/', () => {
+    it('should accept a response from google', async () => {
+      const res = await chai
+        .request(app)
+        .get(`${BACKEND_BASE_URL}/auth/google/callback`);
+      const { _json: userDetails } = google;
+      const { email } = userDetails;
+      const { id: userId } = await findByEmail(email);
+      res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
+    });
+
+    it('should accept a response from facebook', async () => {
+      const res = await chai
+        .request(app)
+        .get(`${BACKEND_BASE_URL}/auth/facebook/callback`);
+      const { _json: userDetails } = facebook;
+      const { email } = userDetails;
+      const { id: userId } = await findByEmail(email);
+      res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
     });
   });
 });

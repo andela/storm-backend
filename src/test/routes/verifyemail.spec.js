@@ -34,7 +34,7 @@ describe('Verify Email', () => {
       chai.request(app)
         .get(endpoint + token).redirects(0)
         .end((err, res) => {
-          res.should.redirectTo(process.env.SIGNIN_PAGE);
+          res.should.redirectTo(process.env.FRONTEND_BASE_URL);
           done();
         });
     });

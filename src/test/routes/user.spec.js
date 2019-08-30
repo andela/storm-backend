@@ -9,7 +9,7 @@ const { userMock, roleMock } = mockData;
 const { generateToken } = authHelper;
 const { User } = models;
 
-const BASE_URL = '/api/v1';
+const BACKEND_BASE_URL = '/api/v1';
 
 let token, invalidToken, user, managerToken;
 
@@ -23,7 +23,7 @@ before(async () => {
 describe('User route', () => {
   describe('GET /users/:userId', () => {
     it('should get user details', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
@@ -33,7 +33,7 @@ describe('User route', () => {
 
   describe('PUT /users/:userId', () => {
     it('should update user details', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -44,7 +44,7 @@ describe('User route', () => {
     });
 
     it('should return an error if user tries to update another users profile', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -55,7 +55,7 @@ describe('User route', () => {
     });
 
     it('should return an error if user tries to update with incomplete credentials', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -65,7 +65,7 @@ describe('User route', () => {
     });
 
     it('should return an error if userId passed to params does not exist', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.wrongId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.wrongId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -76,7 +76,7 @@ describe('User route', () => {
     });
 
     it('should return an error if no token is passed', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .send(userMock.updateUser);
@@ -86,7 +86,7 @@ describe('User route', () => {
     });
 
     it('should return an error if token is invalid', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.wrongId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.wrongId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', invalidToken)
@@ -97,7 +97,7 @@ describe('User route', () => {
     });
 
     it('should return an error if userId is not a valid uuid string', async () => {
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.invalidUuid}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.invalidUuid}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -108,7 +108,7 @@ describe('User route', () => {
 
     it('should return an internal server error', async () => {
       const stub = sinon.stub(User, 'findOne').callsFake(() => Promise.reject(new Error('Internal server error')));
-      const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .set('authorization', token)
         .send(userMock.updateUser);
       expect(response.status).to.equal(500);
@@ -119,7 +119,7 @@ describe('User route', () => {
 
   describe('PATCH /users/:userId', () => {
     it('should return unauthorize error', async () => {
-      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', managerToken)
@@ -133,7 +133,7 @@ describe('User route', () => {
     });
 
     it('should return validation error', async () => {
-      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -146,7 +146,7 @@ describe('User route', () => {
     });
 
     it('should succesfully set user role', async () => {
-      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -160,7 +160,7 @@ describe('User route', () => {
     });
 
     it('should return incorrect staff id error', async () => {
-      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.wrongId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.wrongId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -175,7 +175,7 @@ describe('User route', () => {
 
     it('should return an internal server error', async () => {
       const stub = sinon.stub(User, 'findOne').callsFake(() => Promise.reject(new Error('Internal server error')));
-      const response = await chai.request(app).patch(`${BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)

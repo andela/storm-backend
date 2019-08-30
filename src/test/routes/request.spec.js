@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import {
-  app, chai, expect, sinon, BASE_URL, messages
+  app, chai, expect, sinon, BACKEND_BASE_URL, messages
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
@@ -15,9 +15,9 @@ const {
 const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
-  const requestTripEndpoint = `${BASE_URL}/requests`;
-  const searchRequestTripEndpoint = `${BASE_URL}/search/requests`;
   let user, token, unassignedUser, unassignedUserToken;
+  const requestTripEndpoint = `${BACKEND_BASE_URL}/requests`;
+  const searchRequestTripEndpoint = `${BACKEND_BASE_URL}/search/requests`;
 
   before(async () => {
     user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
@@ -166,7 +166,7 @@ describe('REQUESTS', () => {
 
   describe('GET /requests/user/:userId', () => {
     it('should get a users requests', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -175,7 +175,7 @@ describe('REQUESTS', () => {
     });
 
     it('should get a users requests when "page" and "perPage" are passed to the req.query', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}?page=2&perPage=1`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}?page=2&perPage=1`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -184,7 +184,7 @@ describe('REQUESTS', () => {
     });
 
     it('should return a message if result is empty', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}?page=5&perPage=2`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}?page=5&perPage=2`)
         .set('authorization', token);
       const { body: { data: { message }, status } } = response;
       expect(response.status).to.equal(200);
