@@ -1,9 +1,7 @@
-import Redis from 'ioredis';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import stripBearerToken from '../utils/stripBearerToken';
-
-const redis = new Redis();
+import redis from '../config/redis';
 
 /**
  * Token Blacklist Middleware

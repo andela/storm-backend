@@ -1,4 +1,3 @@
-import Redis from 'ioredis';
 import { Op } from 'sequelize';
 import models from '../models';
 import authHelper from '../utils/authHelper';
@@ -12,6 +11,7 @@ import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 
 import DbServices from '../services/dbServices';
+import redis from '../config/redis';
 
 const { User } = models;
 const { getById, update, getByOptions } = DbServices;
@@ -81,7 +81,6 @@ const signIn = async (req, res) => {
  */
 
 const logout = async (req, res) => {
-  const redis = new Redis();
   const token = req.headers.authorization.split(' ')[1];
 
   try {
