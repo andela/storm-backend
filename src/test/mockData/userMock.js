@@ -44,7 +44,7 @@ export default {
     lastName: 'Skywalker',
     phoneNo: '080777778654',
     gender: 'gender is required',
-    lineManager: 'lineManager is required',
+    lineManager: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
     birthDate: '11-09-1990',
     preferredCurrency: 'preferredCurrency is required',
     preferredLanguage: 'preferredLanguage is required',
@@ -53,5 +53,6 @@ export default {
   anotherUserId: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
   userId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
   wrongId: '122a0d86-8b78-4bb8-b28f-8e5f7811c459',
-  invalidUuid: '122a0d86-8b78-4bb8-b28f-8e5f7'
+  invalidUuid: '122a0d86-8b78-4bb8-b28f-8e5f7',
+  validLineManager: '231a136e-a3e2-4911-86f3-63d7db512d3f'
 };

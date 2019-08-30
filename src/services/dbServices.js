@@ -63,6 +63,32 @@ const DbServices = {
    */
   bulkCreate(model, data) {
     return model.bulkCreate(data, { returning: true });
+  },
+
+  /**
+   * @param {object} model primary model /table
+   * @param {string} id the id (primary model /table)
+   * @param {object} modelDetailsToInclude object containing 3 properties (secondary model /table)
+   * @param {object} modelDetailsToInclude.model secondary model /table
+   * @param {string} modelDetailsToInclude.alias alias of secondary model /table
+   * @param {object} modelDetailsToInclude.column column of secondary model /table
+   * @returns {Promise} Promise resolved or rejected
+   * @description gets data from a primary table and also joins data from a secondary table
+   *
+   * @example
+   *   getTwoTables(Request, 1, { model: User, alias: 'User', column: { lineManager: managerId } })
+   */
+  findOneIncludeModel(model, id, modelDetailsToInclude) {
+    return model.findOne({
+      where: { id },
+      include: [
+        {
+          model: modelDetailsToInclude.model,
+          as: modelDetailsToInclude.alias,
+          where: modelDetailsToInclude.column
+        }
+      ]
+    });
   }
 };
 

@@ -35,9 +35,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     approvalStatus: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+      type: DataTypes.ENUM,
+      allowNull: true,
+      values: ['accepted', 'rejected']
     },
     multiCity: {
       type: DataTypes.BOOLEAN,
