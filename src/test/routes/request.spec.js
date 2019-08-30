@@ -8,7 +8,8 @@ import authHelper from '../../utils/authHelper';
 const { Request } = models;
 const {
   validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
-  validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate
+  validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
+  validMultiCityRequest, multiCityBadRequest
 } = mockData.requestMock;
 const { generateToken } = authHelper;
 
@@ -25,6 +26,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(validTripRequest)
         .end((err, res) => {
           const { data } = res.body;
@@ -43,6 +45,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(validReturnTripRequest)
         .end((err, res) => {
           const { data } = res.body;
@@ -62,6 +65,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(badInputTripRequest)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -74,6 +78,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(returnTripRequestWithDepartureGreaterThanReturnDate)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -86,6 +91,7 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(oneWayTripRequestWithReturnDate)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -100,9 +106,48 @@ describe('REQUESTS', () => {
         .request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
         .send(validTripRequest)
         .end((err, res) => {
           expect(res.status).to.equal(500);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+          stub.restore();
+        });
+    });
+
+    it('should request a multi city trip successfully', (done) => {
+      chai.request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .send(validMultiCityRequest)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(201);
+          expect(data).to.have.property('requestedTrip');
+          expect(data).to.have.property('subRequestedTrips');
+          expect(data.requestedTrip).to.have.property('type');
+          expect(data.requestedTrip).to.have.property('originCity');
+          expect(data.requestedTrip).to.have.property('destinationCity');
+          expect(data.requestedTrip).to.have.property('departureDate');
+          expect(data.requestedTrip).to.have.property('reason');
+          expect(data.requestedTrip).to.have.property('multiCity');
+          expect(data.requestedTrip).to.have.property('accommodation');
+          done(err);
+        });
+    });
+
+    it('should return an bad request error 400', (done) => {
+      const stub = sinon.stub(Request, 'create').callsFake(() => Promise.reject(new Error('Internal server error')));
+      chai
+        .request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .send(multiCityBadRequest)
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
           expect(res.body).to.have.property('status').that.equal('error');
           done(err);
           stub.restore();

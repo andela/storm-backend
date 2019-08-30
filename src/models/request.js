@@ -39,6 +39,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: false,
     },
+    multiCity: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
   });
 
   Request.associate = (models) => {
@@ -46,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'User',
     });
+    Request.hasMany(models.Subrequest);
   };
 
   return Request;

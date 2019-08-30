@@ -4,9 +4,9 @@ import messages from '../utils/messages';
 import DbServices from '../services/dbServices';
 import { calculateLimitAndOffset, paginate } from '../utils/pagination';
 
-const { Request } = models;
+const { Request, Subrequest } = models;
 const { serverError, unauthorizedUserRequest, noRequests } = messages;
-const { create, getAll } = DbServices;
+const { create, getAll, bulkCreate } = DbServices;
 
 /**
  * request trip controller
@@ -19,23 +19,53 @@ const requestTrip = async (req, res) => {
     const { body, decoded } = req;
     const { id: userId } = decoded;
     const {
-      type, originCity, destinationCity, departureDate, returnDate, reason, accommodation
+      type, originCity, destinationCity, departureDate, returnDate, reason,
+      accommodation, subRequest
     } = body;
 
-    const tripToBeRequested = {
-      type,
-      originCity,
-      destinationCity,
-      departureDate,
-      returnDate,
-      reason,
-      accommodation,
-      userId,
-    };
+    let trip = {};
 
-    const requestedTrip = await create(Request, tripToBeRequested);
+    if (!subRequest) {
+      const tripToBeRequested = {
+        type,
+        originCity,
+        destinationCity,
+        departureDate,
+        returnDate,
+        reason,
+        accommodation,
+        userId,
+      };
+      const requestedTrip = await create(Request, tripToBeRequested);
+      trip = requestedTrip;
+    } else {
+      const tripToBeRequested = {
+        type,
+        originCity,
+        destinationCity,
+        departureDate,
+        reason,
+        accommodation,
+        multiCity: true,
+        userId,
+      };
 
-    return response(res, 201, 'success', requestedTrip);
+      const requestedTrip = await create(Request, tripToBeRequested);
+
+      const subRequestWithRequestId = subRequest.map((sub) => ({
+        requestId: requestedTrip.id,
+        originCity: sub.subTripOriginCity,
+        destinationCity: sub.subTripDestinationCity,
+        departureDate: sub.subTripDepartureDate,
+        reason: sub.subTripReason,
+        accommodation: sub.subTripAccommodation
+      }));
+
+      const subRequestedTrips = await bulkCreate(Subrequest, subRequestWithRequestId);
+
+      trip = { requestedTrip, subRequestedTrips };
+    }
+    return response(res, 201, 'success', trip);
   } catch (error) {
     return response(res, 500, 'error', {
       message: serverError,
