@@ -2,6 +2,7 @@ import messages from '../utils/messages';
 import response from '../utils/response';
 import userRoute from './api/user';
 import requestRoute from './api/request';
+import notificationRoutes from './api/notification';
 
 const routes = (router) => {
   router
@@ -42,6 +43,8 @@ const routes = (router) => {
   userRoute(router);
   // request routes
   requestRoute(router);
+  // request routes
+  notificationRoutes(router);
 };
 
 export default routes;

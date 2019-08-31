@@ -15,6 +15,22 @@ export default {
     password: 'Password2',
   },
 
+  validUser3: {
+    firstName: 'Alice',
+    lastName: 'Smith',
+    email: 'as@gmail.com',
+    phoneNo: '08077777332',
+    password: 'Password3',
+  },
+
+  validUser4: {
+    firstName: 'Alice',
+    lastName: 'Smith',
+    email: 'af@gmail.com',
+    phoneNo: '08177777332',
+    password: 'Password4',
+  },
+
   inValidUser: {
     firstName: 'Annie',
     lastName: 'Skywalker',

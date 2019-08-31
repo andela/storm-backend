@@ -43,6 +43,16 @@ export const findByEmailOrPhone = (email, phoneNo) => User.findOne({
 });
 
 /**
+ * Helper function to update a user by id
+ * @param {String} id - user's id
+ * @param {String} data - update
+ * @returns {Promise} - sequelize response
+ */
+export const updateById = (id, data) => User.update(data, {
+  where: { id }
+});
+
+/**
  * Helper function to compare the password provided with the user's hashed password
  * @param {String} password - provided password
  * @param {String} hash - user's hashed password

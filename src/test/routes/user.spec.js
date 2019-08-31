@@ -11,8 +11,7 @@ const { User } = models;
 
 const BASE_URL = '/api/v1';
 
-let token,
-  invalidToken;
+let token, invalidToken, user;
 
 before(async () => {
   const jwtToken = generateToken({ id: userMock.userId });
@@ -27,6 +26,7 @@ describe('User route', () => {
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
+      user = response.body.data.user;
     });
   });
 
@@ -35,8 +35,8 @@ describe('User route', () => {
       const response = await chai.request(app).put(`${BASE_URL}/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
-        .set('authorization', `Bearer ${token}`)
-        .send(userMock.updateUser);
+        .set('authorization', token)
+        .send({ ...userMock.updateUser, lineManager: user.id });
       expect(response.status).to.equal(202);
       expect(response.body.status).to.equal('success');
       expect(response.body.data.updatedUser.firstName).to.equal(userMock.updateUser.firstName);

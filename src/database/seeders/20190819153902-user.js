@@ -22,7 +22,7 @@ module.exports = {
         phoneNo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        verified: true
+        verified: false
       }, {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         firstName: 'Police',
@@ -33,6 +33,17 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
         verified: true
+      }, {
+        id: '83b2a3e7-9ba4-4d3f-b3a3-d31940ee2edc',
+        firstName: 'Mr',
+        lastName: 'Nobody',
+        email: 'freeman@gmail.com',
+        password: 'polly',
+        phoneNo: '2347032123409',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        verified: true,
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5'
       }
     ], {});
   },

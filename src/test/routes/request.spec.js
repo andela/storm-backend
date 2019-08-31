@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import {
   app, chai, expect, sinon, BASE_URL, messages
 } from '../testHelpers/config';
@@ -5,7 +6,7 @@ import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
 
-const { Request } = models;
+const { Request, User } = models;
 const {
   validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
@@ -16,10 +17,11 @@ const { generateToken } = authHelper;
 describe('REQUESTS', () => {
   const requestTripEndpoint = `${BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BASE_URL}/search/requests`;
-  let token;
+  let user, token;
 
   before(async () => {
-    token = generateToken({ id: validTripRequest.userId });
+    user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
+    token = `Bearer ${generateToken({ id: user.id })}`;
   });
 
   describe('POST /requests', () => {
@@ -27,7 +29,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(validTripRequest)
         .end((err, res) => {
           const { data } = res.body;
@@ -46,7 +47,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(validReturnTripRequest)
         .end((err, res) => {
           const { data } = res.body;
@@ -66,7 +66,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(badInputTripRequest)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -79,7 +78,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(returnTripRequestWithDepartureGreaterThanReturnDate)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -92,7 +90,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(oneWayTripRequestWithReturnDate)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -107,7 +104,6 @@ describe('REQUESTS', () => {
         .request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(validTripRequest)
         .end((err, res) => {
           expect(res.status).to.equal(500);
@@ -121,7 +117,6 @@ describe('REQUESTS', () => {
       chai.request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(validMultiCityRequest)
         .end((err, res) => {
           const { data } = res.body;
@@ -145,7 +140,6 @@ describe('REQUESTS', () => {
         .request(app)
         .post(requestTripEndpoint)
         .set('authorization', token)
-        .set('Authorization', `Bearer ${token}`)
         .send(multiCityBadRequest)
         .end((err, res) => {
           expect(res.status).to.equal(400);
@@ -158,7 +152,7 @@ describe('REQUESTS', () => {
 
   describe('GET /requests/user/:userId', () => {
     it('should get a users requests', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}`)
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -167,7 +161,7 @@ describe('REQUESTS', () => {
     });
 
     it('should get a users requests when "page" and "perPage" are passed to the req.query', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}?page=2&perPage=1`)
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}?page=2&perPage=1`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -176,7 +170,7 @@ describe('REQUESTS', () => {
     });
 
     it('should return a message if result is empty', async () => {
-      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${validTripRequest.userId}?page=5&perPage=2`)
+      const response = await chai.request(app).get(`${BASE_URL}/requests/user/${user.id}?page=5&perPage=2`)
         .set('authorization', token);
       const { body: { data: { message }, status } } = response;
       expect(response.status).to.equal(200);

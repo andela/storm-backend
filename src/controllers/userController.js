@@ -153,7 +153,7 @@ const updateUserDetails = async (req, res) => {
       }
     });
   } catch (error) {
-    return response(res, 500, 'error', { message: serverError });
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 

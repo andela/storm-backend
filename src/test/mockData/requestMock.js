@@ -1,6 +1,5 @@
 export default {
   validTripRequest: {
-    userId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
     type: 'one-way',
     originCity: 'Abuja',
     destinationCity: 'New Delhi',
