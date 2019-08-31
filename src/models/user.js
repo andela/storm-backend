@@ -1,6 +1,5 @@
-import bcrypt from 'bcrypt';
+import { hashPassword } from '../utils/authHelper';
 
-const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS));
 export default (Sequelize, DataTypes) => {
   const User = Sequelize.define('User', {
     id: {
@@ -76,7 +75,7 @@ export default (Sequelize, DataTypes) => {
   }, {});
   //  hash user password before creating user
   User.beforeCreate((user) => {
-    user.password = bcrypt.hashSync(user.password, salt);
+    user.password = hashPassword(user.password);
   });
   return User;
 };

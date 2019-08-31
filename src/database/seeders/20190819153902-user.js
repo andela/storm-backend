@@ -1,4 +1,4 @@
-'use strict';
+const { hashPassword } = require('../../utils/authHelper')
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Users', [
@@ -8,7 +8,7 @@ module.exports = {
         lastName: 'Williams',
         email: 'jammy@gmail.com',
         phoneNo: '2347032123304',
-        password: 'jammy11167',
+        password: hashPassword('jammy11167'),
         createdAt: new Date(),
         updatedAt: new Date(),
         verified: true
@@ -18,7 +18,7 @@ module.exports = {
         firstName: 'Samuel',
         lastName: 'Ladapo',
         email: 'samuelman@gmail.com',
-        password: 'samman',
+        password: hashPassword('samman'),
         phoneNo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -28,7 +28,7 @@ module.exports = {
         firstName: 'Police',
         lastName: 'man',
         email: 'polman@gmail.com',
-        password: 'polly',
+        password: hashPassword('polly11167'),
         phoneNo: '2347032123404',
         createdAt: new Date(),
         updatedAt: new Date(),

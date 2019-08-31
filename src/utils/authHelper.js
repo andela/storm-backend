@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
+const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
 const secret = process.env.SECRET_KEY;
 
 /**
@@ -21,5 +23,13 @@ export const verifyToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY);
   return decoded;
 };
+
+/**
+ * @function hashPassword
+ * @param {String} password pasword string to be hashed
+ * @returns {String} hashed password
+ * @description takes a raw password string, hashes it and returns the hasshed value
+ */
+export const hashPassword = (password) => bcrypt.hashSync(password, salt);
 
 export default { generateToken };
