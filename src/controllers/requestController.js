@@ -3,6 +3,7 @@ import response from '../utils/response';
 import messages from '../utils/messages';
 import DbServices from '../services/dbServices';
 import { calculateLimitAndOffset, paginate } from '../utils/pagination';
+import findRequest from '../services/requestServices';
 
 const { Request, Subrequest } = models;
 const { serverError, unauthorizedUserRequest, noRequests } = messages;
@@ -98,7 +99,26 @@ const getUserRequest = async (req, res) => {
   }
 };
 
+/* search requested trip and approval trip controller
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @param {Object} next - server response
+ * @returns {Object} - custom response
+ */
+const searchRequest = async (req, res) => {
+  try {
+    const { body, query } = req;
+    const { page, perPage } = query;
+    const { rows, count } = await findRequest(body, query);
+    const meta = paginate(page, perPage, count, rows);
+    return response(res, 200, 'success', { requests: rows, meta });
+  } catch (error) {
+    return response(res, 400, 'error', { message: messages.error });
+  }
+};
+
 export default {
   requestTrip,
-  getUserRequest
+  getUserRequest,
+  searchRequest
 };

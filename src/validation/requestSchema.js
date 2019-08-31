@@ -2,9 +2,10 @@ import Joi from '@hapi/joi';
 import JoiValidator from './JoiValidator';
 
 const validateRequiredString = JoiValidator.validateString().required();
+const tripTypeSchema = JoiValidator.validateString().valid('one-way', 'return');
 
 const requestTripSchema = Joi.object({
-  type: JoiValidator.validateString().valid('one-way', 'return').required(),
+  type: tripTypeSchema.required(),
   originCity: validateRequiredString,
   destinationCity: validateRequiredString,
   departureDate: JoiValidator.validateDate().required().when('returnDate', {
@@ -23,11 +24,25 @@ const requestTripSchema = Joi.object({
 
 const getUserRequestSchema = Joi.object({
   userId: JoiValidator.validateUuidV4().required(),
-  page: Joi.number().min(1),
-  perPage: Joi.number().min(1)
+  page: JoiValidator.validateNumber().min(1),
+  perPage: JoiValidator.validateNumber().min(1)
 });
+
+const searchRequestTripSchema = Joi.object({
+  page: JoiValidator.validateNumber().min(1),
+  perPage: JoiValidator.validateNumber().min(1),
+  approvalStatus: JoiValidator.validateBoolean(),
+  multiCity: JoiValidator.validateBoolean(),
+  type: tripTypeSchema,
+  originCity: JoiValidator.validateAlphabet(),
+  destinationCity: JoiValidator.validateAlphabet(),
+  departureDate: JoiValidator.validateDate(),
+  reason: JoiValidator.validateAlphabet(),
+  accommodation: JoiValidator.validateAlphabet(),
+}).min(1);
 
 export default {
   requestTripSchema,
-  getUserRequestSchema
+  getUserRequestSchema,
+  searchRequestTripSchema
 };
