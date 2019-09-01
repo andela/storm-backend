@@ -24,7 +24,7 @@ export default {
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
         approvalStatus: 'accepted'
-      }, 
+      },
       {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         type: 'return',
@@ -36,7 +36,7 @@ export default {
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
         approvalStatus: 'accepted'
-      }, 
+      },
       {
         id: 'b2092fb0-502a-4105-961f-2d310d340168',
         type: 'return',
