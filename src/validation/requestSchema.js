@@ -23,7 +23,7 @@ const requestTripSchema = Joi.object({
 });
 
 const getUserRequestSchema = Joi.object({
-  userId: JoiValidator.validateUuidV4().required(),
+  userId: JoiValidator.validateUuidV4(),
   page: JoiValidator.validateNumber().min(1),
   perPage: JoiValidator.validateNumber().min(1)
 });

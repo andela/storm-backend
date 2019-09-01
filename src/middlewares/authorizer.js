@@ -1,11 +1,7 @@
-import DbServices from '../services/dbServices';
-import models from '../models';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import roles from '../utils/roles';
 
-const { getById } = DbServices;
-const { User } = models;
 const { serverError, forbidden } = messages;
 
 /**
@@ -16,14 +12,13 @@ const { serverError, forbidden } = messages;
  */
 const authorize = (permitedRoles) => async (req, res, next) => {
   try {
-    const { id: userId } = req.decoded;
-    const { roleId } = await getById(User, userId, { attributes: ['roleId'] });
+    const { roleId } = req.decoded;
 
-    if (!permitedRoles.includes(roleId) || roleId !== roles.SUPER_ADMIN) {
-      return response(res, 403, 'error', { message: forbidden });
+    if (permitedRoles.includes(roleId) || roleId === roles.SUPER_ADMIN) {
+      return next();
     }
 
-    return next();
+    return response(res, 403, 'error', { message: forbidden });
   } catch (error) {
     return response(res, 500, 'error', { message: serverError });
   }

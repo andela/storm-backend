@@ -21,10 +21,13 @@ const {
    */
 export const checkUserId = async (req, res, next) => {
   try {
-    const { userId } = req.params;
-    const user = await getById(User, userId, {});
-    if (!user) {
-      return response(res, 404, 'error', { message: userNotFoundId });
+    const userId = req.params.userId || req.query.userId;
+    if (userId) {
+      const user = await getById(User, userId, {});
+      if (!user) {
+        return response(res, 404, 'error', { message: userNotFoundId });
+      }
+      return next();
     }
     return next();
   } catch (error) {

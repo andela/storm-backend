@@ -4,6 +4,7 @@ import {
 import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
+import roles from '../../utils/roles';
 
 const { userMock, roleMock } = mockData;
 const { generateToken } = authHelper;
@@ -14,7 +15,7 @@ const BACKEND_BASE_URL = '/api/v1';
 let token, invalidToken, user, managerToken;
 
 before(async () => {
-  const jwtToken = generateToken({ id: userMock.userId });
+  const jwtToken = generateToken({ id: userMock.userId, roleId: roles.SUPER_ADMIN });
   token = jwtToken;
   invalidToken = generateToken({ id: userMock.wrongId });
   managerToken = generateToken({ id: userMock.anotherUserId });
@@ -23,7 +24,7 @@ before(async () => {
 describe('User route', () => {
   describe('GET /users/:userId', () => {
     it('should get user details', async () => {
-      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/?user=${userMock.userId}`)
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');

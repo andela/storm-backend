@@ -3,14 +3,18 @@ import validate from '../../middlewares/validator';
 import requestSchema from '../../validation/requestSchema';
 import { checkToken, checkUserId } from '../../middlewares/userMiddlewares';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
-import verifyRequestLineManager from '../../middlewares/requestMiddlewares';
+import verifyRequestLineManager, { checkRequestId } from '../../middlewares/requestMiddlewares';
+import authorize from '../../middlewares/authorizer';
+import roles from '../../utils/roles';
 
 const {
-  requestTrip, getUserRequest, searchRequest, updateApprovalStatus
+  requestTrip, getUserRequest, searchRequest, updateApprovalStatus, getManagerRequest
 } = requestController;
 const {
   requestTripSchema, getUserRequestSchema, searchRequestTripSchema, requestIdSchema
 } = requestSchema;
+
+const { MANAGER, SUPER_ADMIN } = roles;
 
 const requestRoute = (router) => {
   router.route('/requests')
@@ -128,10 +132,10 @@ const requestRoute = (router) => {
   */
     .post(checkToken, checkBlacklist, validate(requestTripSchema), requestTrip);
 
-  router.route('/requests/user/:userId')
+  router.route('/requests/user')
   /**
    * @swagger
-   * /api/v1/requests/user/{userId}:
+   * /api/v1/requests/user:
    *   get:
    *     tags:
    *       - Requests
@@ -139,7 +143,7 @@ const requestRoute = (router) => {
    *     produces:
    *       - application/json
    *     parameters:
-   *       - in: path
+   *       - in: query
    *         name: userId
    *         schema:
    *           type: string
@@ -188,6 +192,70 @@ const requestRoute = (router) => {
    *       - bearerAuth: []
   */
     .get(checkToken, validate(getUserRequestSchema), checkUserId, getUserRequest);
+
+  router.route('/requests/manager')
+    /**
+   * @swagger
+   * /api/v1/requests/manager:
+   *   get:
+   *     tags:
+   *       - Requests
+   *     description: Get all requests for a manager
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: query
+   *         name: userId
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         description: id of manager
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: number
+   *         required: false
+   *       - in: query
+   *         name: perPage
+   *         schema:
+   *           type: number
+   *         required: false
+   *     responses:
+   *       200:
+   *         description: Get request successful
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  type: object
+   *                  properties:
+   *                    requests:
+   *                      type: array
+   *                      description: array of requests
+   *                      items:
+   *                        $ref: '#/components/schemas/RequestTrip'
+   *       403:
+   *         description: Unauthorized
+   *       404:
+   *          description: User not found
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+  */
+    .get(
+      checkToken, authorize([MANAGER, SUPER_ADMIN]),
+      validate(getUserRequestSchema), checkUserId, getManagerRequest
+    );
 
   router.route('/search/requests')
   /**
@@ -351,7 +419,8 @@ const requestRoute = (router) => {
    *     security:
    *       - bearerAuth: []
    */
-    .patch(checkToken, validate(requestIdSchema), verifyRequestLineManager, updateApprovalStatus);
+    .patch(checkToken, validate(requestIdSchema), checkRequestId,
+      verifyRequestLineManager, updateApprovalStatus);
 
   router.route('/requests/accept/:requestId')
   /**
@@ -416,7 +485,8 @@ const requestRoute = (router) => {
    *     security:
    *       - bearerAuth: []
    */
-    .patch(checkToken, validate(requestIdSchema), verifyRequestLineManager, updateApprovalStatus);
+    .patch(checkToken, validate(requestIdSchema), checkRequestId,
+      verifyRequestLineManager, updateApprovalStatus);
 };
 
 export default requestRoute;

@@ -28,7 +28,8 @@ const messages = {
   inValidCountry: 'Incorrect country',
   noImage: 'No Image found',
   acceptedTripRequest: 'Trip request successfully accepted',
-  rejectedTripRequest: 'Trip request successfully rejected'
+  rejectedTripRequest: 'Trip request successfully rejected',
+  requestNotFoundId: 'Request not found'
 };
 
 export default messages;
