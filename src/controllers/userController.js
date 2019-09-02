@@ -1,8 +1,7 @@
 import Redis from 'ioredis';
-import bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 import models from '../models';
-import authHelper from '../utils/authHelper';
+import { generateToken, generateVerificationToken, decodeVerificationToken } from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import {
@@ -17,7 +16,9 @@ import DbServices from '../services/dbServices';
 
 const { User } = models;
 const { getById, update, getByOptions } = DbServices;
-const { unauthorizedUserProfile, serverError, phoneExists } = messages;
+const {
+  unauthorizedUserProfile, serverError, phoneExists, userNotFoundId
+} = messages;
 
 /**
  * user signup controller
@@ -42,7 +43,7 @@ const signUp = async (req, res) => {
       user: {
         id: createdUser.id,
         email: createdUser.email,
-        token: authHelper.generateToken({ id: createdUser.id }),
+        token: generateToken({ id: createdUser.id }),
       }
     };
     const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
@@ -68,7 +69,7 @@ const signIn = async (req, res) => {
     const { password: hash, ...data } = user.dataValues;
     const passwordsMatch = await comparePasswords(password, hash);
     if (!passwordsMatch) return response(res, 400, 'error', { message: messages.incorrectPassword });
-    const token = authHelper.generateToken({ id: data.id });
+    const token = generateToken({ id: data.id });
     return response(res, 200, 'success', { ...data, token });
   } catch (error) {
     response(res, 500, 'error', { error: error.message });
@@ -172,8 +173,8 @@ const resetPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await findByEmail(email);
-    const token = authHelper.resetPasswordToken({ id: user.id });
-    const link = `${process.env.BASE_URL}/password/reset/${user.id}/${token}`;
+    const token = generateVerificationToken({ id: user.id });
+    const link = `${process.env.BASE_URL}/update_password/${user.id}/${token}`;
     const message = createTemplate(resetPasswordMessage, link);
     await sendMail(user.email, 'Reset Password', message);
     return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
@@ -192,14 +193,15 @@ const resetPassword = async (req, res) => {
 */
 const updatePassword = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId, token } = req.params;
     const { password } = req.body;
-
-    const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
-
-    const newPassword = bcrypt.hashSync(password, salt);
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return response(res, 403, 'error', { message: userNotFoundId });
+    }
+    await decodeVerificationToken(token);
     const options = { returning: true, where: { id: userId } };
-    const updatedUser = await update(User, { password: newPassword }, options);
+    const updatedUser = await update(User, { password }, options);
     return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
   } catch (error) {
     response(res, 500, 'error', { error: error.message });

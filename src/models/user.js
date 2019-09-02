@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS));
+const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
 export default (Sequelize, DataTypes) => {
   const User = Sequelize.define('User', {
     id: {
@@ -74,9 +74,17 @@ export default (Sequelize, DataTypes) => {
       defaultValue: false
     }
   }, {});
-  //  hash user password before creating user
-  User.beforeCreate((user) => {
+  User.hashPassword = (user) => {
     user.password = bcrypt.hashSync(user.password, salt);
+    return user;
+  };
+  //  hash user password before creating user
+  User.beforeCreate((user) => User.hashPassword(user));
+  //  hash user password before updatng user password
+  User.beforeBulkUpdate(({ attributes: user }) => {
+    if (user.password) {
+      return User.hashPassword(user);
+    }
   });
   return User;
 };

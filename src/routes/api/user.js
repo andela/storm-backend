@@ -217,10 +217,10 @@ const userRoute = (router) => {
      *          - bearerAuth: [ ]
     */
     .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
-  router.route('/reset/password')
+  router.route('/reset_password')
   /**
  * @swagger
- * /api/v1/reset/password:
+ * /api/v1/reset_password:
  *  post:
  *     tags:
  *       - Users
@@ -242,11 +242,11 @@ const userRoute = (router) => {
  *         description: Password reset link is invalid or has expired
  */
     .post(validate(emailSchema), resetPassword);
-  router.route('/password/reset/:userId')
+  router.route('/update_password/:userId/:token')
   /**
      * @swagger
      *  paths:
-     *    /api/v1/password/reset/:userId:
+     *    /api/v1/update_password/:userId/:token:
      *      patch:
      *        tags:
      *          - Users

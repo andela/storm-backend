@@ -7,7 +7,7 @@ const secret = process.env.SECRET_KEY;
    * @param {Object} payload - object literal resource to be encoded
    * @returns {String} - jwt token
    */
-const generateToken = (payload) => {
+export const generateToken = (payload) => {
   const token = jwt.sign({ ...payload }, secret, { expiresIn: '7 days' });
   return token;
 };
@@ -21,15 +21,26 @@ export const verifyToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY);
   return decoded;
 };
-/**
-   * Generate JWT
-   * @param {Object} payload - object literal resource to be encoded
-   * @returns {String} - jwt token
+  /**
+   * Generate verification token for a user
+   *
+   * @memberof User
+   *
+   *
+   * @returns {string} user token
    */
-const resetPasswordToken = (payload) => {
-  const token = jwt.sign({ ...payload }, secret, { expiresIn: '1h' });
-  return token;
+export const generateVerificationToken = (...payload) => jwt.sign({ ...payload }, secret, { expiresIn: '10m' });
+/**
+   * Decode verification token for a user
+   *
+   * @memberof User
+   *
+   * @param {string} token
+   *
+   * @returns {string} decoded token
+   */
+export const decodeVerificationToken = (token) => jwt.verify(token, secret);
+
+export default {
+  generateToken, generateVerificationToken, verifyToken, decodeVerificationToken
 };
-
-
-export default { generateToken, resetPasswordToken };

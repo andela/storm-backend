@@ -3,11 +3,10 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
 const { Request } = models;
 const { validTripRequest, badInputTripRequest } = mockData.requestMock;
-const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
   const requestTripEndpoint = `${BASE_URL}/requests`;
