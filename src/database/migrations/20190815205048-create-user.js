@@ -49,9 +49,13 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      role: {
+      roleId: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.UUID,
+        references: {
+          model: 'Roles',
+          key: 'id',
+        },
       },
       lineManager: {
         allowNull: true,

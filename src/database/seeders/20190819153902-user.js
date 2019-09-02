@@ -1,5 +1,7 @@
-const { hashPassword } = require('../../utils/authHelper')
-module.exports = {
+import roles from '../../utils/roles';
+import { hashPassword } from '../../utils/authHelper';
+
+export default {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Users', [
       {
@@ -11,18 +13,20 @@ module.exports = {
         password: hashPassword('jammy11167'),
         createdAt: new Date(),
         updatedAt: new Date(),
-        verified: true
+        verified: true,
+        roleId: roles.SUPER_ADMIN,
       },
       {
         id: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
         firstName: 'Samuel',
         lastName: 'Ladapo',
         email: 'samuelman@gmail.com',
-        password: hashPassword('samman'),
+        password: hashPassword('samman12358'),
         phoneNo: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        verified: false
+        verified: false,
+        roleId: roles.MANAGER,
       }, {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         firstName: 'Police',
@@ -32,18 +36,20 @@ module.exports = {
         phoneNo: '2347032123404',
         createdAt: new Date(),
         updatedAt: new Date(),
-        verified: true
+        verified: true,
+        roleId: roles.REQUESTER,
       }, {
         id: '83b2a3e7-9ba4-4d3f-b3a3-d31940ee2edc',
         firstName: 'Mr',
         lastName: 'Nobody',
         email: 'freeman@gmail.com',
-        password: 'polly',
+        password: hashPassword('polly123456'),
         phoneNo: '2347032123409',
         createdAt: new Date(),
         updatedAt: new Date(),
         verified: true,
-        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5'
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        roleId: roles.REQUESTER,
       }
     ], {});
   },

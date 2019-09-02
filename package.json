@@ -15,7 +15,7 @@
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
     "test": "npm run db:setup && set DEBUG=http:* && cross-env NODE_ENV=test nyc mocha --timeout 120000 src/test/** --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "seed": "babel-node ./node_modules/.bin/sequelize db:seed:all"
+    "seed": "./node_modules/.bin/sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
