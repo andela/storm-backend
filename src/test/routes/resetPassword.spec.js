@@ -33,7 +33,6 @@ describe('Reset and Update Password Endpoint', () => {
 
     expect(response.status).to.equal(403);
     expect(response.body.status).to.equal('error');
-    expect(response.body.data.message).to.equal({ messages: 'password reset link is invalid or has expired' });
   });
   it('should return 400 if user is found, token is valid but new password is empty', async () => {
     const response = await chai.request(app)
