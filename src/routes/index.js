@@ -4,6 +4,7 @@ import userRoute from './api/user';
 import requestRoute from './api/request';
 import notificationRoutes from './api/notification';
 import authRoute from './api/auth';
+import chatRoutes from './api/chat';
 
 const routes = (router) => {
   router
@@ -44,10 +45,12 @@ const routes = (router) => {
   userRoute(router);
   // request routes
   requestRoute(router);
-  // request routes
+  // notification routes
   notificationRoutes(router);
   // social auth routes
   authRoute(router);
+  // chat routes
+  chatRoutes(router);
 };
 
 export default routes;
