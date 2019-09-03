@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import { Op } from 'sequelize';
 import models from '../models';
-import { generateToken, generateVerificationToken, decodeVerificationToken } from '../utils/authHelper';
+import { generateToken, generateVerificationToken, verifyToken } from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import {
@@ -17,7 +17,7 @@ import DbServices from '../services/dbServices';
 const { User } = models;
 const { getById, update, getByOptions } = DbServices;
 const {
-  unauthorizedUserProfile, serverError, phoneExists, userNotFoundId
+  unauthorizedUserProfile, serverError, phoneExists
 } = messages;
 
 /**
@@ -43,7 +43,7 @@ const signUp = async (req, res) => {
       user: {
         id: createdUser.id,
         email: createdUser.email,
-        token: generateToken({ id: createdUser.id }),
+        token: generateToken({ id: createdUser.id }, '7d'),
       }
     };
     const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
@@ -169,12 +169,19 @@ const updateUserDetails = async (req, res) => {
   *
   * @returns {Object} - password reset link
 */
-const resetPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await findByEmail(email);
-    const token = generateVerificationToken({ id: user.id });
-    const link = `${process.env.BASE_URL}/update_password/${user.id}/${token}`;
+    if (!user) {
+      const token = generateVerificationToken(email, '10m');
+      const link = `${process.env.BACKEND_BASE_URL}/reset/password/1/${token}`;
+      const message = createTemplate(resetPasswordMessage, link);
+      await sendMail(email, 'Reset Password', message);
+      return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
+    }
+    const token = generateVerificationToken(email, '10m');
+    const link = `${process.env.BACKEND_BASE_URL}/reset/password/${user.id}/${token}`;
     const message = createTemplate(resetPasswordMessage, link);
     await sendMail(user.email, 'Reset Password', message);
     return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
@@ -191,15 +198,15 @@ const resetPassword = async (req, res) => {
   *
   * @returns {void} - no data returned
 */
-const updatePassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
     const { userId, token } = req.params;
     const { password } = req.body;
     const user = await User.findByPk(userId);
+    await verifyToken(token);
     if (!user) {
-      return response(res, 403, 'error', { message: userNotFoundId });
+      return response(res, 403, 'error', { message: 'password reset link is invalid or has expired' });
     }
-    await decodeVerificationToken(token);
     const options = { returning: true, where: { id: userId } };
     const updatedUser = await update(User, { password }, options);
     return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
@@ -214,6 +221,6 @@ export default {
   logout,
   getUserDetailsById,
   updateUserDetails,
-  resetPassword,
-  updatePassword
+  forgotPassword,
+  resetPassword
 };

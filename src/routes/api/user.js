@@ -13,8 +13,8 @@ const {
   logout,
   getUserDetailsById,
   updateUserDetails,
-  resetPassword,
-  updatePassword
+  forgotPassword,
+  resetPassword
 } = userController;
 
 const {
@@ -217,10 +217,10 @@ const userRoute = (router) => {
      *          - bearerAuth: [ ]
     */
     .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
-  router.route('/reset_password')
+  router.route('/forgot/password')
   /**
  * @swagger
- * /api/v1/reset_password:
+ * /api/v1/forgot/password:
  *  post:
  *     tags:
  *       - Users
@@ -241,12 +241,12 @@ const userRoute = (router) => {
  *       '403':
  *         description: Password reset link is invalid or has expired
  */
-    .post(validate(emailSchema), resetPassword);
-  router.route('/update_password/:userId/:token')
+    .post(validate(emailSchema), forgotPassword);
+  router.route('/reset/password/:userId/:token')
   /**
      * @swagger
      *  paths:
-     *    /api/v1/update_password/:userId/:token:
+     *    /api/v1/reset/password/{userId}/{token}:
      *      patch:
      *        tags:
      *          - Users
@@ -256,6 +256,11 @@ const userRoute = (router) => {
      *            name: userId
      *            schema:
      *              type: string
+     *            required: true
+     *          - in: path
+     *            name: token
+     *            schema:
+     *               type: string
      *            required: true
      *        requestBody:
      *          description: User data object
@@ -272,6 +277,6 @@ const userRoute = (router) => {
      *          500:
      *            description: Internal Server error
     */
-    .patch(validate(passwordSchema), updatePassword);
+    .patch(validate(passwordSchema), resetPassword);
 };
 export default userRoute;

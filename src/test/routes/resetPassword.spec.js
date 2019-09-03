@@ -20,7 +20,7 @@ before(async () => {
 describe('Reset and Update Password Endpoint', () => {
   it('should return 200 for existing user - Reset Password', async () => {
     const response = await chai.request(app)
-      .post(`${BASE_URL}/reset_password`)
+      .post(`${BASE_URL}/forgot/password`)
       .send({ email: 'samuelman@gmail.com' });
 
     expect(response.status).to.equal(200);
@@ -28,7 +28,7 @@ describe('Reset and Update Password Endpoint', () => {
   });
   it('should return 404 for non existing user - Update Password', async () => {
     const response = await chai.request(app)
-      .patch(`${BASE_URL}/update_password/${userMock.wrongId}/${token}`)
+      .patch(`${BASE_URL}/reset/password/${userMock.wrongId}/${token}`)
       .send({ password: 'newpassword' });
 
     expect(response.status).to.equal(403);
@@ -37,7 +37,7 @@ describe('Reset and Update Password Endpoint', () => {
   });
   it('should return 400 if user is found, token is valid but new password is empty', async () => {
     const response = await chai.request(app)
-      .patch(`${BASE_URL}/update_password/${userMock.wrongId}/${invalidToken}`)
+      .patch(`${BASE_URL}/reset/password/${userMock.wrongId}/${invalidToken}`)
       .send({ password: '' });
 
     expect(response.status).to.equal(400);
@@ -45,7 +45,7 @@ describe('Reset and Update Password Endpoint', () => {
   });
   it('should return success if user is found, password and token is valid', async () => {
     const response = await chai.request(app)
-      .patch(`${BASE_URL}/update_password/${userMock.userId}/${token}`)
+      .patch(`${BASE_URL}/reset/password/${userMock.userId}/${token}`)
       .send({ password: 'newPassword' });
 
     expect(response.status).to.equal(200);

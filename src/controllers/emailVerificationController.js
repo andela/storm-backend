@@ -22,7 +22,7 @@ const verifyEmail = async (req, res) => {
     });
   }
 
-  return res.redirect(process.env.SIGNIN_PAGE);
+  return res.redirect(process.env.FRONTEND_BASE_URL);
 };
 export default {
   verifyEmail
