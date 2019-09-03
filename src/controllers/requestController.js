@@ -53,6 +53,8 @@ const createTrip = async (userId, {
 const requestTrip = async (req, res) => {
   try {
     const { id: userId } = req.decoded;
+    const sender = await findById(userId);
+    if (!sender.lineManager) return response(res, 403, 'error', { message: 'You have not been assigned to a line manager' });
     const {
       type, originCity, destinationCity, departureDate, returnDate, reason,
       accommodation, subRequest
@@ -63,13 +65,10 @@ const requestTrip = async (req, res) => {
       type, originCity, destinationCity, departureDate, returnDate, reason, accommodation, subRequest
     });
 
-    const sender = await findById(userId);
-    if (sender.lineManager) {
-      const receiver = await findById(sender.lineManager);
-      await createNotification({
-        sender, receiver, type: 'newRequest', ref: subRequest ? trip.requestedTrip.id : trip.id
-      });
-    }
+    const receiver = await findById(sender.lineManager);
+    await createNotification({
+      sender, receiver, type: 'newRequest', ref: subRequest ? trip.requestedTrip.id : trip.id
+    });
 
     return response(res, 201, 'success', trip);
   } catch (error) {
