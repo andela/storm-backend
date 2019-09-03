@@ -9,7 +9,7 @@ import { createNotification } from '../services/notificationServices';
 
 const { Request, Subrequest } = models;
 const {
-  serverError, unauthorizedUserRequest, noRequests, rejectedTripRequest
+  serverError, unauthorizedUserRequest, noRequests, rejectedTripRequest, acceptedTripRequest
 } = messages;
 const {
   create, getAll, bulkCreate, update
@@ -136,6 +136,10 @@ const updateApprovalStatus = async (req, res) => {
     const { requestId } = req.params;
     const options = { returning: true, where: { id: requestId } };
     const action = await req.url.match(/\/requests\/([a-z]+).*/);
+    if (action[1] === 'accept') {
+      approvalStatusValue = 'accepted';
+      approvalStatusMessage = acceptedTripRequest;
+    }
     if (action[1] === 'reject') {
       approvalStatusValue = 'rejected';
       approvalStatusMessage = rejectedTripRequest;
