@@ -86,5 +86,8 @@ export default {
         subTripAccommodation: 'Abuja Hotel'
       }
     ]
+  },
+  requestToBeRejected: {
+    requestId: 'b2092fb0-502a-4105-961f-2d310d340168'
   }
 };

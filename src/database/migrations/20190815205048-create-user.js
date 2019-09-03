@@ -84,8 +84,8 @@ module.exports = {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true
-      },
-    })
+      }
+        })
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('Users');

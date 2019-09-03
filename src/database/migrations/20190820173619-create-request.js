@@ -42,8 +42,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       approvalStatus: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
+        type: Sequelize.ENUM,
+        allowNull: true,
+        values: ['accepted', 'rejected']
       },
       multiCity: {
         type: Sequelize.BOOLEAN,
@@ -51,12 +52,14 @@ module.exports = {
         defaultValue: false,
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW'),
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW'),
       },
     });
   },

@@ -5,14 +5,21 @@ export default {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Users', [
       {
+        id: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+        firstName: 'line',
+        lastName: 'manager',
+        email: 'linemanager@gmail.com',
+        password: hashPassword('Password'),
+        phoneNo: '2347033545645',
+        verified: true
+      },
+      {
         id: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
         firstName: 'James',
         lastName: 'Williams',
         email: 'jammy@gmail.com',
         phoneNo: '2347032123304',
         password: hashPassword('jammy11167'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
         verified: true,
         roleId: roles.SUPER_ADMIN,
       },
@@ -23,8 +30,6 @@ export default {
         email: 'samuelman@gmail.com',
         password: hashPassword('samman12358'),
         phoneNo: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
         verified: false,
         roleId: roles.MANAGER,
       }, {
@@ -34,8 +39,6 @@ export default {
         email: 'polman@gmail.com',
         password: hashPassword('polly11167'),
         phoneNo: '2347032123404',
-        createdAt: new Date(),
-        updatedAt: new Date(),
         verified: true,
         roleId: roles.REQUESTER,
       }, {
@@ -45,11 +48,19 @@ export default {
         email: 'freeman@gmail.com',
         password: hashPassword('polly123456'),
         phoneNo: '2347032123409',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        verified: true,
         lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         roleId: roles.REQUESTER,
+        verified: true
+      },
+      {
+        id: '2999c776-0f6f-471d-bced-b661d6e75586',
+        firstName: 'request',
+        lastName: 'man',
+        email: 'requestman@gmail.com',
+        password: hashPassword('requestman'),
+        phoneNo: '2347032746854',
+        lineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+        verified: true
       }
     ], {});
   },

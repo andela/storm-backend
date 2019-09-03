@@ -31,7 +31,7 @@ const getUserRequestSchema = Joi.object({
 const searchRequestTripSchema = Joi.object({
   page: JoiValidator.validateNumber().min(1),
   perPage: JoiValidator.validateNumber().min(1),
-  approvalStatus: JoiValidator.validateBoolean(),
+  approvalStatus: JoiValidator.validateString().valid('accepted', 'rejected'),
   multiCity: JoiValidator.validateBoolean(),
   type: tripTypeSchema,
   originCity: JoiValidator.validateAlphabet(),
@@ -41,8 +41,14 @@ const searchRequestTripSchema = Joi.object({
   accommodation: JoiValidator.validateAlphabet(),
 }).min(1);
 
+const requestIdSchema = Joi.object({
+  requestId: JoiValidator.validateString().uuid().required()
+});
+
+
 export default {
   requestTripSchema,
   getUserRequestSchema,
-  searchRequestTripSchema
+  searchRequestTripSchema,
+  requestIdSchema
 };

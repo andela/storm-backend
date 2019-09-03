@@ -3,9 +3,14 @@ import validate from '../../middlewares/validator';
 import requestSchema from '../../validation/requestSchema';
 import { checkToken, checkUserId } from '../../middlewares/userMiddlewares';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
+import verifyRequestLineManager from '../../middlewares/requestMiddlewares';
 
-const { requestTrip, getUserRequest, searchRequest } = requestController;
-const { requestTripSchema, getUserRequestSchema, searchRequestTripSchema } = requestSchema;
+const {
+  requestTrip, getUserRequest, searchRequest, updateApprovalStatus
+} = requestController;
+const {
+  requestTripSchema, getUserRequestSchema, searchRequestTripSchema, requestIdSchema
+} = requestSchema;
 
 const requestRoute = (router) => {
   router.route('/requests')
@@ -122,6 +127,7 @@ const requestRoute = (router) => {
    *       - bearerAuth: []
   */
     .post(checkToken, checkBlacklist, validate(requestTripSchema), requestTrip);
+
   router.route('/requests/user/:userId')
   /**
    * @swagger
@@ -281,6 +287,71 @@ const requestRoute = (router) => {
      *       - bearerAuth: []
     */
     .post(checkToken, validate(searchRequestTripSchema), searchRequest);
+
+  router.route('/requests/reject/:requestId')
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    acceptOrRejectTrip:
+   *      properties:
+   *        message:
+   *          type: string
+   *          readOnly: true
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/requests/reject/{requestId}:
+   *   patch:
+   *     tags:
+   *       - Requests
+   *     description: Reject a request for a trip
+   *     parameters:
+   *       - in: path
+   *         name: requestId
+   *         schema:
+   *           type: string
+   *         required: true
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Trip request successfully rejected
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  allOf:
+   *                    - $ref: '#/components/schemas/acceptOrRejectTrip'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+   */
+    .patch(checkToken, validate(requestIdSchema), verifyRequestLineManager, updateApprovalStatus);
 };
 
 export default requestRoute;
