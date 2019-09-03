@@ -17,11 +17,13 @@ const { generateToken } = authHelper;
 describe('REQUESTS', () => {
   const requestTripEndpoint = `${BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BASE_URL}/search/requests`;
-  let user, token;
+  let user, token, unassignedUser, unassignedUserToken;
 
   before(async () => {
     user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
+    unassignedUser = await User.findOne({ where: { lineManager: { [Op.eq]: null } } });
     token = `Bearer ${generateToken({ id: user.id })}`;
+    unassignedUserToken = `Bearer ${generateToken({ id: unassignedUser.id })}`;
   });
 
   describe('POST /requests', () => {
@@ -58,6 +60,18 @@ describe('REQUESTS', () => {
           expect(data).to.have.property('returnDate');
           expect(data).to.have.property('reason', validReturnTripRequest.reason);
           expect(data).to.have.property('accommodation', validReturnTripRequest.accommodation);
+          done(err);
+        });
+    });
+
+    it('should not create a request if user has no line manager', (done) => {
+      chai.request(app)
+        .post(requestTripEndpoint)
+        .set('authorization', unassignedUserToken)
+        .send(validReturnTripRequest)
+        .end((err, res) => {
+          expect(res.status).to.equal(403);
+          expect(res.body).to.have.property('status').that.equals('error');
           done(err);
         });
     });
