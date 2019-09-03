@@ -13,7 +13,7 @@ const verifyEmail = async (req, res) => {
   try {
     const { id } = await verifyToken(req.params.token);
     await updateById(id, { verified: true });
-    return res.redirect(process.env.SIGNIN_PAGE);
+    return res.redirect(process.env.FRONTEND_BASE_URL);
   } catch (error) {
     const rescode = (error.name === 'JsonWebTokenError') ? 403 : 500;
     return response(res, rescode, 'error', { error });

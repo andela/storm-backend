@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import {
-  app, chai, expect, sinon, BASE_URL
+  app, chai, expect, sinon, BACKEND_BASE_URL
 } from '../testHelpers/config';
 import mockData from '../mockData';
 import models from '../../models';
@@ -24,7 +24,7 @@ before(async () => {
 
 describe('Notification', () => {
   describe('POST /notification/optOut', () => {
-    const endpoint = `${BASE_URL}/notification/optOut`;
+    const endpoint = `${BACKEND_BASE_URL}/notification/optOut`;
     it('should opt out of email notificaitons', (done) => {
       chai
         .request(app)
@@ -51,7 +51,7 @@ describe('Notification', () => {
     });
   });
   describe('POST /notification/optIn', () => {
-    const endpoint = `${BASE_URL}/notification/optIn`;
+    const endpoint = `${BACKEND_BASE_URL}/notification/optIn`;
     it('should opt in to email notificaitons', (done) => {
       chai
         .request(app)
@@ -78,7 +78,7 @@ describe('Notification', () => {
     });
   });
   describe('POST /requests', () => {
-    const endpoint = `${BASE_URL}/requests`;
+    const endpoint = `${BACKEND_BASE_URL}/requests`;
     it('should request a trip successfully', (done) => {
       chai.request(app)
         .post(endpoint)
@@ -98,7 +98,7 @@ describe('Notification', () => {
     });
   });
   describe('GET /notification', () => {
-    const endpoint = `${BASE_URL}/notification`;
+    const endpoint = `${BACKEND_BASE_URL}/notification`;
     it('should return all notificaitons for a specific user', (done) => {
       chai
         .request(app)
@@ -127,7 +127,7 @@ describe('Notification', () => {
   });
   describe('POST /notification/markAsRead', () => {
     it('should mark a notificaiton as read', (done) => {
-      const endpoint = `${BASE_URL}/notification/markAsRead/${notification.id}`;
+      const endpoint = `${BACKEND_BASE_URL}/notification/markAsRead/${notification.id}`;
       chai
         .request(app)
         .patch(endpoint)
@@ -139,7 +139,7 @@ describe('Notification', () => {
         });
     });
     it('should return an internal server error', (done) => {
-      const endpoint = `${BASE_URL}/notification/markAsRead/${notification.id}`;
+      const endpoint = `${BACKEND_BASE_URL}/notification/markAsRead/${notification.id}`;
       const stub = sinon.stub(Notification, 'update').callsFake(() => Promise.reject(new Error('Internal server error')));
       chai
         .request(app)
@@ -154,7 +154,7 @@ describe('Notification', () => {
     });
   });
   describe('POST /notification/markAllAsRead', () => {
-    const endpoint = `${BASE_URL}/notification/markAllAsRead`;
+    const endpoint = `${BACKEND_BASE_URL}/notification/markAllAsRead`;
     it('should mark all notificaitons as read', (done) => {
       chai
         .request(app)
@@ -181,7 +181,7 @@ describe('Notification', () => {
     });
   });
   describe('POST /notification/clear', () => {
-    const endpoint = `${BASE_URL}/notification/clear`;
+    const endpoint = `${BACKEND_BASE_URL}/notification/clear`;
     it('should clear all notificaitons for a user', (done) => {
       chai
         .request(app)

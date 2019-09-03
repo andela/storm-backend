@@ -3,6 +3,7 @@ import response from '../utils/response';
 import userRoute from './api/user';
 import requestRoute from './api/request';
 import notificationRoutes from './api/notification';
+import authRoute from './api/auth';
 
 const routes = (router) => {
   router
@@ -45,6 +46,8 @@ const routes = (router) => {
   requestRoute(router);
   // request routes
   notificationRoutes(router);
+  // social auth routes
+  authRoute(router);
 };
 
 export default routes;
