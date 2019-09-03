@@ -4,9 +4,8 @@ import {
 } from '../testHelpers/config';
 import mockData from '../mockData';
 import models from '../../models';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
-const { generateToken } = authHelper;
 const { User, Notification } = models;
 
 const { requestMock: { validTripRequest } } = mockData;
@@ -18,8 +17,8 @@ let notification;
 before(async () => {
   requester.data = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
   manager.data = await User.findOne({ where: { id: requester.data.lineManager } });
-  manager.token = `Bearer ${generateToken({ id: manager.data.id })}`;
-  requester.token = `Bearer ${generateToken({ id: requester.data.id })}`;
+  manager.token = `Bearer ${generateToken({ id: manager.data.id }, '7d')}`;
+  requester.token = `Bearer ${generateToken({ id: requester.data.id }, '7d')}`;
 });
 
 describe('Notification', () => {

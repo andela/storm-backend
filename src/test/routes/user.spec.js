@@ -3,10 +3,9 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
 const { userMock, roleMock } = mockData;
-const { generateToken } = authHelper;
 const { User } = models;
 
 const BACKEND_BASE_URL = '/api/v1';
@@ -14,10 +13,10 @@ const BACKEND_BASE_URL = '/api/v1';
 let token, invalidToken, user, managerToken;
 
 before(async () => {
-  const jwtToken = generateToken({ id: userMock.userId });
+  const jwtToken = generateToken({ id: userMock.userId }, '7d');
   token = jwtToken;
-  invalidToken = generateToken({ id: userMock.wrongId });
-  managerToken = generateToken({ id: userMock.anotherUserId });
+  invalidToken = generateToken({ id: userMock.wrongId }, '7d');
+  managerToken = generateToken({ id: userMock.anotherUserId }, '7d');
 });
 
 describe('User route', () => {

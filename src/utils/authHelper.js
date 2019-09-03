@@ -7,10 +7,11 @@ const secret = process.env.SECRET_KEY;
 /**
    * Generate JWT
    * @param {Object} payload - object literal resource to be encoded
+   * @param {Object} expiresIn - object literal resource to be encoded
    * @returns {String} - jwt token
    */
-const generateToken = (payload) => {
-  const token = jwt.sign({ ...payload }, secret, { expiresIn: '7 days' });
+export const generateToken = (payload, expiresIn) => {
+  const token = jwt.sign({ ...payload }, secret, { expiresIn });
   return token;
 };
 
@@ -20,7 +21,11 @@ const generateToken = (payload) => {
  * @returns {Object} decoded object
  */
 export const verifyToken = async (token) => {
-  const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+  const decoded = await jwt.verify(token, process.env.SECRET_KEY, (error) => {
+    if (error) {
+      return 'password reset link is invalid or has expired';
+    }
+  });
   return decoded;
 };
 
@@ -32,4 +37,4 @@ export const verifyToken = async (token) => {
  */
 export const hashPassword = (password) => bcrypt.hashSync(password, salt);
 
-export default { generateToken };
+export default { generateToken, verifyToken };

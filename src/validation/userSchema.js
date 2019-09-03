@@ -38,7 +38,15 @@ const setUserRoleSchema = Joi.object({
   role: JoiValidator.validateString()
     .valid('requester', 'travel-admin', 'travel-team-member', 'manager', 'super-admin').required(),
 });
+const emailSchema = Joi.object({
+  email: JoiValidator.validateEmail().required(),
+});
+
+const passwordSchema = Joi.object({
+  password: JoiValidator.validatePassword().min(7).alphanum().required(),
+});
 
 export {
-  signUpSchema, signInSchema, updateUserSchema, getUserSchema, setUserRoleSchema,
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema,
+  setUserRoleSchema, passwordSchema, emailSchema
 };

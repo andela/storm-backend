@@ -4,7 +4,7 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
 const { Request, User } = models;
 const {
@@ -12,7 +12,6 @@ const {
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
   validMultiCityRequest, multiCityBadRequest
 } = mockData.requestMock;
-const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
   let user, token, unassignedUser, unassignedUserToken;
@@ -22,8 +21,8 @@ describe('REQUESTS', () => {
   before(async () => {
     user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
     unassignedUser = await User.findOne({ where: { lineManager: { [Op.eq]: null } } });
-    token = `Bearer ${generateToken({ id: user.id })}`;
-    unassignedUserToken = `Bearer ${generateToken({ id: unassignedUser.id })}`;
+    token = `Bearer ${generateToken({ id: user.id }, '7d')}`;
+    unassignedUserToken = `Bearer ${generateToken({ id: unassignedUser.id }, '7d')}`;
   });
 
   describe('POST /requests', () => {
