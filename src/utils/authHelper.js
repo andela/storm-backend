@@ -8,8 +8,8 @@ const secret = process.env.SECRET_KEY;
    *  @param {Object} expiresIn - object literal resource to be encoded
    * @returns {String} - jwt token
    */
-export const generateToken = (payload) => {
-  const token = jwt.sign({ ...payload }, secret, { expiresIn: '7d' });
+export const generateToken = (payload, expiresIn) => {
+  const token = jwt.sign({ ...payload }, secret, { expiresIn });
   return token;
 };
 

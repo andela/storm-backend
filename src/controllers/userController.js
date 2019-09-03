@@ -46,6 +46,7 @@ const signUp = async (req, res) => {
         token: generateToken({ id: createdUser.id }, '7d'),
       }
     };
+    console.log(user.data);
     const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
     const message = createTemplate(verifyEmailMessage, link);
     await sendMail(userData.user.email, 'VERIFY EMAIL', message);
