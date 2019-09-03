@@ -70,7 +70,19 @@ export default {
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
         approvalStatus: 'pending'
-      }
+      },
+      {
+        id: 'ba94c67b-1d18-4628-ab12-ce2efe46f00b',
+        type: 'return',
+        originCity: 'Abuja',
+        destinationCity: 'Lagos',
+        departureDate: '01-07-2018',
+        userId: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        returnDate: '02-08-2018',
+        reason: 'Annual meeting',
+        accommodation: 'Eko Hotels & Suites',
+        approvalStatus: 'accepted'
+      },
     ], {});
   },
   down: (queryInterface, Sequelize) => {
