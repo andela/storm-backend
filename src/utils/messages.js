@@ -25,7 +25,9 @@ const messages = {
   forbidden: 'You are not authorized to perform this operation',
   unauthorized: 'You do not have authorization',
   rejectedTripRequest: 'Trip request successfully rejected',
-  chatAdded: 'Message added successfully'
+  chatAdded: 'Message added successfully',
+  inValidCountry: 'Incorrect country',
+  noImage: 'No Image found'
 };
 
 export default messages;

@@ -5,6 +5,7 @@ import requestRoute from './api/request';
 import notificationRoutes from './api/notification';
 import authRoute from './api/auth';
 import chatRoutes from './api/chat';
+import accommodationRoute from './api/accommodation';
 
 const routes = (router) => {
   router
@@ -51,6 +52,8 @@ const routes = (router) => {
   authRoute(router);
   // chat routes
   chatRoutes(router);
+  // accommodation routes
+  accommodationRoute(router);
 };
 
 export default routes;

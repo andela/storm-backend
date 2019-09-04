@@ -10,6 +10,8 @@ import './config/env';
 import routes from './routes';
 import swaggerDoc from './config/swaggerDoc';
 import db from './models';
+import { cloudinaryConfig } from './config/cloudinaryConfig';
+
 
 
 // Instance of express app
@@ -43,6 +45,9 @@ app.use(methodOverride());
 app.get('/', (req, res) => response(res, 200, 'success', {
   message: messages.welcome,
 }));
+
+// Handle image upload
+app.use('*', cloudinaryConfig);
 
 app.use('/api/v1', router, swaggerUi.serve);
 // Handle routes not found
