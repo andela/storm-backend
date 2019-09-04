@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
     },
+    returnDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     reason: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,6 +35,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     approvalStatus: {
+      type: DataTypes.ENUM,
+      allowNull: true,
+      values: ['accepted', 'rejected']
+    },
+    multiCity: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
@@ -42,6 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'User',
     });
+    Request.hasMany(models.Subrequest);
   };
 
   return Request;

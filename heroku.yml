@@ -1,0 +1,9 @@
+build:
+  docker:
+    web: Dockerfile
+run:
+  web: docker-compose up
+setup:
+  addons:
+  - plan: heroku-postgresql
+    as: DATABASE

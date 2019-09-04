@@ -21,3 +21,5 @@ coverage
 .editorconfig
 # editor files
 .vscode/
+
+.idea/

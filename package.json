@@ -4,7 +4,7 @@
   "description": "An app for making company global travel and accommodation easy and convenient",
   "main": "index.js",
   "scripts": {
-    "db:setup": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && npm run seed",
+    "db:setup": "cross-env NODE_ENV=test sequelize db:migrate:undo:all && cross-env NODE_ENV=test sequelize db:migrate && cross-env NODE_ENV=test npm run seed",
     "build": "babel src -d dist",
     "clean": "rm -rf dist/*",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate",
@@ -15,7 +15,7 @@
     "start:dev": "set DEBUG=http:* && nodemon src/index.js --exec babel-node",
     "test": "npm run db:setup && set DEBUG=http:* && cross-env NODE_ENV=test nyc mocha --timeout 120000 src/test/** --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "seed": "cross-env NODE_ENV=test sequelize db:seed:all"
+    "seed": "./node_modules/.bin/sequelize db:seed:all"
   },
   "repository": {
     "type": "git",
@@ -37,23 +37,34 @@
     "@hapi/joi": "^15.1.1",
     "@sendgrid/mail": "^6.4.0",
     "bcrypt": "^3.0.6",
+    "cloudinary": "^1.14.0",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "ioredis": "^4.14.0",
     "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
     "mock-req-res": "^1.1.1",
+    "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-strategy": "^1.0.0",
+    "multer": "^1.4.2",
+    "multer-storage-cloudinary": "^2.2.1",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
+    "pusher": "^2.2.2",
     "sequelize": "^5.15.0",
     "sequelize-cli": "^5.5.0",
     "swagger-jsdoc": "^3.4.0",
     "swagger-ui-express": "^4.0.7",
-    "trim-request-body": "^1.0.1"
+    "trim-request-body": "^1.0.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@babel/node": "^7.5.5",
+    "bcrypt": "^3.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "coveralls": "^3.0.6",

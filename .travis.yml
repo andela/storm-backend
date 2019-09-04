@@ -12,5 +12,13 @@ services:
 before_script:
   - psql -c 'create database test;' -U postgres
 
+install:
+  # install deps
+  - npm install
+
+script:
+  - npm test
+  - npm build
+
 after_success:
   - npm run coverage

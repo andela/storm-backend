@@ -2,6 +2,7 @@ import express from 'express';
 import trimmer from 'trim-request-body';
 import cors from 'cors';
 import debug from 'debug';
+import methodOverride from 'method-override';
 import swaggerUi from 'swagger-ui-express';
 import messages from './utils/messages';
 import response from './utils/response';
@@ -9,6 +10,8 @@ import './config/env';
 import routes from './routes';
 import swaggerDoc from './config/swaggerDoc';
 import db from './models';
+import { cloudinaryConfig } from './config/cloudinaryConfig';
+
 
 // Instance of express app
 const app = express();
@@ -35,10 +38,15 @@ app.use(express.urlencoded({ extended: false }));
 // Trim the parsed request body
 app.use(trimmer);
 
+app.use(methodOverride());
+
 // Handle base route
 app.get('/', (req, res) => response(res, 200, 'success', {
   message: messages.welcome,
 }));
+
+// Handle image upload
+app.use('*', cloudinaryConfig);
 
 app.use('/api/v1', router, swaggerUi.serve);
 // Handle routes not found
