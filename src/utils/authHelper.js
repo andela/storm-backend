@@ -19,6 +19,10 @@ export const generateToken = (payload, expiresIn = '7d') => {
  * @returns {Object} decoded object
  */
 export const verifyToken = async (token) => {
+  const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+  return decoded;
+};
+export const verifyResetPasswordToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY, (error) => {
     if (error) {
       return 'password reset link is invalid or has expired';
@@ -27,7 +31,6 @@ export const verifyToken = async (token) => {
   return decoded;
 };
 
-
 export default {
-  generateToken, verifyToken
+  generateToken, verifyToken, verifyResetPasswordToken
 };

@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import { Op } from 'sequelize';
 import models from '../models';
-import { generateToken, verifyToken } from '../utils/authHelper';
+import { generateToken, verifyResetPasswordToken } from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import {
@@ -203,7 +203,7 @@ const resetPassword = async (req, res) => {
     const { userId, token } = req.params;
     const { password } = req.body;
     const user = await User.findByPk(userId);
-    await verifyToken(token);
+    await verifyResetPasswordToken(token);
     if (!user) return response(res, 404, 'error', { message: messages.userNotFound });
     const options = { returning: true, where: { id: userId } };
     const updatedUser = await update(User, { password }, options);
