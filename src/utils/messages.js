@@ -24,10 +24,11 @@ const messages = {
   roleChanged: 'The staff role has been successfully set to a',
   forbidden: 'You are not authorized to perform this operation',
   unauthorized: 'You do not have authorization',
-  rejectedTripRequest: 'Trip request successfully rejected',
   chatAdded: 'Message added successfully',
   inValidCountry: 'Incorrect country',
-  noImage: 'No Image found'
+  noImage: 'No Image found',
+  acceptedTripRequest: 'Trip request successfully accepted',
+  rejectedTripRequest: 'Trip request successfully rejected'
 };
 
 export default messages;
