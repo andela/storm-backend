@@ -8,4 +8,9 @@ describe('Index route', () => {
     expect(response.status).to.equal(200);
     expect(response.body.data.message).to.equal(messages.apiV1Welcome);
   });
+
+  it('should return 404 if route is not found', async () => {
+    const response = await chai.request(app).get('/api/v2/user');
+    expect(response.status).to.equal(404);
+  });
 });

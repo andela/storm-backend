@@ -1,8 +1,7 @@
-import Redis from 'ioredis';
 import response from '../utils/response';
 import messages from '../utils/messages';
-
-const redis = new Redis();
+import stripBearerToken from '../utils/stripBearerToken';
+import redis from '../config/redis';
 
 /**
  * Token Blacklist Middleware
@@ -12,7 +11,9 @@ const redis = new Redis();
  * @returns {Object} - Returns Object
  */
 const checkBlacklist = async (req, res, next) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  let token = req.headers.authorization;
+  token = stripBearerToken(token);
+
   if (!token) {
     return response(res, 401, 'error', {
       message: messages.noToken

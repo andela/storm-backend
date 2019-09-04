@@ -17,6 +17,7 @@ const signInSchema = Joi.object({
 });
 
 const updateUserSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
   firstName: JoiValidator.validateString().required(),
   lastName: JoiValidator.validateString().required(),
   phoneNo: JoiValidator.validateNumber().required(),
@@ -38,4 +39,17 @@ const passwordSchema = Joi.object({
 
 export {
   signUpSchema, signInSchema, updateUserSchema, emailSchema, passwordSchema
+
+const getUserSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
+});
+
+const setUserRoleSchema = Joi.object({
+  userId: JoiValidator.validateUuidV4().required(),
+  role: JoiValidator.validateString()
+    .valid('requester', 'travel-admin', 'travel-team-member', 'manager', 'super-admin').required(),
+});
+
+export {
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema, setUserRoleSchema, emailSchema, passwordSchema
 };

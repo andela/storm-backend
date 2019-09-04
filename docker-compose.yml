@@ -15,6 +15,10 @@ services:
       - ${DB_PORT}:${DB_PORT}
     networks:
       - webnet
+  redis:
+    image: redis
+    networks:
+      - webnet
   backend:
     build:
       context: .
@@ -23,6 +27,7 @@ services:
     entrypoint: ["/bin/bash", "./entrypoint.sh"]
     depends_on:
       - db
+      - redis
     networks:
       - webnet
 networks:

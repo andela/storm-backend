@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt';
+import roles from '../utils/roles';
+import { hashPassword } from '../utils/authHelper';
 
 const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
 export default (Sequelize, DataTypes) => {
@@ -23,7 +24,7 @@ export default (Sequelize, DataTypes) => {
       unique: true
     },
     password: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.STRING
     },
     phoneNo: {
@@ -50,13 +51,14 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.STRING
     },
-    role: {
+    roleId: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.UUID,
+      defaultValue: roles.REQUESTER,
     },
     lineManager: {
       allowNull: true,
-      type: DataTypes.STRING
+      type: DataTypes.UUID
     },
     createdAt: {
       allowNull: true,
@@ -72,8 +74,14 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    emailNotificationEnabled: {
+      allowNull: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
   }, {});
+   //  hash user password before creating user
   User.hashPassword = (user) => {
     user.password = bcrypt.hashSync(user.password, salt);
     return user;
@@ -85,6 +93,14 @@ export default (Sequelize, DataTypes) => {
     if (user.password) {
       return User.hashPassword(user);
     }
+
+  User.associate = (models) => {
+    User.hasOne(models.User, {
+      foreignKey: 'lineManager',
+      as: 'User',
+    });
+  };
+
   });
   return User;
 };

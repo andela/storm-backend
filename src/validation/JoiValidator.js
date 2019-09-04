@@ -1,12 +1,32 @@
 import Joi from '@hapi/joi';
 
 /** *
- *  Object that help to validate user details
+ *  Required String validation
+ */
+const requiredString = Joi.string().required();
+
+/** *
+ *  Rules that help to validate sub trip/multi city request details
+ */
+const subTrip = Joi.object().keys({
+  subTripOriginCity: requiredString,
+  subTripDestinationCity: requiredString,
+  subTripDepartureDate: Joi.date().required(),
+  subTripReason: requiredString,
+  subTripAccommodation: requiredString,
+});
+
+/** *
+ *  Object that help to validate request details
  */
 const JoiValidation = {
 
   validateString() {
     return Joi.string();
+  },
+
+  validateAlphabet() {
+    return Joi.string().regex(/^[a-zA-Z ]+$/);
   },
 
   validateEmail() {
@@ -31,7 +51,39 @@ const JoiValidation = {
    * @returns {Object} - number schema
   */
   validateNumber() {
-    return Joi.number().required();
+    return Joi.number();
+  },
+
+  /**
+   * uuidV4 schema creator
+   * @returns {Object} - uuidV4 schema
+  */
+  validateUuidV4() {
+    return Joi.string().guid({ version: 'uuidv4' });
+  },
+
+  /**
+   * object schema creator
+   * @returns {Object} - object schema
+  */
+  validateArray() {
+    return Joi.array().items(subTrip);
+  },
+
+  /**
+   * object schema creator
+   * @returns {Object} - object schema
+  */
+  validArray() {
+    return Joi.array();
+  },
+
+  /**
+   * object schema creator
+   * @returns {Object} - object schema
+  */
+  validateBoolean() {
+    return Joi.boolean();
   }
 };
 

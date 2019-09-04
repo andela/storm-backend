@@ -30,6 +30,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      returnDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       reason: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -38,16 +42,24 @@ module.exports = {
         type: Sequelize.STRING,
       },
       approvalStatus: {
+        type: Sequelize.ENUM,
+        allowNull: true,
+        values: ['accepted', 'rejected']
+      },
+      multiCity: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
       },
       createdAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW'),
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('NOW'),
       },
     });
   },

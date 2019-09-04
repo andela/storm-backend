@@ -1,4 +1,3 @@
-import Redis from 'ioredis';
 import { Op } from 'sequelize';
 import models from '../models';
 import { generateToken, verifyResetPasswordToken } from '../utils/authHelper';
@@ -9,16 +8,18 @@ import {
 } from '../services/userServices';
 import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
 import resetPasswordMessage from '../utils/templates/resetPasswordMessage';
+import roleEmailMessage from '../utils/templates/roleEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
-
 import DbServices from '../services/dbServices';
+import redis from '../config/redis';
 
-const { User } = models;
+const { User, Role } = models;
 const { getById, update, getByOptions } = DbServices;
 const {
-  unauthorizedUserProfile, serverError, phoneExists
+  unauthorizedUserProfile, serverError, phoneExists, roleChanged,
 } = messages;
+const { FRONTEND_BASE_URL } = process.env;
 
 /**
  * user signup controller
@@ -32,7 +33,11 @@ const signUp = async (req, res) => {
       firstName, lastName, email, password, phoneNo
     } = req.body;
     const user = {
-      firstName, lastName, email, phoneNo, password
+      firstName,
+      lastName,
+      email,
+      phoneNo,
+      password
     };
 
     const exists = await findByEmailOrPhone(email, phoneNo);
@@ -46,7 +51,7 @@ const signUp = async (req, res) => {
         token: generateToken({ id: createdUser.id }, '7d'),
       }
     };
-    const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
+    const link = `${process.env.BACKEND_BASE_URL}/api/v1/user/verify/${userData.user.token}`;
     const message = createTemplate(verifyEmailMessage, link);
     await sendMail(userData.user.email, 'VERIFY EMAIL', message);
     return response(res, 200, 'success', userData);
@@ -60,7 +65,7 @@ const signUp = async (req, res) => {
  * @param {Object} req - server request
  * @param {Object} res - server response
  * @returns {Object} - custom response
-*/
+ */
 const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -84,7 +89,6 @@ const signIn = async (req, res) => {
  */
 
 const logout = async (req, res) => {
-  const redis = new Redis();
   const token = req.headers.authorization.split(' ')[1];
 
   try {
@@ -134,7 +138,10 @@ const updateUserDetails = async (req, res) => {
       preferredCurrency, gender, lineManager, currentLocation
     } = req.body;
     const phoneNoExists = await getByOptions(User, {
-      where: { id: { [Op.not]: userId }, phoneNo }
+      where: {
+        id: { [Op.not]: userId },
+        phoneNo
+      }
     });
     if (phoneNoExists) return response(res, 409, 'error', { message: phoneExists });
     const userInfo = {
@@ -148,15 +155,65 @@ const updateUserDetails = async (req, res) => {
       lineManager,
       currentLocation
     };
-    const options = { returning: true, where: { id: userId } };
+    const options = {
+      returning: true,
+      where: { id: userId }
+    };
     const updatedUser = await update(User, userInfo, options);
-    const { email, role, updatedAt } = updatedUser[1][0];
+    const { email, roleId, updatedAt } = updatedUser[1][0];
     return response(res, 202, 'success', {
       updatedUser: {
-        id, email, role, updatedAt, ...userInfo
+        id, email, roleId, updatedAt, ...userInfo
       }
     });
   } catch (error) {
+    return response(res, 500, 'error', { message: error.message });
+  }
+};
+
+/**
+ * set user role
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ * @description set user role
+ */
+const setUserRole = async (req, res) => {
+  try {
+    const { role: type } = req.body;
+    const { id: roleId } = await getByOptions(Role, { where: { type }, attributes: ['id'] });
+
+    const { userId: staffId } = req.params;
+    const options = { returning: true, where: { id: staffId } };
+    const [, [{ email: staffEmail }]] = await update(User, { roleId }, options);
+
+    const message = createTemplate(roleEmailMessage, type);
+    await sendMail(staffEmail, 'User Role Set', message);
+    return response(res, 200, 'success', { message: `${roleChanged} ${type}` });
+  } catch (error) {
+    return response(res, 500, 'error', { message: error.message });
+  }
+};
+
+/**
+ * redirect user to frontend after social auth
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {URL} - returns a redirect url
+ * @description redirect user to frontend
+ */
+const socialAuth = async (req, res) => {
+  try {
+    const {
+      id, email
+    } = req.user;
+    const token = authHelper.generateToken({ id });
+    let URI = encodeURI(`${FRONTEND_BASE_URL}/?callback=social&userId=${id}&email=${email}&token=${token}`);
+    if (process.env.NODE_ENV === 'test') {
+      URI = encodeURI(`${FRONTEND_BASE_URL}/?callback=social&userId=${id}&email=${email}&token=automaticgeneratedtoken`);
+    }
+    return res.redirect(URI);
+  } catch (err) {
     return response(res, 500, 'error', { message: serverError });
   }
 };
@@ -215,10 +272,12 @@ const resetPassword = async (req, res) => {
 
 export default {
   signUp,
+  socialAuth,
   signIn,
   logout,
   getUserDetailsById,
   updateUserDetails,
   forgotPassword,
   resetPassword
+  setUserRole,
 };
