@@ -1,5 +1,5 @@
 import {
-  app, chai, expect, messages
+  app, chai, expect,
 } from '../testHelpers/config';
 import mockData from '../mockData';
 import { generateToken } from '../../utils/authHelper';
@@ -12,9 +12,9 @@ let token,
   invalidToken;
 
 before(async () => {
-  const jwtToken = generateToken({ id: userMock.userId });
+  const jwtToken = generateToken({ id: userMock.userId }, '1h');
   token = jwtToken;
-  invalidToken = generateToken({ id: userMock.wrongId });
+  invalidToken = generateToken({ id: userMock.wrongId }, '1h');
 });
 
 describe('Reset and Update Password Endpoint', () => {
@@ -31,9 +31,9 @@ describe('Reset and Update Password Endpoint', () => {
       .patch(`${BASE_URL}/reset/password/${userMock.wrongId}/${token}`)
       .send({ password: 'newpassword' });
 
-    expect(response.status).to.equal(403);
+    expect(response.status).to.equal(404);
     expect(response.body.status).to.equal('error');
-    expect(response.body.data.message).to.equal(messages.userNotFoundId);
+    expect(response.body.data.message).to.equal('User not found, please check your email address');
   });
   it('should return 400 if user is found, token is valid but new password is empty', async () => {
     const response = await chai.request(app)

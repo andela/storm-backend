@@ -219,64 +219,83 @@ const userRoute = (router) => {
     .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
   router.route('/forgot/password')
   /**
- * @swagger
- * /api/v1/forgot/password:
- *  post:
- *     tags:
- *       - Users
- *     name: Reset Password Link
- *     summary: Reset Password Link
- *     consumes:
- *       - application/json
- *     requestBody:
- *      description: User data object
- *      required: true
- *      content:
- *       application/json:
- *          schema:
- *            $ref: '#/components/schemas/User'
- *     responses:
- *       '200':
- *         description: Check your mail to reset your password
- *       '403':
- *         description: Password reset link is invalid or has expired
- */
+       * @swagger
+       * components:
+       *  schemas:
+       *    forgotPassword:
+       *      properties:
+       *        email:
+       *          type: string
+       */
+    /**
+       * @swagger
+       * /api/v1/forgot/password:
+       *  post:
+       *     tags:
+       *       - Users
+       *     name: Reset Password Link
+       *     summary: Reset Password Link
+       *     consumes:
+       *       - application/json
+       *     requestBody:
+       *      description: User data object
+       *      required: true
+       *      content:
+       *       application/json:
+       *          schema:
+       *            $ref: '#/components/schemas/forgotPassword'
+       *     responses:
+       *       '200':
+       *         description: Check your mail to reset your password
+       *       '403':
+       *         description: Password reset link is invalid or has expired
+       */
     .post(validate(emailSchema), forgotPassword);
   router.route('/reset/password/:userId/:token')
   /**
-     * @swagger
-     *  paths:
-     *    /api/v1/reset/password/{userId}/{token}:
-     *      patch:
-     *        tags:
-     *          - Users
-     *        summary: Update Password
-     *        parameters:
-     *          - in: path
-     *            name: userId
-     *            schema:
-     *              type: string
-     *            required: true
-     *          - in: path
-     *            name: token
-     *            schema:
-     *               type: string
-     *            required: true
-     *        requestBody:
-     *          description: User data object
-     *          required: true
-     *          content:
-     *            application/json:
-     *              schema:
-     *                $ref: '#/components/schemas/User'
-     *        responses:
-     *          200:
-     *            description: Password updated successfully
-     *          404:
-     *            description: "password is required"
-     *          500:
-     *            description: Internal Server error
-    */
+       * @swagger
+       * components:
+       *  schemas:
+       *    resetPassword:
+       *      properties:
+       *        password:
+       *          type: string
+       */
+    /**
+           * @swagger
+           *  paths:
+           *    /api/v1/reset/password/{userId}/{token}:
+           *      patch:
+           *        tags:
+           *          - Users
+           *        summary: Update Password
+           *        parameters:
+           *          - in: path
+           *            name: userId
+           *            schema:
+           *              type: string
+           *            required: true
+           *          - in: path
+           *            name: token
+           *            schema:
+           *               type: string
+           *            required: true
+           *        requestBody:
+           *          description: User data object
+           *          required: true
+           *          content:
+           *            application/json:
+           *              schema:
+           *                $ref: '#/components/schemas/resetPassword'
+           *        responses:
+           *          200:
+           *            description: Password updated successfully
+           *          404:
+           *            description: "password is required"
+           *          500:
+           *            description: Internal Server error
+          */
     .patch(validate(passwordSchema), resetPassword);
 };
+
 export default userRoute;

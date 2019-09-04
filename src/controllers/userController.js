@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import { Op } from 'sequelize';
 import models from '../models';
-import { generateToken, generateVerificationToken, verifyToken } from '../utils/authHelper';
+import { generateToken, verifyToken } from '../utils/authHelper';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import {
@@ -46,7 +46,6 @@ const signUp = async (req, res) => {
         token: generateToken({ id: createdUser.id }, '7d'),
       }
     };
-    console.log(user.data);
     const link = `${process.env.BASE_URL}/api/v1/user/verify/${userData.user.token}`;
     const message = createTemplate(verifyEmailMessage, link);
     await sendMail(userData.user.email, 'VERIFY EMAIL', message);
@@ -175,14 +174,14 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
     const user = await findByEmail(email);
     if (!user) {
-      const token = generateVerificationToken(email, '10m');
+      const token = generateToken(email, '10m');
       const link = `${process.env.BACKEND_BASE_URL}/reset/password/1/${token}`;
       const message = createTemplate(resetPasswordMessage, link);
       await sendMail(email, 'Reset Password', message);
       return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
     }
-    const token = generateVerificationToken(email, '10m');
-    const link = `${process.env.BACKEND_BASE_URL}/reset/password/${user.id}/${token}`;
+    const token = generateToken(email, '10m');
+    const link = `${process.env.FONTEND_BASE_URL}/reset/password/${user.id}/${token}`;
     const message = createTemplate(resetPasswordMessage, link);
     await sendMail(user.email, 'Reset Password', message);
     return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
@@ -205,9 +204,7 @@ const resetPassword = async (req, res) => {
     const { password } = req.body;
     const user = await User.findByPk(userId);
     await verifyToken(token);
-    if (!user) {
-      return response(res, 403, 'error', { message: 'password reset link is invalid or has expired' });
-    }
+    if (!user) return response(res, 404, 'error', { message: messages.userNotFound });
     const options = { returning: true, where: { id: userId } };
     const updatedUser = await update(User, { password }, options);
     return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
