@@ -8,7 +8,7 @@ const secret = process.env.SECRET_KEY;
    *  @param {Object} expiresIn - object literal resource to be encoded
    * @returns {String} - jwt token
    */
-export const generateToken = (payload, expiresIn = '7d') => {
+const generateToken = (payload, expiresIn = '7d') => {
   const token = jwt.sign({ ...payload }, secret, { expiresIn });
   return token;
 };
@@ -22,6 +22,7 @@ export const verifyToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY);
   return decoded;
 };
+
 export const verifyResetPasswordToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY, (error) => {
     if (error) {
@@ -32,5 +33,5 @@ export const verifyResetPasswordToken = async (token) => {
 };
 
 export default {
-  generateToken, verifyToken, verifyResetPasswordToken
+  generateToken
 };
