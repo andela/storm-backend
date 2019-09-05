@@ -7,6 +7,7 @@ import { findRequest } from '../services/requestServices';
 import messages from '../utils/messages';
 import { findById } from '../services/userServices';
 import { createNotification } from '../services/notificationServices';
+import addOrCreateCounter from '../services/mostDestinationServices';
 
 const { Request, Subrequest, User } = models;
 const {
@@ -188,6 +189,9 @@ const updateApprovalStatus = async (req, res) => {
       type: action[1] === 'accept' ? 'approvedRequest' : 'rejectedRequest',
       ref: requestId
     });
+    if (approvalStatusValue === 'accepted') {
+      await addOrCreateCounter(requestId);
+    }
     return response(res, 201, 'success', { message: approvalStatusMessage });
   } catch (error) {
     return response(res, 500, 'error', { message: error.message });
