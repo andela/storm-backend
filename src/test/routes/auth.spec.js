@@ -197,7 +197,7 @@ describe('AUTH', () => {
         .get(`${BACKEND_BASE_URL}/auth/google/callback`);
       const { _json: userDetails } = google;
       const { email } = userDetails;
-      const { id: userId } = await findByEmail(email);
+      const { userId } = await findByEmail(email);
       res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
     });
 
@@ -207,7 +207,7 @@ describe('AUTH', () => {
         .get(`${BACKEND_BASE_URL}/auth/facebook/callback`);
       const { _json: userDetails } = facebook;
       const { email } = userDetails;
-      const { id: userId } = await findByEmail(email);
+      const { userId } = await findByEmail(email);
       res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
     });
   });
