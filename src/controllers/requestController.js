@@ -2,7 +2,7 @@ import models from '../models';
 import response from '../utils/response';
 import DbServices from '../services/dbServices';
 import { calculateLimitAndOffset, paginate } from '../utils/pagination';
-import findRequest from '../services/requestServices';
+import { findRequest } from '../services/requestServices';
 import messages from '../utils/messages';
 import { findById } from '../services/userServices';
 import { createNotification } from '../services/notificationServices';
@@ -133,6 +133,7 @@ const updateApprovalStatus = async (req, res) => {
   try {
     let approvalStatusValue, approvalStatusMessage;
     const { requestId } = req.params;
+    const { id: userId } = req.decoded;
     const options = { returning: true, where: { id: requestId } };
     const action = await req.url.match(/\/requests\/([a-z]+).*/);
     switch (action[1]) {
@@ -145,17 +146,20 @@ const updateApprovalStatus = async (req, res) => {
         approvalStatusMessage = rejectedTripRequest;
         break;
       default:
-        approvalStatusValue = '';
+        break;
     }
     const updateColumn = { approvalStatus: approvalStatusValue };
     await update(Request, updateColumn, options);
-    return response(res, 201, 'success', {
-      message: approvalStatusMessage
+    const manager = await findById(userId);
+    await createNotification({
+      sender: manager,
+      receiver: req.requester,
+      type: action[1] === 'accept' ? 'approvedRequest' : 'rejectedRequest',
+      ref: requestId
     });
+    return response(res, 201, 'success', { message: approvalStatusMessage });
   } catch (error) {
-    return response(res, 500, 'error', {
-      message: serverError,
-    });
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 

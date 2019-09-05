@@ -1,16 +1,50 @@
 {
   "addons": [
     "heroku-postgresql",
-    "heroku-postgresql"
+    "heroku-redis"
   ],
-  "buildpacks": [
-
-  ],
+  "buildpacks": [],
   "env": {
     "NPM_CONFIG_PRODUCTION": {
       "required": true
     },
     "SECRET_KEY": {
+      "required": true
+    },
+    "FACEBOOK_APP_ID": {
+      "required": true
+    },
+    "FACEBOOK_APP_SECRET": {
+      "required": true
+    },
+    "GOOGLE_APP_ID": {
+      "required": true
+    },
+    "GOOGLE_APP_SECRET": {
+      "required": true
+    },
+    "PUSHER_APP_ID": {
+      "required": true
+    },
+    "PUSHER_APP_KEY": {
+      "required": true
+    },
+    "PUSHER_APP_SECRET": {
+      "required": true
+    },
+    "PUSHER_APP_CLUSTER": {
+      "required": true
+    },
+    "APP_EMAIL": {
+      "required": true
+    },
+    "SEND_GRID_API_KEY": {
+      "required": true
+    },
+    "DOC_BASE_URL": {
+      "required": true
+    },
+    "REDIS_URL": {
       "required": true
     }
   },
@@ -20,7 +54,6 @@
     }
   },
   "name": "storm-backend",
-  "scripts": {
-  },
+  "scripts": {},
   "stack": "container"
 }
