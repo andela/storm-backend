@@ -34,7 +34,7 @@ const emailSchema = Joi.object({
 });
 
 const passwordSchema = Joi.object({
-  password: JoiValidator.validatePassword().min(7).alphanum().required(),
+  password: JoiValidator.validatePassword().min(8).alphanum().required(),
 });
 
 
