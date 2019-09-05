@@ -231,11 +231,7 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
     const user = await findByEmail(email);
     if (!user) {
-      const token = generateToken(email, '10m');
-      const link = `${process.env.FONTEND_BASE_URL}/reset/password/1/${token}`;
-      const message = createTemplate(resetPasswordMessage, link);
-      await sendMail(email, 'Reset Password', message);
-      return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
+      return response(res, 200, 'success');
     }
     const token = generateToken(user.id, '10m');
     const link = `${process.env.FONTEND_BASE_URL}/reset/password/${user.id}/${token}`;
