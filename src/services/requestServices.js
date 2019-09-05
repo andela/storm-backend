@@ -3,12 +3,13 @@ import models from '../models';
 import { calculateLimitAndOffset } from '../utils/pagination';
 
 const { Request } = models;
+
 /** helper function that get request with a search keyword
-   * @param {object} body query
-   * @param {object} query query
-   * @returns {Promise} Promise resolved or rejected
-   */
-const findRequest = (body, query) => {
+  * @param {object} body query
+  * @param {object} query query
+  * @returns {Promise} Promise resolved or rejected
+  */
+export const findRequest = (body, query) => {
   const { page, perPage } = query;
   const { limit, offset } = calculateLimitAndOffset(page, perPage);
   const searchValue = Object.keys(body).map((key) => {
@@ -41,5 +42,3 @@ const findRequest = (body, query) => {
     offset
   });
 };
-
-export default findRequest;

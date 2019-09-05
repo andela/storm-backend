@@ -16,18 +16,15 @@ const verifyRequestLineManager = async (req, res, next) => {
       column: { lineManager: loggedInUserId }
     };
     const data = await findOneIncludeModel(Request, requestId, table2);
-
-    const requestLineManagerId = data.User.lineManager;
-    const manager = loggedInUserId === requestLineManagerId;
-    if (!manager) {
-      return response(res, 401, 'error', {
-        message: messages.unauthorized
-      });
-    }
+    const { dataValues: { User: { dataValues: requester }, ...request } } = data;
+    const isManager = loggedInUserId === data.User.lineManager;
+    if (!isManager) return response(res, 401, 'error', { message: messages.unauthorized });
+    req.request = request;
+    req.requester = requester;
     next();
   } catch (error) {
     return response(res, 500, 'error', {
-      errors: error
+      errors: error.message
     });
   }
 };
