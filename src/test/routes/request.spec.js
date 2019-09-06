@@ -1,32 +1,38 @@
-import { Op } from 'sequelize';
 import {
   app, chai, expect, sinon, BACKEND_BASE_URL, messages
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
 import authHelper from '../../utils/authHelper';
+import roles from '../../utils/roles';
 
-const { Request, User } = models;
-const { userMock } = mockData;
+const { Request } = models;
+const {
+  userMock: {
+    userId, anotherManagerId, requesterId, noLineManager
+  }, requestMock
+} = mockData;
 const {
   validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
   validMultiCityRequest, multiCityBadRequest, requestToBeRejected
-} = mockData.requestMock;
+} = requestMock;
 const { generateToken } = authHelper;
 
 describe('REQUESTS', () => {
-  let user, token, unassignedUser, unassignedUserToken, validManagerToken;
+  let token, unassignedUserToken, managerToken, superAdmin;
   const requestTripEndpoint = `${BACKEND_BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BACKEND_BASE_URL}/search/requests`;
   const rejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.requestId}`;
+  const acceptRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/accept/${requestToBeRejected.requestId}`;
+  const invalidRejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.wrongRequestId}`;
+  const { REQUESTER, SUPER_ADMIN, MANAGER } = roles;
 
   before(async () => {
-    user = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
-    unassignedUser = await User.findOne({ where: { lineManager: { [Op.eq]: null } } });
-    token = `Bearer ${generateToken({ id: user.id })}`;
-    unassignedUserToken = `Bearer ${generateToken({ id: unassignedUser.id })}`;
-    validManagerToken = generateToken({ id: `${userMock.validLineManager}` });
+    token = `Bearer ${generateToken({ id: requesterId, roleId: REQUESTER })}`;
+    managerToken = `Bearer ${generateToken({ id: anotherManagerId, roleId: MANAGER })}`;
+    superAdmin = `Bearer ${generateToken({ id: userId, roleId: SUPER_ADMIN })}`;
+    unassignedUserToken = `Bearer ${generateToken({ id: noLineManager, roleId: REQUESTER })}`;
   });
 
   describe('POST /requests', () => {
@@ -169,7 +175,16 @@ describe('REQUESTS', () => {
 
   describe('GET /requests/user/:userId', () => {
     it('should get a users requests', async () => {
-      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}`)
+        .set('authorization', token);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a users requests when userId is not provided', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?page=2&perPage=1`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -178,7 +193,7 @@ describe('REQUESTS', () => {
     });
 
     it('should get a users requests when "page" and "perPage" are passed to the req.query', async () => {
-      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}?page=2&perPage=1`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}&page=2&perPage=1`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -187,7 +202,7 @@ describe('REQUESTS', () => {
     });
 
     it('should return a message if result is empty', async () => {
-      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/${user.id}?page=5&perPage=2`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}&page=5&perPage=2`)
         .set('authorization', token);
       const { body: { data: { message }, status } } = response;
       expect(response.status).to.equal(200);
@@ -254,10 +269,71 @@ describe('REQUESTS', () => {
         it('should return 201 response when trip is rejected', async () => {
           const response = await chai.request(app)
             .patch(rejectRequestTripEndpoint)
-            .set('Authorization', `Bearer ${validManagerToken}`);
+            .set('Authorization', managerToken);
           expect(response.status).to.equal(201);
         });
+
+        it('should return 201 response when trip is rejected', async () => {
+          const response = await chai.request(app)
+            .patch(acceptRequestTripEndpoint)
+            .set('Authorization', managerToken);
+          expect(response.status).to.equal(201);
+        });
+
+        it('should return 404 response when requestId is wrong', async () => {
+          const response = await chai.request(app)
+            .patch(invalidRejectRequestTripEndpoint)
+            .set('Authorization', managerToken);
+          expect(response.status).to.equal(404);
+        });
       });
+    });
+  });
+
+  describe('GET /requests/manager/:userId', () => {
+    it('should get a managers requests', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager/?userId=${anotherManagerId}`)
+        .set('authorization', managerToken);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a managers requests if userId is not passed to query', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager`)
+        .set('authorization', managerToken);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a managers requests if super admin is logged in', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager/?userId=${anotherManagerId}`)
+        .set('authorization', superAdmin);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a managers requests when "page" and "perPage" are passed to the req.query', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager/?userId=${anotherManagerId}&page=1&perPage=1`)
+        .set('authorization', managerToken);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should return a message if result is empty', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager/?userId=${anotherManagerId}&page=5&perPage=2`)
+        .set('authorization', managerToken);
+      const { body: { data: { message }, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(message).to.equal(messages.noRequests);
     });
   });
 });

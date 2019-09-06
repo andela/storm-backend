@@ -21,7 +21,7 @@ export default {
         phoneNo: '2347032123304',
         password: hashPassword('jammy11167'),
         verified: true,
-        roleId: roles.SUPER_ADMIN,
+        roleId: roles.SUPER_ADMIN
       },
       {
         id: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
@@ -32,6 +32,7 @@ export default {
         phoneNo: null,
         verified: false,
         roleId: roles.MANAGER,
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5'
       }, {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         firstName: 'Police',
@@ -40,7 +41,7 @@ export default {
         password: hashPassword('polly11167'),
         phoneNo: '2347032123404',
         verified: true,
-        roleId: roles.REQUESTER,
+        roleId: roles.MANAGER,
       }, {
         id: '83b2a3e7-9ba4-4d3f-b3a3-d31940ee2edc',
         firstName: 'Mr',
@@ -60,7 +61,18 @@ export default {
         password: hashPassword('requestman'),
         phoneNo: '2347032746854',
         lineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+        roleId: roles.REQUESTER,
         verified: true
+      }, {
+        id: '3e747d71-4fa1-4934-af9d-13926eb2d063',
+        firstName: 'Mrs',
+        lastName: 'Somebody',
+        email: 'freewoman@gmail.com',
+        password: hashPassword('polly123456'),
+        phoneNo: '2347032123509',
+        verified: true,
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        roleId: roles.REQUESTER,
       }
     ], {});
   },

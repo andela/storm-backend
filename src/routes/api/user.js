@@ -158,21 +158,20 @@ const userRoute = (router) => {
      */
 
     .get(verifyEmail);
-  router.route('/users/:userId')
+  router.route('/users')
     /**
      * @swagger
      * paths:
-     *  /api/v1/users/{userId}:
+     *  /api/v1/users:
      *    get:
      *     tags:
      *       - Users
      *     summary: Get one user's details
      *     parameters:
-     *       - in: path
+     *       - in: query
      *         name: userId
      *         schema:
      *           type: string
-     *         required: true
      *     responses:
      *       200:
      *         description: User deatails fetched successfully
@@ -183,7 +182,8 @@ const userRoute = (router) => {
      *     security:
      *       - bearerAuth: [ ]
     */
-    .get(checkToken, validate(getUserSchema), checkUserId, getUserDetailsById)
+    .get(checkToken, validate(getUserSchema), checkUserId, getUserDetailsById);
+  router.route('/users/:userId')
     /**
      * @swagger
      *  paths:

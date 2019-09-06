@@ -3,12 +3,11 @@
  * @function calculateLimitAndOffset
  * @param {number} page page number to get
  * @param {number} perPage number of items per page/request
- * @param {number} defaultLimit default items per page = 50
  * @returns {object} returns object containing limit and offset
  */
-export const calculateLimitAndOffset = (page, perPage, defaultLimit = 20) => {
-  const offset = (page ? Number(page) - 1 : 0) * (perPage ? Number(perPage) : defaultLimit);
-  const limit = perPage ? Number(perPage) : defaultLimit;
+export const calculateLimitAndOffset = (page, perPage) => {
+  const offset = (page ? Number(page) - 1 : 0) * (perPage ? Number(perPage) : 20);
+  const limit = perPage ? Number(perPage) : 20;
   return { offset, limit };
 };
 
@@ -18,13 +17,12 @@ export const calculateLimitAndOffset = (page, perPage, defaultLimit = 20) => {
  * @param {number} perPage number of items per page/request
  * @param {number} count total number of items
  * @param {array} rows items
- * @param {number} defaultLimit default items per page = 20
  * @returns {object} return the meta for pagination
  */
-export const paginate = (page, perPage, count, rows, defaultLimit = 20) => {
+export const paginate = (page, perPage, count, rows) => {
   const meta = {
     page: Number(page) || 1,
-    pageCount: Math.ceil(count / (perPage ? Number(perPage) : defaultLimit)),
+    pageCount: Math.ceil(count / (perPage ? Number(perPage) : 20)),
     pageSize: rows.length,
     count
   };
