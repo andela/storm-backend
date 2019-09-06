@@ -29,7 +29,10 @@ const messages = {
   noImage: 'No Image found',
   acceptedTripRequest: 'Trip request successfully accepted',
   rejectedTripRequest: 'Trip request successfully rejected',
-  requestNotFoundId: 'Request not found'
+  requestNotFoundId: 'Request not found',
+  notExistAccommodation: 'Accommodation not found',
+  lowercase: 'Room types should be in lower case',
+  invalidRoom: (roomType) => `${roomType} not present in accommodation`
 };
 
 export default messages;

@@ -8,10 +8,7 @@ const requestTripSchema = Joi.object({
   type: tripTypeSchema.required(),
   originCity: validateRequiredString,
   destinationCity: validateRequiredString,
-  departureDate: JoiValidator.validateDate().required().when('returnDate', {
-    is: Joi.required(),
-    then: Joi.date().less(Joi.ref('returnDate')),
-  }),
+  departureDate: JoiValidator.compareDate('returnDate').required(),
   returnDate: JoiValidator.validateDate().when('type', {
     is: Joi.valid('return'),
     then: Joi.required(),

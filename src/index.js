@@ -13,7 +13,6 @@ import db from './models';
 import { cloudinaryConfig } from './config/cloudinaryConfig';
 
 
-
 // Instance of express app
 const app = express();
 
