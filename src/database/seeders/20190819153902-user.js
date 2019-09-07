@@ -11,7 +11,8 @@ export default {
         email: 'linemanager@gmail.com',
         password: hashPassword('Password'),
         phoneNo: '2347033545645',
-        verified: true
+        verified: true,
+        roleId: roles.MANAGER,
       },
       {
         id: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
@@ -42,6 +43,7 @@ export default {
         phoneNo: '2347032123404',
         verified: true,
         roleId: roles.MANAGER,
+        lineManager: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
       }, {
         id: '83b2a3e7-9ba4-4d3f-b3a3-d31940ee2edc',
         firstName: 'Mr',
@@ -72,6 +74,7 @@ export default {
         phoneNo: '2347032123509',
         verified: true,
         lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        verified: true,
         roleId: roles.REQUESTER,
       }
     ], {});

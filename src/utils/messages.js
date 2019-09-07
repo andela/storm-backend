@@ -32,7 +32,8 @@ const messages = {
   requestNotFoundId: 'Request not found',
   notExistAccommodation: 'Accommodation not found',
   lowercase: 'Room types should be in lower case',
-  invalidRoom: (roomType) => `${roomType} not present in accommodation`
+  invalidRoom: (roomType) => `${roomType} not present in accommodation`,
+  noComment: 'No comment was found for this request',
 };
 
 export default messages;
