@@ -6,7 +6,7 @@ const validAccommodationDetail = {
   address: '2, Alausa Ikeja',
   accommodation: 'OrientalHotel',
   accommodationType: ['Hotel', 'Motel'],
-  roomType: ['Single', 'Double'],
+  roomType: ['single', 'double'],
   numOfRooms: 50,
   description: 'The best hotel in lagos state',
   facilities: ['Free-Wifi', 'Television', 'Parking space'],
@@ -19,14 +19,48 @@ const inValidAccommodationDetail = {
   address: '2, Alausa Ikeja',
   accommodation: 'OrientalHotel',
   accommodationType: ['Hotel', 'Motel'],
-  roomType: ['Single', 'Double'],
+  roomType: ['single', 'double'],
   numOfRooms: 50,
   description: 'The best hotel in lagos state',
   facilities: ['Free-Wifi', 'Television', 'Parking space'],
 };
 
+const validBookingDetails = {
+  tripRequestId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
+  typeOfRoom: ['single', 'double'],
+  numOfRooms: 1,
+  adults: 2,
+  children: 0,
+  checkIn: '2019-09-03',
+  checkOut: '2019-09-06'
+};
+
+const inValidBookingDetails = {
+  tripRequestId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
+  typeOfRoom: ['Single'],
+  numOfRooms: 1,
+  adults: 2,
+  children: 0,
+  checkIn: '2019-09-03',
+  checkOut: '2019-09-06'
+};
+
+
+const inValidBookingDate = {
+  tripRequestId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
+  typeOfRoom: ['single'],
+  numOfRooms: 1,
+  adults: 2,
+  children: 0,
+  checkIn: '2019-09-09',
+  checkOut: '2019-09-06'
+};
+
 export {
   validAccommodationDetail,
   inValidAccommodationDetail,
+  validBookingDetails,
+  inValidBookingDetails,
+  inValidBookingDate,
   userId
 };

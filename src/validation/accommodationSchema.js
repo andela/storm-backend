@@ -2,6 +2,13 @@ import Joi from '@hapi/joi';
 import JoiValidator from './JoiValidator';
 import messages from '../utils/messages';
 
+const err = () => messages.lowercase;
+
+const validRoomType = JoiValidator.validArray().items(Joi.string()
+  .regex(/^[a-z]+$/).required().error(err)).error(err);
+const validRoomNumber = JoiValidator.validateNumber().required();
+const isValidId = JoiValidator.validateUuidV4().required();
+
 const accommodationSchema = Joi.object({
   country: JoiValidator.validateString().valid('Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina',
     'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados',
@@ -31,11 +38,25 @@ const accommodationSchema = Joi.object({
   address: JoiValidator.validateString().required(),
   accommodation: JoiValidator.validateString().required(),
   accommodationType: JoiValidator.validArray(JoiValidator.validateString()).required(),
-  roomType: JoiValidator.validArray(JoiValidator.validateString()).required(),
-  numOfRooms: JoiValidator.validateNumber().required(),
+  roomType: validRoomType,
+  numOfRooms: validRoomNumber,
   description: JoiValidator.validateString().required(),
   facilities: JoiValidator.validArray(JoiValidator.validateString()).required(),
   images: JoiValidator.validateString()
 });
 
-export default accommodationSchema;
+const bookAccommodationSchema = Joi.object({
+  accommodationId: isValidId,
+  typeOfRoom: validRoomType,
+  numOfRooms: validRoomNumber,
+  tripRequestId: isValidId,
+  checkIn: JoiValidator.compareDate('checkOut').required(),
+  checkOut: JoiValidator.validateDate().required(),
+  adults: JoiValidator.validateNumber().min(1),
+  children: JoiValidator.validateNumber().min(0)
+});
+
+export {
+  accommodationSchema,
+  bookAccommodationSchema
+};

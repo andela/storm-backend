@@ -1,11 +1,11 @@
 import messages from '../utils/messages';
 import response from '../utils/response';
 import userRoute from './api/user';
-import requestRoute from './api/request';
+import { requestRoute, searchRequestRoute } from './api/request';
 import notificationRoutes from './api/notification';
 import authRoute from './api/auth';
 import chatRoutes from './api/chat';
-import accommodationRoute from './api/accommodation';
+import { accommodationRoute, bookAccommodationRoute } from './api/accommodation';
 import mostDestinationRoutes from './api/mostdestination';
 
 const routes = (router) => {
@@ -57,6 +57,10 @@ const routes = (router) => {
   accommodationRoute(router);
   // Most Destination routes
   mostDestinationRoutes(router);
+  // admin can search request
+  searchRequestRoute(router);
+  // book accommodation facility
+  bookAccommodationRoute(router);
 };
 
 export default routes;

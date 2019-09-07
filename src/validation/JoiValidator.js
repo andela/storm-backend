@@ -84,6 +84,18 @@ const JoiValidation = {
   */
   validateBoolean() {
     return Joi.boolean();
+  },
+
+  /**
+   * Object schema creator
+   * @param {endDate} endDate -string
+   * @returns {object} - object schema
+   */
+  compareDate(endDate) {
+    return Joi.date().when(endDate, {
+      is: Joi.required(),
+      then: Joi.date().less(Joi.ref(endDate)),
+    });
   }
 };
 

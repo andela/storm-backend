@@ -256,7 +256,9 @@ const requestRoute = (router) => {
       checkToken, authorize([MANAGER, SUPER_ADMIN]),
       validate(getUserRequestSchema), checkUserId, getManagerRequest
     );
+};
 
+const searchRequestRoute = (router) => {
   router.route('/search/requests')
   /**
      * @swagger
@@ -489,4 +491,4 @@ const requestRoute = (router) => {
       verifyRequestLineManager, updateApprovalStatus);
 };
 
-export default requestRoute;
+export { requestRoute, searchRequestRoute };
