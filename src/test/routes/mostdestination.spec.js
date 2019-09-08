@@ -13,7 +13,7 @@ let managerToken;
 
 const { requestMock: { requestToBeAccepted }, userMock: { anotherManagerId } } = mockData;
 
-const acceptRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/accept/${requestToBeAccepted.requestId}`;
+const acceptRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/accept/${requestToBeAccepted.requestId}?confirmation=true`;
 const endpoint = `${BACKEND_BASE_URL}/mostdestination`;
 
 const user = { data: {}, token: '' };
