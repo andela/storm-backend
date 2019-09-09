@@ -34,7 +34,7 @@ const sendViaApp = (id, title, body, actionLink) => client.trigger(`${id}`, 'not
  * @returns {null} - null
  */
 // eslint-disable-next-line object-curly-newline
-export const createNotification = async ({ sender, receiver, type, ref }) => {
+export const createNotification = async ({ sender, receiver, type, ref }, inAppOnly) => {
   // title - Notification title
   // body - Notification body
   // actionLink - Redirect url from email or browser notification pane
@@ -47,9 +47,11 @@ export const createNotification = async ({ sender, receiver, type, ref }) => {
     sender: sender.id, receiver: receiver.id, message: body, type, ref
   });
 
-  receiver.emailNotificationEnabled && sendViaEmail(
-    receiver.email, title, createEmailTemplate(title, body, actionLink, actionText)
-  );
+  if (!inAppOnly) {
+    receiver.emailNotificationEnabled && sendViaEmail(
+      receiver.email, title, createEmailTemplate(title, body, actionLink, actionText)
+    );
+  }
   sendViaApp(receiver.id, title, body, actionLink);
 };
 
