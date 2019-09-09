@@ -9,30 +9,32 @@ import roles from '../../utils/roles';
 const { Request } = models;
 const {
   userMock: {
-    userId, anotherManagerId, requesterId, noLineManager
+    userId, anotherManagerId, requesterId, noLineManager, editRequesterUserId
   }, requestMock
 } = mockData;
 const {
   validTripRequest, badInputTripRequest, oneWayTripRequestWithReturnDate,
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
-  validMultiCityRequest, multiCityBadRequest, requestToBeRejected
+  validMultiCityRequest, multiCityBadRequest, requestToBeRejected, requestToBeEdited
 } = requestMock;
 
 
 describe('REQUESTS', () => {
-  let token, unassignedUserToken, managerToken, superAdmin;
+  let token, unassignedUserToken, managerToken, superAdmin, editRequesterIdToken;
   const requestTripEndpoint = `${BACKEND_BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BACKEND_BASE_URL}/search/requests`;
   const rejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.requestId}`;
   const acceptRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/accept/${requestToBeRejected.requestId}`;
   const invalidRejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.wrongRequestId}`;
   const { REQUESTER, SUPER_ADMIN, MANAGER } = roles;
+  const editRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/edit/${requestToBeEdited.requestId}`;
 
   before(async () => {
     token = `Bearer ${generateToken({ id: requesterId, roleId: REQUESTER })}`;
     managerToken = `Bearer ${generateToken({ id: anotherManagerId, roleId: MANAGER })}`;
     superAdmin = `Bearer ${generateToken({ id: userId, roleId: SUPER_ADMIN })}`;
     unassignedUserToken = `Bearer ${generateToken({ id: noLineManager, roleId: REQUESTER })}`;
+    editRequesterIdToken = generateToken({ id: `${editRequesterUserId}` });
   });
 
   describe('POST /requests', () => {
@@ -293,6 +295,16 @@ describe('REQUESTS', () => {
             .patch(invalidRejectRequestTripEndpoint)
             .set('Authorization', managerToken);
           expect(response.status).to.equal(404);
+        });
+      });
+
+      describe('USER EDITS TRIP REQUEST', () => {
+        it('should return 201 response when trip request is edited', async () => {
+          const response = await chai.request(app)
+            .put(editRequestTripEndpoint)
+            .set('authorization', `Bearer ${editRequesterIdToken}`)
+            .send(requestToBeEdited.requestBody);
+          expect(response.status).to.equal(201);
         });
       });
     });

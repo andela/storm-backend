@@ -3,16 +3,26 @@ import validate from '../../middlewares/validator';
 import requestSchema from '../../validation/requestSchema';
 import { checkToken, checkUserId } from '../../middlewares/userMiddlewares';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
-import { verifyRequestLineManager, checkRequestId } from '../../middlewares/requestMiddlewares';
+import { verifyRequestLineManager, checkRequestId, verifyEditRequestAuthorization } from '../../middlewares/requestMiddlewares';
 import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
 import requestConfirmation from '../../middlewares/confirmationMiddleware';
 
 const {
-  requestTrip, getUserRequest, searchRequest, updateApprovalStatus, getManagerRequest
+  requestTrip,
+  getUserRequest,
+  searchRequest,
+  updateApprovalStatus,
+  updateTripRequest,
+  getManagerRequest
 } = requestController;
+
 const {
-  requestTripSchema, getUserRequestSchema, searchRequestTripSchema, requestIdSchema
+  requestTripSchema,
+  getUserRequestSchema,
+  searchRequestTripSchema,
+  requestIdSchema,
+  subrequestTripSchema
 } = requestSchema;
 
 const { MANAGER, SUPER_ADMIN } = roles;
@@ -500,6 +510,195 @@ const searchRequestRoute = (router) => {
    */
     .patch(checkToken, validate(requestIdSchema), checkRequestId,
       verifyRequestLineManager, requestConfirmation, updateApprovalStatus);
+
+  router.route('/requests/edit/:requestId')
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    editRequest:
+   *      properties:
+   *        type:
+   *          type: string
+   *          enum: [return, one-way]
+   *        originCity:
+   *          type: string
+   *          example: Gotham City
+   *        destinationCity:
+   *          type: string
+   *          example: Central City
+   *        departureDate:
+   *          type: string
+   *          example: 19 Sep 2019 21:03:25
+   *        returnDate:
+   *          type: string
+   *          example: 10 Sep 2020 21:03:25
+   *        reason:
+   *          type: string
+   *          example: Meet barry allen
+   *        accommodation:
+   *          type: string
+   *          example: Star Labs
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/requests/edit/{requestId}:
+   *   put:
+   *     tags:
+   *       - Requests
+   *     description: Edit trip request
+   *     parameters:
+   *       - in: path
+   *         name: requestId
+   *         schema:
+   *           type: string
+   *         required: true
+   *     produces:
+   *       - application/json
+   *     requestBody:
+   *      description: Updated request
+   *      required: true
+   *      content:
+   *       application/json:
+   *          schema:
+   *            $ref: '#/components/schemas/editRequest'
+   *     responses:
+   *       201:
+   *         description: Trip request successfully updated
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  allOf:
+   *                    - $ref: '#/components/schemas/editRequest'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+   */
+    .put([
+      checkToken,
+      checkBlacklist,
+      validate(requestIdSchema),
+      validate(requestTripSchema),
+      verifyEditRequestAuthorization,
+      updateTripRequest
+    ]);
+
+  router.route('/subrequests/edit/:requestId')
+  /**
+   *
+   * @swagger
+   * components:
+   *  schemas:
+   *    editSubRequest:
+   *      properties:
+   *        originCity:
+   *          type: string
+   *          example: Metropolis City
+   *        destinationCity:
+   *          type: string
+   *          example: Atlantis
+   *        departureDate:
+   *          type: string
+   *          example: 15 Sep 2020 21:03:25
+   *        reason:
+   *          type: string
+   *          example: Meet AquaMan
+   *        accommodation:
+   *          type: string
+   *          example: Pacific Ocean
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/subrequests/edit/{requestId}:
+   *   put:
+   *     tags:
+   *       - Requests
+   *     description: Edit trip subrequest
+   *     parameters:
+   *       - in: path
+   *         name: requestId
+   *         schema:
+   *           type: string
+   *         required: true
+   *     produces:
+   *       - application/json
+   *     requestBody:
+   *      description: Updated subrequest
+   *      required: true
+   *      content:
+   *       application/json:
+   *          schema:
+   *            $ref: '#/components/schemas/editSubRequest'
+   *     responses:
+   *       201:
+   *         description: Trip request successfully updated
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  allOf:
+   *                    - $ref: '#/components/schemas/editSubRequest'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+   */
+    .put([
+      checkToken,
+      checkBlacklist,
+      validate(requestIdSchema),
+      validate(subrequestTripSchema),
+      verifyEditRequestAuthorization,
+      updateTripRequest
+    ]);
 };
 
 export { requestRoute, searchRequestRoute };

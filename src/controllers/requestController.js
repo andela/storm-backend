@@ -167,8 +167,8 @@ const updateApprovalStatus = async (req, res) => {
     const { requestId } = req.params;
     const { id: userId } = req.decoded;
     const options = { returning: true, where: { id: requestId } };
-    const action = await req.url.match(/\/requests\/([a-z]+).*/);
-    switch (action[1]) {
+    const [, action] = req.url.match(/\/requests\/([a-z]+).*/);
+    switch (action) {
       case 'accept':
         approvalStatusValue = 'accepted';
         approvalStatusMessage = acceptedTripRequest;
@@ -186,7 +186,7 @@ const updateApprovalStatus = async (req, res) => {
     await createNotification({
       sender: manager,
       receiver: req.requester,
-      type: action[1] === 'accept' ? 'approvedRequest' : 'rejectedRequest',
+      type: action === 'accept' ? 'approvedRequest' : 'rejectedRequest',
       ref: requestId
     });
     if (approvalStatusValue === 'accepted') {
@@ -198,10 +198,31 @@ const updateApprovalStatus = async (req, res) => {
   }
 };
 
+/**
+ * update request controller
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const updateTripRequest = async (req, res) => {
+  try {
+    const { requestType, body, params: { requestId } } = req;
+    const data = body;
+    const model = (requestType === 'requests') ? Request : Subrequest;
+    const options = { where: { id: requestId }, returning: true };
+    const updatedRequest = await update(model, data, options);
+    const [, [updatedRow]] = updatedRequest;
+    return response(res, 201, 'success', updatedRow);
+  } catch (error) {
+    return response(res, 500, 'error', { message: error.message });
+  }
+};
+
 export default {
   requestTrip,
   getUserRequest,
   searchRequest,
   updateApprovalStatus,
-  getManagerRequest
+  getManagerRequest,
+  updateTripRequest
 };

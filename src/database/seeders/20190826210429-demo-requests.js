@@ -11,7 +11,8 @@ export default {
         returnDate: '02-08-2017',
         reason: 'Check stocks',
         accommodation: 'Great Istanbul Arena',
-        approvalStatus: 'pending'
+        approvalStatus: 'pending',
+        multiCity: false
       },
       {
         id: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
@@ -23,8 +24,9 @@ export default {
         returnDate: '02-08-2017',
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
-        approvalStatus: 'accepted'
-      },
+        approvalStatus: 'accepted',
+        multiCity: false
+      }, 
       {
         id: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         type: 'return',
@@ -35,8 +37,9 @@ export default {
         returnDate: '02-08-2018',
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
-        approvalStatus: 'accepted'
-      },
+        approvalStatus: 'accepted',
+        multiCity: false
+      }, 
       {
         id: 'b2092fb0-502a-4105-961f-2d310d340168',
         type: 'return',
@@ -47,7 +50,8 @@ export default {
         reason: 'vacation',
         accommodation: 'Hotel Transylvania',
         userId: '3e747d71-4fa1-4934-af9d-13926eb2d063',
-        approvalStatus: 'accepted'
+        approvalStatus: 'accepted',
+        multiCity: false
       }, {
         id: 'd2b80fd4-e9f2-4c2d-b56c-fabc41821f7d',
         type: 'return',
@@ -58,7 +62,8 @@ export default {
         returnDate: '02-08-2018',
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
-        approvalStatus: 'accepted'
+        approvalStatus: 'accepted',
+        multiCity: false
       }, {
         id: '3e747d71-4fa1-4934-af9d-13926eb2d063',
         type: 'return',
@@ -69,7 +74,8 @@ export default {
         returnDate: '02-08-2018',
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
-        approvalStatus: 'pending'
+        approvalStatus: 'pending',
+        multiCity: false
       },
       {
         id: 'ba94c67b-1d18-4628-ab12-ce2efe46f00b',
@@ -81,8 +87,35 @@ export default {
         returnDate: '02-08-2018',
         reason: 'Annual meeting',
         accommodation: 'Eko Hotels & Suites',
-        approvalStatus: 'accepted'
+        approvalStatus: 'accepted',
+        multiCity: false
       },
+      {
+        id: '0fcda9b7-e17f-4162-88ed-ded031063e53',
+        userId: 'c1b0a0fc-7536-4152-8837-6a5348ba9566',
+        type: 'return',
+        originCity: 'Gotham City',
+        destinationCity: 'Metropolis',
+        departureDate: '2019-11-21 17:59:04.305+00',
+        returnDate: '2020-08-21 17:59:04.305+00',
+        reason: 'Meet Superman',
+        accommodation: 'Metropolis Hotel',
+        approvalStatus: 'pending',
+        multiCity: true
+      },
+      {
+        id: '707969c1-a4c1-4f58-a683-b86f01a94e31',
+        userId: 'c1b0a0fc-7536-4152-8837-6a5348ba9566',
+        type: 'return',
+        originCity: 'Metropolis',
+        destinationCity: 'Gotham City',
+        departureDate: '2019-10-21 17:59:04.305+00',
+        returnDate: '2020-03-21 17:59:04.305+00',
+        reason: 'Kill The Joker',
+        accommodation: 'Wayne Mansion',
+        approvalStatus: 'accepted',
+        multiCity: false
+      }
     ], {});
   },
   down: (queryInterface, Sequelize) => {

@@ -19,6 +19,15 @@ const requestTripSchema = Joi.object({
   subRequest: JoiValidator.validateArray()
 });
 
+const subrequestTripSchema = Joi.object({
+  requestId: JoiValidator.validateUuidV4().required(),
+  originCity: validateRequiredString,
+  destinationCity: validateRequiredString,
+  departureDate: JoiValidator.validateDate().required(),
+  reason: validateRequiredString,
+  accommodation: validateRequiredString
+});
+
 const getUserRequestSchema = Joi.object({
   userId: JoiValidator.validateUuidV4(),
   page: JoiValidator.validateNumber().min(1),
@@ -45,6 +54,7 @@ const requestIdSchema = Joi.object({
 
 export default {
   requestTripSchema,
+  subrequestTripSchema,
   getUserRequestSchema,
   searchRequestTripSchema,
   requestIdSchema
