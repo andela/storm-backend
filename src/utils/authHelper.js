@@ -10,7 +10,7 @@ const secret = process.env.SECRET_KEY;
    * @param {String} expiresIn jwt expiry date
    * @returns {String} - jwt token
    */
-const generateToken = (payload, expiresIn = '7 days') => {
+export const generateToken = (payload, expiresIn = '7 days') => {
   const token = jwt.sign({ ...payload }, secret, { expiresIn });
   return token;
 };
