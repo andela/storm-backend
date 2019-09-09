@@ -1,14 +1,14 @@
 import {
   app, chai, expect, BACKEND_BASE_URL, messages,
 } from '../testHelpers/config';
+import { generateToken } from '../../utils/authHelper';
 import {
   validAccommodationDetail, inValidAccommodationDetail, userId,
   validBookingDetails, inValidBookingDetails, inValidBookingDate
 } from '../mockData/accommodationMock';
-import authHelper from '../../utils/authHelper';
 
-const { generateToken } = authHelper;
 let id;
+
 
 describe('Create Accommodation', () => {
   const accommodationEndpoint = `${BACKEND_BASE_URL}/accommodation`;

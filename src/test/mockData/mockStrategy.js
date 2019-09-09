@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import passport from 'passport-strategy';
 import util from 'util';
 import user from './mockProfile';

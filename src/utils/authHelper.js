@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import messages from './messages';
 
 const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
 const secret = process.env.SECRET_KEY;
@@ -10,7 +11,7 @@ const secret = process.env.SECRET_KEY;
    * @param {String} expiresIn jwt expiry date
    * @returns {String} - jwt token
    */
-const generateToken = (payload, expiresIn = '7 days') => {
+export const generateToken = (payload, expiresIn = '7 days') => {
   const token = jwt.sign({ ...payload }, secret, { expiresIn });
   return token;
 };
@@ -25,6 +26,15 @@ export const verifyToken = async (token) => {
   return decoded;
 };
 
+export const verifyResetPasswordToken = async (token) => {
+  const decoded = await jwt.verify(token, process.env.SECRET_KEY, (error) => {
+    if (error) {
+      return { messages: messages.expiredJWT };
+    }
+  });
+  return decoded;
+};
+
 /**
  * @function hashPassword
  * @param {String} password pasword string to be hashed
@@ -33,4 +43,4 @@ export const verifyToken = async (token) => {
  */
 export const hashPassword = (password) => bcrypt.hashSync(password, salt);
 
-export default { generateToken };
+export default { generateToken, verifyResetPasswordToken };

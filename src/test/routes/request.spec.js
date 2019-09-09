@@ -3,7 +3,7 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 import roles from '../../utils/roles';
 
 const { Request } = models;
@@ -17,7 +17,7 @@ const {
   validReturnTripRequest, returnTripRequestWithDepartureGreaterThanReturnDate,
   validMultiCityRequest, multiCityBadRequest, requestToBeRejected
 } = requestMock;
-const { generateToken } = authHelper;
+
 
 describe('REQUESTS', () => {
   let token, unassignedUserToken, managerToken, superAdmin;

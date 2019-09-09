@@ -3,11 +3,11 @@ import {
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 import roles from '../../utils/roles';
 
 const { userMock, roleMock } = mockData;
-const { generateToken } = authHelper;
+
 const { User } = models;
 
 const BACKEND_BASE_URL = '/api/v1';

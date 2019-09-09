@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import models from '../models';
-import authHelper from '../utils/authHelper';
+import { generateToken, verifyResetPasswordToken } from '../utils/authHelper';
 import roles from '../utils/roles';
 import response from '../utils/response';
 import messages from '../utils/messages';
@@ -8,6 +8,7 @@ import {
   create, findByEmail, comparePasswords, findByEmailOrPhone
 } from '../services/userServices';
 import verifyEmailMessage from '../utils/templates/verifyEmailMessage';
+import resetPasswordMessage from '../utils/templates/resetPasswordMessage';
 import roleEmailMessage from '../utils/templates/roleEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
@@ -48,7 +49,7 @@ const signUp = async (req, res) => {
       user: {
         id: createdUser.id,
         email: createdUser.email,
-        token: authHelper.generateToken({ id: createdUser.id, roleId: createdUser.roleId }),
+        token: generateToken({ id: createdUser.id, roleId: createdUser.roleId }),
       }
     };
     const link = `${process.env.BACKEND_BASE_URL}/api/v1/user/verify/${userData.user.token}`;
@@ -74,7 +75,7 @@ const signIn = async (req, res) => {
     const { password: hash, ...data } = user.dataValues;
     const passwordsMatch = await comparePasswords(password, hash);
     if (!passwordsMatch) return response(res, 400, 'error', { message: messages.incorrectPassword });
-    const token = authHelper.generateToken({ id: data.id, roleId: data.roleId });
+    const token = generateToken({ id: data.id, roleId: data.roleId });
     return response(res, 200, 'success', { ...data, token });
   } catch (error) {
     response(res, 500, 'error', { error: error.message });
@@ -211,7 +212,7 @@ const socialAuth = async (req, res) => {
     const {
       id, email
     } = req.user;
-    const token = authHelper.generateToken({ id });
+    const token = generateToken({ id });
     let URI = encodeURI(`${FRONTEND_BASE_URL}/?callback=social&userId=${id}&email=${email}&token=${token}`);
     if (process.env.NODE_ENV === 'test') {
       URI = encodeURI(`${FRONTEND_BASE_URL}/?callback=social&userId=${id}&email=${email}&token=automaticgeneratedtoken`);
@@ -219,6 +220,54 @@ const socialAuth = async (req, res) => {
     return res.redirect(URI);
   } catch (err) {
     return response(res, 500, 'error', { message: serverError });
+  }
+};
+/**
+  * Handles user reset password
+  *
+  * @function
+  * @param {Object} req - request object to the server
+  * @param {Object} res - response object from the server
+  *
+  * @returns {Object} - password reset link
+*/
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await findByEmail(email);
+    if (!user) {
+      return response(res, 200, 'success', { message: 'Check your mail to reset your password.' });
+    }
+    const token = generateToken(user.id, '10m');
+    const link = `${process.env.FONTEND_BASE_URL}/reset/password/${user.id}/${token}`;
+    const message = createTemplate(resetPasswordMessage, link);
+    await sendMail(user.email, 'Reset Password', message);
+    return response(res, 200, 'success', { data: { link }, message: message.forgotPassword });
+  } catch (error) {
+    response(res, 500, 'error', { error: error.message });
+  }
+};
+/**
+  * Handles user update password
+  *
+  * @function
+  * @param {Object} req - The request object to the server
+  * @param {Object} res - The response object from the server
+  *
+  * @returns {void} - no data returned
+*/
+const resetPassword = async (req, res) => {
+  try {
+    const { userId, token } = req.params;
+    const { password } = req.body;
+    const user = await User.findByPk(userId);
+    await verifyResetPasswordToken(token);
+    if (!user) return response(res, 404, 'error', { message: messages.userNotFound });
+    const options = { returning: true, where: { id: userId } };
+    const updatedUser = await update(User, { password }, options);
+    return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
+  } catch (error) {
+    response(res, 500, 'error', { error: error.message });
   }
 };
 
@@ -229,5 +278,7 @@ export default {
   logout,
   getUserDetailsById,
   updateUserDetails,
-  setUserRole,
+  forgotPassword,
+  resetPassword,
+  setUserRole
 };

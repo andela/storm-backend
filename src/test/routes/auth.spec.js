@@ -197,7 +197,8 @@ describe('AUTH', () => {
         .get(`${BACKEND_BASE_URL}/auth/google/callback`);
       const { _json: userDetails } = google;
       const { email } = userDetails;
-      const { id: userId } = await findByEmail(email);
+      const googleUserData = await findByEmail(email);
+      const { id: userId } = googleUserData.dataValues;
       res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
     });
 
@@ -207,7 +208,8 @@ describe('AUTH', () => {
         .get(`${BACKEND_BASE_URL}/auth/facebook/callback`);
       const { _json: userDetails } = facebook;
       const { email } = userDetails;
-      const { id: userId } = await findByEmail(email);
+      const facebookUserData = await findByEmail(email);
+      const { id: userId } = facebookUserData.dataValues;
       res.should.redirectTo(`${process.env.FRONTEND_BASE_URL}/?callback=social&userId=${userId}&email=${email}&token=automaticgeneratedtoken`);
     });
   });

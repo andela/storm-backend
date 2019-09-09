@@ -2,10 +2,9 @@ import {
   app, chai, expect, sinon
 } from '../testHelpers/config';
 import models from '../../models';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
 const { User } = models;
-const { generateToken } = authHelper;
 
 const invalidToken = 'invalidToken';
 

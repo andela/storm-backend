@@ -3,9 +3,8 @@ import {
 } from '../testHelpers/config';
 import mockData from '../mockData';
 import models from '../../models';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
-const { generateToken } = authHelper;
 const { User, Chat } = models;
 
 const { chatMock: { validChat, badChatMessage, emptyChatMessage } } = mockData;

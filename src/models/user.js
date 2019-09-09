@@ -87,9 +87,12 @@ export default (Sequelize, DataTypes) => {
       as: 'User',
     });
   };
-
   //  hash user password before creating user
   User.beforeCreate((user) => {
+    if (user.password) { user.password = hashPassword(user.password); }
+  });
+  //  hash user password before updatng user password
+  User.beforeBulkUpdate(({ attributes: user }) => {
     if (user.password) { user.password = hashPassword(user.password); }
   });
   return User;

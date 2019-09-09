@@ -1,7 +1,8 @@
 import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
 import {
-  signUpSchema, signInSchema, updateUserSchema, getUserSchema, setUserRoleSchema,
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema,
+  setUserRoleSchema, emailSchema, passwordSchema
 } from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import verifyEmailController from '../../controllers/emailVerificationController';
@@ -15,6 +16,8 @@ const {
   logout,
   getUserDetailsById,
   updateUserDetails,
+  forgotPassword,
+  resetPassword,
   setUserRole,
 } = userController;
 
@@ -218,6 +221,85 @@ const userRoute = (router) => {
      *          - bearerAuth: [ ]
     */
     .put(checkToken, validate(updateUserSchema), checkUserId, updateUserDetails);
+  router.route('/forgot/password')
+  /**
+       * @swagger
+       * components:
+       *  schemas:
+       *    forgotPassword:
+       *      properties:
+       *        email:
+       *          type: string
+       */
+    /**
+       * @swagger
+       * /api/v1/forgot/password:
+       *  post:
+       *     tags:
+       *       - Users
+       *     name: Reset Password Link
+       *     summary: Reset Password Link
+       *     consumes:
+       *       - application/json
+       *     requestBody:
+       *      description: User data object
+       *      required: true
+       *      content:
+       *       application/json:
+       *          schema:
+       *            $ref: '#/components/schemas/forgotPassword'
+       *     responses:
+       *       '200':
+       *         description: Check your mail to reset your password
+       *       '403':
+       *         description: Password reset link is invalid or has expired
+       */
+    .post(validate(emailSchema), forgotPassword);
+  router.route('/reset/password/:userId/:token')
+  /**
+       * @swagger
+       * components:
+       *  schemas:
+       *    resetPassword:
+       *      properties:
+       *        password:
+       *          type: string
+       */
+    /**
+           * @swagger
+           *  paths:
+           *    /api/v1/reset/password/{userId}/{token}:
+           *      patch:
+           *        tags:
+           *          - Users
+           *        summary: Update Password
+           *        parameters:
+           *          - in: path
+           *            name: userId
+           *            schema:
+           *              type: string
+           *            required: true
+           *          - in: path
+           *            name: token
+           *            schema:
+           *               type: string
+           *            required: true
+           *        requestBody:
+           *          description: User data object
+           *          required: true
+           *          content:
+           *            application/json:
+           *              schema:
+           *                $ref: '#/components/schemas/resetPassword'
+           *        responses:
+           *          200:
+           *            description: Password updated successfully
+           *          404:
+           *            description: "password is required"
+           *          500:
+           *            description: Internal Server error
+          */
+    .patch(validate(passwordSchema), resetPassword);
 
   router.route('/users/:userId')
     /**
@@ -279,4 +361,5 @@ const userRoute = (router) => {
     .patch(checkToken, validate(setUserRoleSchema),
       authorize([roles.SUPER_ADMIN]), checkUserId, setUserRole);
 };
+
 export default userRoute;

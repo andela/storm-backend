@@ -29,6 +29,15 @@ const updateUserSchema = Joi.object({
   currentLocation: JoiValidator.validateString().required(),
 });
 
+const emailSchema = Joi.object({
+  email: JoiValidator.validateEmail().required(),
+});
+
+const passwordSchema = Joi.object({
+  password: JoiValidator.validatePassword().min(8).alphanum().required(),
+});
+
+
 const getUserSchema = Joi.object({
   userId: JoiValidator.validateUuidV4(),
 });
@@ -40,5 +49,6 @@ const setUserRoleSchema = Joi.object({
 });
 
 export {
-  signUpSchema, signInSchema, updateUserSchema, getUserSchema, setUserRoleSchema,
+  signUpSchema, signInSchema, updateUserSchema, getUserSchema,
+  setUserRoleSchema, emailSchema, passwordSchema
 };

@@ -2,9 +2,8 @@ import {
   app, chai, expect, BACKEND_BASE_URL
 } from '../testHelpers/config';
 import mockData from '../mockData';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 
-const { generateToken } = authHelper;
 const { userMock } = mockData;
 const { requestToBeRejected } = mockData.requestMock;
 
