@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import {
   app, chai, expect, sinon, BACKEND_BASE_URL
 } from '../testHelpers/config';
@@ -8,17 +7,15 @@ import { generateToken } from '../../utils/authHelper';
 
 const { User, Notification } = models;
 
-const { requestMock: { validTripRequest } } = mockData;
+const { requestMock: { validTripRequest }, userMock: { requesterId, anotherManagerId } } = mockData;
 
 const manager = { data: {}, token: '' };
 const requester = { data: {}, token: '' };
 let notification;
 
 before(async () => {
-  requester.data = await User.findOne({ where: { lineManager: { [Op.ne]: null } } });
-  manager.data = await User.findOne({ where: { id: requester.data.lineManager } });
-  manager.token = `Bearer ${generateToken({ id: manager.data.id })}`;
-  requester.token = `Bearer ${generateToken({ id: requester.data.id })}`;
+  manager.token = `Bearer ${generateToken({ id: anotherManagerId })}`;
+  requester.token = `Bearer ${generateToken({ id: requesterId })}`;
 });
 
 describe('Notification', () => {
@@ -124,6 +121,7 @@ describe('Notification', () => {
         });
     });
   });
+
   describe('POST /notification/markAsRead', () => {
     it('should mark a notificaiton as read', (done) => {
       const endpoint = `${BACKEND_BASE_URL}/notification/markAsRead/${notification.id}`;

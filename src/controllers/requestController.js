@@ -1,13 +1,15 @@
 import models from '../models';
 import response from '../utils/response';
+import roles from '../utils/roles';
 import DbServices from '../services/dbServices';
 import { calculateLimitAndOffset, paginate } from '../utils/pagination';
-import findRequest from '../services/requestServices';
+import { findRequest } from '../services/requestServices';
 import messages from '../utils/messages';
 import { findById } from '../services/userServices';
 import { createNotification } from '../services/notificationServices';
+import addOrCreateCounter from '../services/mostDestinationServices';
 
-const { Request, Subrequest } = models;
+const { Request, Subrequest, User } = models;
 const {
   serverError, unauthorizedUserRequest, noRequests, acceptedTripRequest, rejectedTripRequest
 } = messages;
@@ -81,21 +83,19 @@ const requestTrip = async (req, res) => {
 };
 
 /**
- * request trip controller
+ * @function getUserRequest
  * @param {Object} req - server request
  * @param {Object} res - server response
  * @returns {Object} - custom response
 */
 const getUserRequest = async (req, res) => {
   try {
-    const { params, decoded, query } = req;
-    const { userId } = params;
-    if (userId !== decoded.id) {
+    const { decoded: { id, roleId }, query: { page, perPage, userId } } = req;
+    if (userId && (userId !== id && roleId !== roles.SUPER_ADMIN)) {
       return response(res, 403, 'error', { message: unauthorizedUserRequest });
     }
-    const { page, perPage } = query;
     const { limit, offset } = calculateLimitAndOffset(page, perPage);
-    const options = { where: { userId }, limit, offset };
+    const options = { where: { userId: userId || id }, limit, offset };
     const { rows, count } = await getAll(Request, options);
     if (rows.length === 0) return response(res, 200, 'success', { message: noRequests });
     const meta = paginate(page, perPage, count, rows);
@@ -122,6 +122,38 @@ const searchRequest = async (req, res) => {
     return response(res, 400, 'error', { message: messages.error });
   }
 };
+/**
+ * @function getManagerRequest
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const getManagerRequest = async (req, res) => {
+  try {
+    const { decoded: { id, roleId }, query: { page, perPage, userId } } = req;
+    if (userId && (userId !== id && roleId !== roles.SUPER_ADMIN)) {
+      return response(res, 403, 'error', { message: unauthorizedUserRequest });
+    }
+    const { limit, offset } = calculateLimitAndOffset(page, perPage);
+    const options = {
+      where: { approvalStatus: 'pending' },
+      include: [{
+        model: User,
+        as: 'User',
+        where: { lineManager: userId || id },
+        attributes: ['id', 'lineManager'],
+      }],
+      limit,
+      offset
+    };
+    const { rows, count } = await getAll(Request, options);
+    if (rows.length === 0) return response(res, 200, 'success', { message: noRequests });
+    const meta = paginate(page, perPage, count, rows);
+    return response(res, 200, 'success', { requests: rows, meta });
+  } catch (error) {
+    return response(res, 500, 'error', serverError);
+  }
+};
 
 /**
  * reject request controller
@@ -133,6 +165,7 @@ const updateApprovalStatus = async (req, res) => {
   try {
     let approvalStatusValue, approvalStatusMessage;
     const { requestId } = req.params;
+    const { id: userId } = req.decoded;
     const options = { returning: true, where: { id: requestId } };
     const action = await req.url.match(/\/requests\/([a-z]+).*/);
     switch (action[1]) {
@@ -145,17 +178,23 @@ const updateApprovalStatus = async (req, res) => {
         approvalStatusMessage = rejectedTripRequest;
         break;
       default:
-        approvalStatusValue = '';
+        break;
     }
     const updateColumn = { approvalStatus: approvalStatusValue };
     await update(Request, updateColumn, options);
-    return response(res, 201, 'success', {
-      message: approvalStatusMessage
+    const manager = await findById(userId);
+    await createNotification({
+      sender: manager,
+      receiver: req.requester,
+      type: action[1] === 'accept' ? 'approvedRequest' : 'rejectedRequest',
+      ref: requestId
     });
+    if (approvalStatusValue === 'accepted') {
+      await addOrCreateCounter(requestId);
+    }
+    return response(res, 201, 'success', { message: approvalStatusMessage });
   } catch (error) {
-    return response(res, 500, 'error', {
-      message: serverError,
-    });
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 
@@ -163,5 +202,6 @@ export default {
   requestTrip,
   getUserRequest,
   searchRequest,
-  updateApprovalStatus
+  updateApprovalStatus,
+  getManagerRequest
 };

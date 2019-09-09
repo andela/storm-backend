@@ -28,7 +28,12 @@ const messages = {
   inValidCountry: 'Incorrect country',
   noImage: 'No Image found',
   acceptedTripRequest: 'Trip request successfully accepted',
-  rejectedTripRequest: 'Trip request successfully rejected'
+  rejectedTripRequest: 'Trip request successfully rejected',
+  requestNotFoundId: 'Request not found',
+  notExistAccommodation: 'Accommodation not found',
+  lowercase: 'Room types should be in lower case',
+  invalidRoom: (roomType) => `${roomType} not present in accommodation`,
+  noComment: 'No comment was found for this request',
 };
 
 export default messages;

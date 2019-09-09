@@ -39,7 +39,7 @@ const passwordSchema = Joi.object({
 
 
 const getUserSchema = Joi.object({
-  userId: JoiValidator.validateUuidV4().required(),
+  userId: JoiValidator.validateUuidV4(),
 });
 
 const setUserRoleSchema = Joi.object({

@@ -19,6 +19,7 @@
     "import/no-unresolved": [2, { "commonjs": true }],
     "no-shadow": ["error", { "allow": ["req", "res", "err"] }],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true, "optionalDependencies": false, "peerDependencies": false }],
+    "import/prefer-default-export": 0,
     "valid-jsdoc": ["error", {
       "requireReturn": true,
       "requireReturnType": true,

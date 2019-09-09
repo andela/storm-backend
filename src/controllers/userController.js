@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import models from '../models';
 import { generateToken, verifyResetPasswordToken } from '../utils/authHelper';
+import roles from '../utils/roles';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import {
@@ -17,7 +18,7 @@ import redis from '../config/redis';
 const { User, Role } = models;
 const { getById, update, getByOptions } = DbServices;
 const {
-  unauthorizedUserProfile, serverError, phoneExists, roleChanged,
+  unauthorizedUserProfile, serverError, phoneExists, roleChanged, unauthorizedUserRequest
 } = messages;
 const { FRONTEND_BASE_URL } = process.env;
 
@@ -48,7 +49,7 @@ const signUp = async (req, res) => {
       user: {
         id: createdUser.id,
         email: createdUser.email,
-        token: generateToken({ id: createdUser.id }, '7d'),
+        token: generateToken({ id: createdUser.id, roleId: createdUser.roleId }),
       }
     };
     const link = `${process.env.BACKEND_BASE_URL}/api/v1/user/verify/${userData.user.token}`;
@@ -74,7 +75,7 @@ const signIn = async (req, res) => {
     const { password: hash, ...data } = user.dataValues;
     const passwordsMatch = await comparePasswords(password, hash);
     if (!passwordsMatch) return response(res, 400, 'error', { message: messages.incorrectPassword });
-    const token = generateToken({ id: data.id });
+    const token = generateToken({ id: data.id, roleId: data.roleId });
     return response(res, 200, 'success', { ...data, token });
   } catch (error) {
     response(res, 500, 'error', { error: error.message });
@@ -110,9 +111,13 @@ const logout = async (req, res) => {
  */
 const getUserDetailsById = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { MANAGER, SUPER_ADMIN } = roles;
+    const { query: { userId }, decoded: { id, roleId } } = req;
+    if (userId && (userId !== id && ![MANAGER, SUPER_ADMIN].includes(roleId))) {
+      return response(res, 403, 'error', { message: unauthorizedUserRequest });
+    }
     const options = { attributes: { exclude: ['password'] } };
-    const user = await getById(User, userId, options);
+    const user = await getById(User, userId || id, options);
     return response(res, 200, 'success', { user });
   } catch (error) {
     return response(res, 500, 'error', { message: serverError });

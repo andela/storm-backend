@@ -8,10 +8,7 @@ const requestTripSchema = Joi.object({
   type: tripTypeSchema.required(),
   originCity: validateRequiredString,
   destinationCity: validateRequiredString,
-  departureDate: JoiValidator.validateDate().required().when('returnDate', {
-    is: Joi.required(),
-    then: Joi.date().less(Joi.ref('returnDate')),
-  }),
+  departureDate: JoiValidator.compareDate('returnDate').required(),
   returnDate: JoiValidator.validateDate().when('type', {
     is: Joi.valid('return'),
     then: Joi.required(),
@@ -23,7 +20,7 @@ const requestTripSchema = Joi.object({
 });
 
 const getUserRequestSchema = Joi.object({
-  userId: JoiValidator.validateUuidV4().required(),
+  userId: JoiValidator.validateUuidV4(),
   page: JoiValidator.validateNumber().min(1),
   perPage: JoiValidator.validateNumber().min(1)
 });

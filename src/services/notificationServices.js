@@ -39,18 +39,14 @@ export const createNotification = async ({ sender, receiver, type, ref }) => {
   // body - Notification body
   // actionLink - Redirect url from email or browser notification pane
   // actionText - Redirect button text in email
-  let title, body, actionLink, actionText;
-  switch (type) {
-    case 'newRequest':
-      ({ title, body } = Notifications.newTravelRequest(sender));
-      ([actionLink, actionText] = [`/request/${ref}`, 'Respond']);
-      break;
-    default:
-      break;
-  }
+  const {
+    title, body, actionLink, actionText
+  } = Notifications[type](sender, receiver, ref);
+
   await Notification.create({
     sender: sender.id, receiver: receiver.id, message: body, type, ref
   });
+
   receiver.emailNotificationEnabled && sendViaEmail(
     receiver.email, title, createEmailTemplate(title, body, actionLink, actionText)
   );
