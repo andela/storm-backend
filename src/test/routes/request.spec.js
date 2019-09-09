@@ -266,16 +266,24 @@ describe('REQUESTS', () => {
         });
 
       describe('LINE MANAGER REJECTS A TRIP REQUEST', () => {
-        it('should return 201 response when trip is rejected', async () => {
+        it('should return 201 response when confirmation boolean is not passed', async () => {
           const response = await chai.request(app)
             .patch(rejectRequestTripEndpoint)
+            .set('Authorization', managerToken);
+          expect(response.status).to.equal(201);
+          expect(response.body.data.message).to.equal('Please confirm this action by passing confirmation as true as query parameter in your request');
+        });
+
+        it('should return 201 response when trip is rejected', async () => {
+          const response = await chai.request(app)
+            .patch(`${rejectRequestTripEndpoint}?confirmation=true`)
             .set('Authorization', managerToken);
           expect(response.status).to.equal(201);
         });
 
         it('should return 201 response when trip is rejected', async () => {
           const response = await chai.request(app)
-            .patch(acceptRequestTripEndpoint)
+            .patch(`${acceptRequestTripEndpoint}?confirmation=true`)
             .set('Authorization', managerToken);
           expect(response.status).to.equal(201);
         });
