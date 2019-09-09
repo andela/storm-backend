@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import messages from './messages';
 
 const salt = bcrypt.genSaltSync(parseInt(process.env.SALT_ROUNDS, 10));
 const secret = process.env.SECRET_KEY;
@@ -28,7 +29,7 @@ export const verifyToken = async (token) => {
 export const verifyResetPasswordToken = async (token) => {
   const decoded = await jwt.verify(token, process.env.SECRET_KEY, (error) => {
     if (error) {
-      return 'password reset link is invalid or has expired';
+      return { messages: messages.expiredJWT };
     }
   });
   return decoded;

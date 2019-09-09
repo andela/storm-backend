@@ -236,13 +236,13 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
     const user = await findByEmail(email);
     if (!user) {
-      return response(res, 200, 'success');
+      return response(res, 200, 'success', { message: 'Check your mail to reset your password.' });
     }
     const token = generateToken(user.id, '10m');
     const link = `${process.env.FONTEND_BASE_URL}/reset/password/${user.id}/${token}`;
     const message = createTemplate(resetPasswordMessage, link);
     await sendMail(user.email, 'Reset Password', message);
-    return response(res, 200, 'success', { data: { link }, message: 'Check your mail to reset your password.' });
+    return response(res, 200, 'success', { data: { link }, message: message.forgotPassword });
   } catch (error) {
     response(res, 500, 'error', { error: error.message });
   }

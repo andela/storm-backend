@@ -34,6 +34,9 @@ const messages = {
   lowercase: 'Room types should be in lower case',
   invalidRoom: (roomType) => `${roomType} not present in accommodation`,
   noComment: 'No comment was found for this request',
+  expiredJWT: 'password reset link is invalid or has expired',
+  forgotPassword: 'Check your mail to reset your password.',
+  updatePassword: 'Password updated successfully',
 };
 
 export default messages;
