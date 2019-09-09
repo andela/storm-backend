@@ -1,11 +1,14 @@
-const userId = '122a0d86-8b78-4bb8-b28f-8e5f7811c456';
+const travelAdmin = {
+  email: 'kazmobileapp@gmail.com',
+  password: 'Kazeem27'
+};
 
 const validAccommodationDetail = {
   country: 'Nigeria',
   city: 'lagos',
   address: '2, Alausa Ikeja',
   accommodation: 'OrientalHotel',
-  accommodationType: ['Hotel', 'Motel'],
+  accommodationType: 'Hotel',
   roomType: ['single', 'double'],
   numOfRooms: 50,
   description: 'The best hotel in lagos state',
@@ -13,12 +16,22 @@ const validAccommodationDetail = {
   images: '/home/oluwatobi/Pictures/jpeg2000-home.jpg'
 };
 
+const inValidRoomType = {
+  tripRequestId: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
+  typeOfRoom: ['master'],
+  numOfRooms: 1,
+  adults: 2,
+  children: 0,
+  checkIn: '2019-09-03',
+  checkOut: '2019-09-06'
+};
+
 const inValidAccommodationDetail = {
   country: 'Nigeri',
   city: 'lagos',
   address: '2, Alausa Ikeja',
   accommodation: 'OrientalHotel',
-  accommodationType: ['Hotel', 'Motel'],
+  accommodationType: 'Hotel',
   roomType: ['single', 'double'],
   numOfRooms: 50,
   description: 'The best hotel in lagos state',
@@ -62,5 +75,6 @@ export {
   validBookingDetails,
   inValidBookingDetails,
   inValidBookingDate,
-  userId
+  travelAdmin,
+  inValidRoomType,
 };

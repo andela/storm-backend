@@ -9,7 +9,7 @@ module.exports = {
       type: {
         allowNull: false,
         type: Sequelize.ENUM,
-        values: ['requester', 'super-admin', 'manager', 'travel-admin', 'travel-team-member'],
+        values: ['requester', 'super-admin', 'manager', 'travel-admin', 'travel-team-member', 'accommodation-supplier'],
       },
       createdAt: {
         allowNull: true,

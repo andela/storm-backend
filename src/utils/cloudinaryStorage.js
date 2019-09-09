@@ -7,7 +7,7 @@ const storage = cloudinaryStorage({
   transformation: [{
     width: 500, height: 250, crop: 'scale', quality: 'auto'
   }],
-  allowedFormats: ['jpg', 'jpeg', 'png', 'gif'],
+  allowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'svg'],
 });
 
 export default storage;

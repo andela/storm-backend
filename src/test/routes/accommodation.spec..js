@@ -1,25 +1,32 @@
 import {
   app, chai, expect, BACKEND_BASE_URL, messages,
 } from '../testHelpers/config';
-import { generateToken } from '../../utils/authHelper';
 import {
-  validAccommodationDetail, inValidAccommodationDetail, userId,
+  validAccommodationDetail, inValidAccommodationDetail, travelAdmin, inValidRoomType,
   validBookingDetails, inValidBookingDetails, inValidBookingDate
 } from '../mockData/accommodationMock';
-
-let id;
-
 
 describe('Create Accommodation', () => {
   const accommodationEndpoint = `${BACKEND_BASE_URL}/accommodation`;
   const bookAccommodationEndpoint = `${BACKEND_BASE_URL}/book/accommodation`;
+  const signinEndpoint = `${BACKEND_BASE_URL}/user/signin`;
   let token;
-
-  before(async () => {
-    token = generateToken({ id: userId });
-  });
+  let id;
 
   describe('POST /accommodation', () => {
+    it('should generate travel admin token', (done) => {
+      chai
+        .request(app)
+        .post(signinEndpoint)
+        .send(travelAdmin)
+        .end((err, res) => {
+          const { data } = res.body;
+          token = data.token;
+          expect(data).to.have.property('token');
+          done(err);
+        });
+    });
+
     it('should post accommodation successfully', (done) => {
       chai.request(app)
         .post(accommodationEndpoint)
@@ -88,6 +95,20 @@ describe('Create Accommodation', () => {
           expect(data).to.have.property('userId');
           expect(data).to.have.property('typeOfRoom');
           expect(data).to.have.property('numOfRooms');
+          done(err);
+        });
+    });
+
+    it('should return error if room specify is not in accommodation', (done) => {
+      chai.request(app)
+        .post(`${bookAccommodationEndpoint}/${id}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .send(inValidRoomType)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(400);
+          expect(data).to.have.property('message');
           done(err);
         });
     });

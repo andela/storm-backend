@@ -76,7 +76,31 @@ export default {
         lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         verified: true,
         roleId: roles.REQUESTER,
-      }
+      },
+
+      {
+        id: '98686f96-3452-4420-a093-8f2fbba1ff05',
+        firstName: 'Kazeem',
+        lastName: 'Odutola',
+        email: 'kazmobileapp@gmail.com',
+        password: hashPassword('Kazeem27'),
+        phoneNo: '2347039387595',
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        verified: true,
+        roleId: roles.TRAVEL_ADMIN,
+      },
+
+      {
+        id: 'a2ff3c34-4b2b-449e-aa35-6587f56fdff3',
+        firstName: 'Kazeem',
+        lastName: 'Odutola',
+        email: 'odutolak@gmail.com',
+        password: hashPassword('Kazeem27'),
+        phoneNo: '2347032123522',
+        verified: true,
+        lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        roleId: roles.ACCOMMODATION_SUPPLIER,
+      },
     ], {});
   },
   down: (queryInterface, Sequelize) => {
