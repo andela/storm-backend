@@ -5,9 +5,9 @@ import DbServices from '../services/dbServices';
 
 
 const {
-  Accommodation, BookAccomodation, User, Request
+  Accommodation, BookAccomodation, User, Request, AccommodationLike
 } = models;
-const { create, getById } = DbServices;
+const { create, getById, getOrCreate } = DbServices;
 const { serverError } = messages;
 
 /**
@@ -95,6 +95,28 @@ const bookAccommodation = async (req, res) => {
     return response(res, 500, 'error', {
       message: serverError,
     });
+  }
+};
+
+/**
+ * @function likeAccommodation
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ */
+export const likeAccommodation = async (req, res) => {
+  const { decoded: { id }, params: { accommodationId } } = req;
+  try {
+    const options = { where: { userId: id, accommodationId }, defaults: { liked: true } };
+    const [feedback, created] = await getOrCreate(AccommodationLike, options);
+    if (!created) {
+      feedback.liked = !feedback.liked;
+      const savedFeedback = await feedback.save();
+      return response(res, 202, 'success', savedFeedback);
+    }
+    return response(res, 201, 'success', feedback);
+  } catch (error) {
+    return response(res, 500, 'error', { message: serverError });
   }
 };
 

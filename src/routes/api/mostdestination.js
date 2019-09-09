@@ -1,5 +1,6 @@
 import mostDestinationController from '../../controllers/mostDestinationController';
 import { checkToken } from '../../middlewares/userMiddlewares';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
 
 const { getMostDestinations } = mostDestinationController;
 
@@ -70,7 +71,7 @@ const counterRoutes = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .get(checkToken, getMostDestinations);
+    .get(checkToken, checkBlacklist, getMostDestinations);
 };
 
 export default counterRoutes;

@@ -7,6 +7,7 @@ import {
   getAllNotifications,
 } from '../../controllers/notificationController';
 import { checkToken } from '../../middlewares/userMiddlewares';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
 
 const notificationRoutes = (router) => {
   router.route('/notification')
@@ -88,7 +89,7 @@ const notificationRoutes = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .get(checkToken, getAllNotifications);
+    .get(checkToken, checkBlacklist, getAllNotifications);
 
   router.route('/notification/optIn')
     /**
@@ -110,7 +111,7 @@ const notificationRoutes = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .patch(checkToken, handleOptInEmail);
+    .patch(checkToken, checkBlacklist, handleOptInEmail);
 
   router.route('/notification/optOut')
     /**
@@ -132,7 +133,7 @@ const notificationRoutes = (router) => {
        *     security:
        *       - bearerAuth: []
       */
-    .patch(checkToken, handleOptOutEmail);
+    .patch(checkToken, checkBlacklist, handleOptOutEmail);
 
   router.route('/notification/markAsRead/:id')
     /**
@@ -161,7 +162,7 @@ const notificationRoutes = (router) => {
        *     security:
        *       - bearerAuth: []
       */
-    .patch(checkToken, handleMarkAsRead);
+    .patch(checkToken, checkBlacklist, handleMarkAsRead);
 
   router.route('/notification/markAllAsRead')
     /**
@@ -196,7 +197,7 @@ const notificationRoutes = (router) => {
        *     security:
        *       - bearerAuth: []
       */
-    .patch(checkToken, handleMarkAllAsRead);
+    .patch(checkToken, checkBlacklist, handleMarkAllAsRead);
 
   router.route('/notification/clear')
   /**
@@ -218,7 +219,7 @@ const notificationRoutes = (router) => {
        *     security:
        *       - bearerAuth: []
       */
-    .delete(checkToken, clearNotifications);
+    .delete(checkToken, checkBlacklist, clearNotifications);
 };
 
 export default notificationRoutes;

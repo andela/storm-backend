@@ -3,7 +3,8 @@ import {
 } from '../testHelpers/config';
 import {
   validAccommodationDetail, inValidAccommodationDetail, travelAdmin, inValidRoomType,
-  validBookingDetails, inValidBookingDetails, inValidBookingDate
+  validBookingDetails, inValidBookingDetails, inValidBookingDate,
+  accommodationId, wrongAccommodationId
 } from '../mockData/accommodationMock';
 
 describe('Create Accommodation', () => {
@@ -154,6 +155,35 @@ describe('Create Accommodation', () => {
           expect(res.body.status).to.be.equal('error');
           done(err);
         });
+    });
+  });
+
+  describe('PATCH /accommodations/:accommodationId/like', () => {
+    const likeAccommodationEndpoint = `${BACKEND_BASE_URL}/accommodations/${accommodationId}/like`;
+    const wrongLikeAccommodationEndpoint = `${BACKEND_BASE_URL}/accommodations/${wrongAccommodationId}/like`;
+
+    it('should return 201 when an accommodation is successfully liked for the first time', async () => {
+      const response = await chai.request(app)
+        .patch(likeAccommodationEndpoint)
+        .set('authorization', token);
+      const { status, body: { data: { liked } } } = response;
+      expect(status).to.equal(201);
+      expect(liked).to.equal(true);
+    });
+
+    it('should return 202 when an accommodation is successfully unliked', async () => {
+      const { status, body: { data: { liked } } } = await chai.request(app)
+        .patch(likeAccommodationEndpoint)
+        .set('authorization', token);
+      expect(status).to.equal(202);
+      expect(liked).to.equal(false);
+    });
+
+    it('should return 404 when an accommodationId is wrong', async () => {
+      const { status } = await chai.request(app)
+        .patch(wrongLikeAccommodationEndpoint)
+        .set('authorization', token);
+      expect(status).to.equal(404);
     });
   });
 });
