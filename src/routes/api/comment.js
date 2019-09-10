@@ -107,7 +107,7 @@ const commentRoute = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .post(validate(createCommentSchema), checkBlacklist, checkToken,
+    .post(validate(createCommentSchema), checkToken, checkBlacklist,
       authorize([REQUESTER, MANAGER]), checkRequestId, canAccessRequest, createComment);
 
   router.route('/comments/:requestId')
@@ -174,7 +174,7 @@ const commentRoute = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .get(validate(getCommentsSchema), checkBlacklist, checkToken,
+    .get(validate(getCommentsSchema), checkToken, checkBlacklist,
       authorize([REQUESTER, MANAGER]), checkRequestId, canAccessRequest, getComments);
 };
 

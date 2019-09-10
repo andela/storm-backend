@@ -131,7 +131,7 @@ const userRoute = (router) => {
      *         description: You are already logged out!
      */
 
-    .post(checkBlacklist, logout);
+    .post(checkToken, checkBlacklist, logout);
 
   // Email verification endpoint
   router
