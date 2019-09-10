@@ -65,9 +65,14 @@ const accomodationFeedbackSchema = Joi.object({
   message: JoiValidator.validateString().required(),
 });
 
+const destinationCitySchema = Joi.object({
+  destinationCity: JoiValidator.validateString().required()
+});
+
 export {
   accommodationSchema,
   bookAccommodationSchema,
   accommodationIdSchema,
-  accomodationFeedbackSchema
+  accomodationFeedbackSchema,
+  destinationCitySchema
 };

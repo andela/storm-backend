@@ -2,11 +2,13 @@ import { checkToken } from '../../middlewares/userMiddlewares';
 import validator from '../../middlewares/validator';
 import { checkAccommodationId } from '../../middlewares/accommodationMiddlewares';
 import {
-  createAccommodation, bookAccommodation, accomodationFeedback, likeAccommodation
+  createAccommodation, bookAccommodation, accomodationFeedback,
+  likeAccommodation, getByDestinationCity
 } from '../../controllers/accommodationController';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import {
-  accommodationSchema, bookAccommodationSchema, accomodationFeedbackSchema, accommodationIdSchema
+  accommodationSchema, bookAccommodationSchema, accomodationFeedbackSchema,
+  accommodationIdSchema, destinationCitySchema
 } from '../../validation/accommodationSchema';
 import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
@@ -109,6 +111,102 @@ const accommodationRoute = (router) => {
     .post(checkToken, checkBlacklist,
       authorize([TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER]),
       validator(accommodationSchema), createAccommodation);
+
+  router.route('/accommodation/:destinationCity')
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    accommodation:
+   *      properties:
+   *        id:
+   *          type: string
+   *          readOnly: true
+   *        country:
+   *          type: string
+   *        city:
+   *          type: string
+   *        address:
+   *          type: string
+   *        accommodation:
+   *          type: string
+   *        accommodationType:
+   *          type: string
+   *        roomType:
+   *          type: array
+   *          items:
+   *           type: string
+   *        numOfRooms:
+   *          type: integer
+   *        description:
+   *          type: string
+   *        facilities:
+   *          type: array
+   *          items:
+   *           type: string
+   *        createdAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *        updateAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/accommodation/{destinationCity}:
+   *   get:
+   *     tags:
+   *       - Accommodation
+   *     description: Users can get accommodation by destination city
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: path
+   *         name: destinationCity
+   *         schema:
+   *           type: string
+   *         required: true
+   *     responses:
+   *       201:
+   *         description: Acommodation by destination city successful
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: object
+   *                data:
+   *                  type: array
+   *                  description: array of accomodations
+   *                  items:
+   *                    $ref: '#/components/schemas/accommodation'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+  */
+    .get(checkToken, checkBlacklist, validator(destinationCitySchema), getByDestinationCity);
 };
 
 

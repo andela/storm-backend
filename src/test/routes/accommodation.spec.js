@@ -216,4 +216,14 @@ describe('Create Accommodation', () => {
         });
     });
   });
+
+  describe('GET /accommodation/:destinationCity', () => {
+    it('should return 201 when an accommodation is successfully gotten by destination city', async () => {
+      const response = await chai.request(app)
+        .get(`${accommodationEndpoint}/lagos`)
+        .set('authorization', token);
+      const { status } = response;
+      expect(status).to.equal(201);
+    });
+  });
 });

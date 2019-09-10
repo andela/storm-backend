@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import models from '../models';
 import response from '../utils/response';
 import messages from '../utils/messages';
@@ -7,7 +8,10 @@ const {
   Accommodation, BookAccomodation, User, Request, AccomodationFeedback, AccommodationLike
 } = models;
 
-const { create, getById, getOrCreate } = DbServices;
+const {
+  create, getById, getOrCreate, getAllRecord
+} = DbServices;
+
 const { serverError, accommodationFeedbackPosted } = messages;
 
 /**
@@ -144,6 +148,25 @@ const accomodationFeedback = async (req, res) => {
   }
 };
 
+/* user can get accomodation by destination city
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const getByDestinationCity = async (req, res) => {
+  try {
+    const { destinationCity } = req.params;
+    const options = { where: { city: { [Op.iLike]: `%${destinationCity}%` } } };
+    const accommodation = await getAllRecord(Accommodation, options);
+    return response(res, 201, 'success', accommodation);
+  } catch (error) {
+    return response(res, 500, 'error', {
+      message: serverError,
+    });
+  }
+};
+
 export {
- createAccommodation, bookAccommodation, accomodationFeedback, likeAccommodation 
+  createAccommodation, bookAccommodation, accomodationFeedback,
+  likeAccommodation, getByDestinationCity
 };

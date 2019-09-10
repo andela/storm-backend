@@ -29,7 +29,7 @@ export const findRequest = (body, query) => {
       default:
         return {
           [key]: {
-            [Op.iLike]: `%${body[key]}`
+            [Op.iLike]: `%${body[key]}%`
           }
         };
     }
