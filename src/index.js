@@ -2,6 +2,7 @@ import express from 'express';
 import trimmer from 'trim-request-body';
 import cors from 'cors';
 import debug from 'debug';
+import morganBody from 'morgan-body';
 import methodOverride from 'method-override';
 import swaggerUi from 'swagger-ui-express';
 import messages from './utils/messages';
@@ -18,6 +19,9 @@ const app = express();
 
 const infoLog = debug('http:info');
 const router = express.Router();
+
+// Log http information to console
+morganBody(app, { prettify: false });
 
 // Pass router to routes
 routes(router);
