@@ -30,7 +30,7 @@ const checkBlacklist = async (req, res, next) => {
     next();
   } catch (e) {
     return response(res, 500, 'error', {
-      errors: e
+      errors: e.toString()
     });
   }
 };

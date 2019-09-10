@@ -93,5 +93,8 @@ export default {
   },
   requestToBeAccepted: {
     requestId: 'b2092fb0-502a-4105-961f-2d310d340168'
+  },
+  requestToBeAccepted: {
+    requestId: 'b2092fb0-502a-4105-961f-2d310d340168'
   }
 };

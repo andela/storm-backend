@@ -16,7 +16,11 @@ services:
     networks:
       - webnet
   redis:
+    env_file:
+      - .env
     image: redis
+    environment:
+      - REDIS_URL=${REDIS_URL}
     networks:
       - webnet
   backend:

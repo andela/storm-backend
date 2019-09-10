@@ -5,5 +5,6 @@ run:
   web: docker-compose up
 setup:
   addons:
+  - plan: heroku-redis
   - plan: heroku-postgresql
     as: DATABASE

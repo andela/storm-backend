@@ -91,13 +91,12 @@ const signIn = async (req, res) => {
 
 const logout = async (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
-
   try {
     await redis.set(token, token, 'EX', 604800000);
     return response(res, 200, 'success', { message: messages.loggedOut });
   } catch (e) {
     return response(res, 500, 'error', {
-      errors: e
+      errors: e.toString()
     });
   }
 };
