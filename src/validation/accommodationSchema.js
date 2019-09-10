@@ -6,7 +6,7 @@ const err = () => messages.lowercase;
 
 const validRoomType = JoiValidator.validArray().items(Joi.string()
   .regex(/^[a-z]+$/).required().error(err)).error(err);
-const validRoomNumber = JoiValidator.validateNumber().required();
+const validRoomNumber = JoiValidator.validateNumber().min(1).required();
 const isValidId = JoiValidator.validateUuidV4().required();
 
 const accommodationSchema = Joi.object({
@@ -37,7 +37,7 @@ const accommodationSchema = Joi.object({
   city: JoiValidator.validateString().required(),
   address: JoiValidator.validateString().required(),
   accommodation: JoiValidator.validateString().required(),
-  accommodationType: JoiValidator.validArray(JoiValidator.validateString()).required(),
+  accommodationType: JoiValidator.validateString().required(),
   roomType: validRoomType,
   numOfRooms: validRoomNumber,
   description: JoiValidator.validateString().required(),

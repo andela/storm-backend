@@ -23,6 +23,10 @@ export default {
         id: roles.TRAVEL_TEAM_MEMBER,
         type: 'travel-team-member',
       },
+      {
+        id: roles.ACCOMMODATION_SUPPLIER,
+        type: 'accommodation-supplier',
+      },
     ], {});
   },
 

@@ -18,7 +18,12 @@ const { serverError } = messages;
 */
 const createAccommodation = async (req, res) => {
   try {
-    const { body } = req;
+    const { decoded: { id: userId }, body } = req;
+    const user = await getById(User, userId, {});
+    const { verified } = user;
+    if (verified === false) {
+      return response(res, 403, 'error', { message: messages.unAuthorized });
+    }
     const {
       country, city, address, accommodation, accommodationType, roomType, numOfRooms,
       description, facilities

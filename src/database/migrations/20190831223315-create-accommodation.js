@@ -47,7 +47,7 @@ module.exports = {
         allowNull: false,
       },
       accommodationType: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
+        type: Sequelize.STRING,
         allowNull: false,
       },
       roomType: {

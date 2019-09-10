@@ -38,6 +38,7 @@ const messages = {
   forgotPassword: 'Check your mail to reset your password.',
   updatePassword: 'Password updated successfully',
   confirmation: 'Please confirm this action by passing confirmation as true as query parameter in your request',
+  unAuthorized: 'You are not authorized to create accommodation',
 };
 
 export default messages;

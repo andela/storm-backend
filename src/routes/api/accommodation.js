@@ -2,6 +2,10 @@ import { createAccommodation, bookAccommodation } from '../../controllers/accomm
 import { checkToken } from '../../middlewares/userMiddlewares';
 import validate from '../../middlewares/validator';
 import { accommodationSchema, bookAccommodationSchema } from '../../validation/accommodationSchema';
+import authorize from '../../middlewares/authorizer';
+import roles from '../../utils/roles';
+
+const { TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER } = roles;
 
 const accommodationRoute = (router) => {
   router.route('/accommodation')
@@ -25,13 +29,17 @@ const accommodationRoute = (router) => {
    *        accommodationType:
    *          type: string
    *        roomType:
-   *          type: string
+   *          type: array
+   *          items:
+   *           type: string
    *        numOfRooms:
    *          type: integer
    *        description:
    *          type: string
    *        facilities:
-   *          type: string
+   *          type: array
+   *          items:
+   *           type: string
    *        createdAt:
    *          type: string
    *          format: date-time
@@ -92,7 +100,8 @@ const accommodationRoute = (router) => {
    *     security:
    *       - bearerAuth: []
   */
-    .post(checkToken, validate(accommodationSchema), createAccommodation);
+    .post(checkToken, authorize([TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER]),
+      validate(accommodationSchema), createAccommodation);
 };
 
 
