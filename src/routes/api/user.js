@@ -187,14 +187,57 @@ const userRoute = (router) => {
     */
     .get(checkToken, checkBlacklist, validate(getUserSchema), checkUserId, getUserDetailsById);
   router.route('/users/:userId')
-    /**
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    editUserProfile:
+   *      properties:
+   *        userId:
+   *          type: string
+   *          readOnly: true
+   *        firstName:
+   *          type: string
+   *        lastName:
+   *          type: string
+   *        phoneNo:
+   *          type: string
+   *        birthDate:
+   *          type: string
+   *          format: date
+   *        preferredLanguage:
+   *          type: string
+   *        preferredCurrency:
+   *          type: string
+   *        gender:
+   *          type: string
+   *        currentLocation:
+   *          type: string
+   *        createdAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *        updateAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
      * @swagger
      *  paths:
      *    /api/v1/users/{userId}:
      *      put:
      *        tags:
      *          - Users
-     *        summary: Get one user's details
+     *        summary: update user's profile
      *        parameters:
      *          - in: path
      *            name: userId
@@ -207,16 +250,37 @@ const userRoute = (router) => {
      *          content:
      *            application/json:
      *              schema:
-     *                $ref: '#/components/schemas/User'
+     *                $ref: '#/components/schemas/editUserProfile'
      *        responses:
      *          200:
-     *            description: User deatails fetched successfully
+     *            description: User profile updated successfully
+     *            content:
+     *             application/json:
+     *               schema:
+     *                 type: object
+     *                 properties:
+     *                   status:
+     *                     type: object
+     *                   data:
+     *                     $ref: '#/components/schemas/editUserProfile'
      *          403:
      *            description: Unauthorized
+     *            content:
+     *             application/json:
+     *               schema:
+     *                 $ref: '#/components/schemas/ErrorResponse'
      *          404:
      *            description: User not found
+     *            content:
+     *             application/json:
+     *               schema:
+     *                 $ref: '#/components/schemas/ErrorResponse'
      *          500:
      *            description: Internal Server error
+     *            content:
+     *             application/json:
+     *               schema:
+     *                 $ref: '#/components/schemas/ErrorResponse'
      *        security:
      *          - bearerAuth: [ ]
     */
@@ -301,10 +365,10 @@ const userRoute = (router) => {
           */
     .patch(validate(passwordSchema), resetPassword);
 
-  router.route('/users/:userId')
+  router.route('/role/users/:userId')
     /**
      * @swagger
-     * /api/v1/users/{userId}:
+     * /api/v1/role/users/{userId}:
      *   patch:
      *     tags:
      *       - Users

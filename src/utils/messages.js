@@ -15,7 +15,7 @@ const messages = {
   userNotFoundId: 'User not found',
   serverError: 'Internal server error',
   unauthorizedUserProfile: 'You are not authorized to edit this profile',
-  unauthorizedUserRequest: 'You are not authorized to view this users request',
+  unauthorizedUserRequest: 'You are not authorized to view this users profile',
   invalidToken: 'Token you provided is invalid',
   invalidUserId: 'userId provided is not a valid uuid string',
   noRequests: 'No requests to display',

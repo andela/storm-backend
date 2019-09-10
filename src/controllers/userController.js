@@ -140,7 +140,7 @@ const updateUserDetails = async (req, res) => {
     }
     const {
       firstName, lastName, phoneNo, birthDate, preferredLanguage,
-      preferredCurrency, gender, lineManager, currentLocation
+      preferredCurrency, gender, currentLocation
     } = req.body;
     const phoneNoExists = await getByOptions(User, {
       where: {
@@ -157,7 +157,6 @@ const updateUserDetails = async (req, res) => {
       preferredLanguage,
       preferredCurrency,
       gender,
-      lineManager,
       currentLocation
     };
     const options = {

@@ -120,7 +120,7 @@ describe('User route', () => {
 
   describe('PATCH /users/:userId', () => {
     it('should return unauthorize error', async () => {
-      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/role/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', managerToken)
@@ -134,7 +134,7 @@ describe('User route', () => {
     });
 
     it('should return validation error', async () => {
-      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/role/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -147,7 +147,7 @@ describe('User route', () => {
     });
 
     it('should succesfully set user role', async () => {
-      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.anotherUserId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/role/users/${userMock.anotherUserId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -161,7 +161,7 @@ describe('User route', () => {
     });
 
     it('should return incorrect staff id error', async () => {
-      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.wrongId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/role/users/${userMock.wrongId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
@@ -176,7 +176,7 @@ describe('User route', () => {
 
     it('should return an internal server error', async () => {
       const stub = sinon.stub(User, 'findOne').callsFake(() => Promise.reject(new Error('Internal server error')));
-      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
+      const response = await chai.request(app).patch(`${BACKEND_BASE_URL}/role/users/${userMock.userId}`)
         .type('form')
         .set('Content-Type', 'application/json')
         .set('authorization', token)
