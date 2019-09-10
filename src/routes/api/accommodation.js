@@ -1,11 +1,15 @@
-import { createAccommodation, bookAccommodation, likeAccommodation } from '../../controllers/accommodationController';
 import { checkToken } from '../../middlewares/userMiddlewares';
 import validator from '../../middlewares/validator';
-import { accommodationSchema, bookAccommodationSchema, accommodationIdSchema } from '../../validation/accommodationSchema';
 import { checkAccommodationId } from '../../middlewares/accommodationMiddlewares';
+import {
+  createAccommodation, bookAccommodation, accomodationFeedback, likeAccommodation
+} from '../../controllers/accommodationController';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
+import {
+  accommodationSchema, bookAccommodationSchema, accomodationFeedbackSchema, accommodationIdSchema
+} from '../../validation/accommodationSchema';
 import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
-import checkBlacklist from '../../middlewares/blacklistMiddleware';
 
 const { TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER } = roles;
 
@@ -289,7 +293,96 @@ const bookAccommodationRoute = (router) => {
       checkAccommodationId, likeAccommodation);
 };
 
+const accomodationFeedbackRoute = (router) => {
+  router.route('/feedback/accommodation/:accommodationId')
+  /**
+       * @swagger
+       * components:
+       *  schemas:
+       *    accomodationFeedback:
+       *      properties:
+       *        id:
+       *          type: string
+       *          readOnly: true
+       *        userId:
+       *          type: string
+       *          readOnly: true
+       *        accommodationId:
+       *          type: string
+       *          readOnly: true
+       *        message:
+       *          type: string
+       *        createdAt:
+       *          type: string
+       *          format: date-time
+       *          readOnly: true
+       *        updateAt:
+       *          type: string
+       *          format: date-time
+       *          readOnly: true
+       *    ErrorResponse:
+       *      properties:
+       *        status:
+       *          type: string
+       *          example: error
+       *        data:
+       *          type: string
+       */
+
+  /**
+       * @swagger
+       * /api/v1/feedback/accommodation/{accommodationId}:
+       *   post:
+       *     tags:
+       *       - Accommodation
+       *     description: Users can provide feedback comment on an accomodation facility
+       *     parameters:
+       *       - in: path
+       *         name: accommodationId
+       *         schema:
+       *           type: string
+       *         required: true
+       *     produces:
+       *       - application/json
+       *     requestBody:
+       *      description: Accommodation
+       *      required: true
+       *      content:
+       *       application/json:
+       *          schema:
+       *            $ref: '#/components/schemas/accomodationFeedback'
+       *     responses:
+       *       201:
+       *         description: Feedback submitted successfully
+       *         content:
+       *          application/json:
+       *            schema:
+       *              type: object
+       *              properties:
+       *                status:
+       *                  type: object
+       *                data:
+       *                  $ref: '#/components/schemas/accomodationFeedback'
+       *       400:
+       *         description: Input validation error
+       *         content:
+       *          application/json:
+       *            schema:
+       *              $ref: '#/components/schemas/ErrorResponse'
+       *       500:
+       *         description: Internal Server error
+       *         content:
+       *          application/json:
+       *            schema:
+       *              $ref: '#/components/schemas/ErrorResponse'
+       *     security:
+       *       - bearerAuth: []
+      */
+    .post(checkToken, checkBlacklist, validator(accomodationFeedbackSchema), accomodationFeedback);
+};
+
 export {
   accommodationRoute,
-  bookAccommodationRoute
+  bookAccommodationRoute,
+  accomodationFeedbackRoute
 };

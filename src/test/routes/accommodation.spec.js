@@ -3,13 +3,14 @@ import {
 } from '../testHelpers/config';
 import {
   validAccommodationDetail, inValidAccommodationDetail, travelAdmin, inValidRoomType,
-  validBookingDetails, inValidBookingDetails, inValidBookingDate,
+  validFeedbackmessage, validBookingDetails, inValidBookingDetails, inValidBookingDate,
   accommodationId, wrongAccommodationId
 } from '../mockData/accommodationMock';
 
 describe('Create Accommodation', () => {
   const accommodationEndpoint = `${BACKEND_BASE_URL}/accommodation`;
   const bookAccommodationEndpoint = `${BACKEND_BASE_URL}/book/accommodation`;
+  const feedbackAccommodationEndpoint = `${BACKEND_BASE_URL}/feedback/accommodation`;
   const signinEndpoint = `${BACKEND_BASE_URL}/user/signin`;
   let token;
   let id;
@@ -184,6 +185,35 @@ describe('Create Accommodation', () => {
         .patch(wrongLikeAccommodationEndpoint)
         .set('authorization', token);
       expect(status).to.equal(404);
+    });
+  });
+
+  describe('POST /feedback/accommodation', () => {
+    it('should be able to post feedback on accomodation', (done) => {
+      chai.request(app)
+        .post(`${feedbackAccommodationEndpoint}/${id}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .send(validFeedbackmessage)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(200);
+          expect(data).to.have.property('message');
+          done(err);
+        });
+    });
+    it('should return validation error if no message', (done) => {
+      chai.request(app)
+        .post(`${feedbackAccommodationEndpoint}/${id}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .send({})
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(400);
+          expect(data).to.have.property('message');
+          done(err);
+        });
     });
   });
 });

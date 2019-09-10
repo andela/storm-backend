@@ -3,12 +3,12 @@ import response from '../utils/response';
 import messages from '../utils/messages';
 import DbServices from '../services/dbServices';
 
-
 const {
-  Accommodation, BookAccomodation, User, Request, AccommodationLike
+  Accommodation, BookAccomodation, User, Request, AccomodationFeedback, AccommodationLike
 } = models;
+
 const { create, getById, getOrCreate } = DbServices;
-const { serverError } = messages;
+const { serverError, accommodationFeedbackPosted } = messages;
 
 /**
  * travel admin can add accommodation controller
@@ -104,7 +104,7 @@ const bookAccommodation = async (req, res) => {
  * @param {Object} res - server response
  * @returns {Object} - custom response
  */
-export const likeAccommodation = async (req, res) => {
+const likeAccommodation = async (req, res) => {
   const { decoded: { id }, params: { accommodationId } } = req;
   try {
     const options = { where: { userId: id, accommodationId }, defaults: { liked: true } };
@@ -120,4 +120,30 @@ export const likeAccommodation = async (req, res) => {
   }
 };
 
-export { createAccommodation, bookAccommodation };
+/**
+ * @function accomodationFeedback
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ */
+const accomodationFeedback = async (req, res) => {
+  try {
+    const { id: userId } = req.decoded;
+    const { accommodationId } = req.params;
+    const {
+      message
+    } = req.body;
+    const accommodation = await getById(Accommodation, accommodationId, {});
+    if (!accommodation) return response(res, 404, 'error', { message: messages.notExistAccommodation });
+    await create(AccomodationFeedback, { accommodationId, userId, message });
+    return response(res, 200, 'success', { message: accommodationFeedbackPosted });
+  } catch (error) {
+    return response(res, 500, 'error', {
+      message: serverError,
+    });
+  }
+};
+
+export {
+ createAccommodation, bookAccommodation, accomodationFeedback, likeAccommodation 
+};
