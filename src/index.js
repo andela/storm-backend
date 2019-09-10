@@ -20,9 +20,10 @@ const app = express();
 const infoLog = debug('http:info');
 const router = express.Router();
 
-// Log http information
-morganBody(app, { prettify: false });
-
+// Log http information to console
+if (process.env.NODE_ENV !== 'test') {
+  morganBody(app, { prettify: true });
+}
 // Pass router to routes
 routes(router);
 

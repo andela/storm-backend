@@ -25,6 +25,12 @@ export default {
         ownerId: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         requestId: 'ba94c67b-1d18-4628-ab12-ce2efe46f00b',
       },
+      {
+        id: '72fc67c0-ce67-49fc-ac7c-21313f959a55',
+        content: 'This comment should be deleted',
+        ownerId: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
+        requestId: 'ba94c67b-1d18-4628-ab12-ce2efe46f00b',
+      },
     ], {});
   },
   down: (queryInterface, Sequelize) => {

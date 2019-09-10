@@ -159,7 +159,7 @@ const requestRoute = (router) => {
    *         schema:
    *           type: string
    *           format: uuid
-   *         required: true
+   *         required: false
    *       - in: query
    *         name: page
    *         schema:
