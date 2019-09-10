@@ -69,6 +69,7 @@ module.exports = {
       images: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         allowNull: true,
+        defaultValue: ['https://res.cloudinary.com/dmlapwmzj/image/upload/v1567513691/rk-items/qae7hr6mlqfwkhvqpguq.jpg']
       },
       createdAt: {
         allowNull: true,

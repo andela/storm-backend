@@ -69,6 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     images: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
+      defaultValue: ['https://res.cloudinary.com/kola-c-1/image/upload/v1568114881/barefootnomad-images/default-accomodation-image_iqbuvj.svg']
     }
   });
 
