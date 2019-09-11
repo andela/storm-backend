@@ -244,7 +244,7 @@ const forgotPassword = async (req, res) => {
     await sendMail(user.email, 'Reset Password', message);
     return response(res, 200, 'success', { data: { link }, message: message.forgotPassword });
   } catch (error) {
-    response(res, 500, 'error', { error: error.message });
+    return response(res, 500, 'error', { error: error.message });
   }
 };
 /**
@@ -267,7 +267,7 @@ const resetPassword = async (req, res) => {
     const updatedUser = await update(User, { password }, options);
     return response(res, 200, 'success', { message: 'Password updated successfully' }, updatedUser.lastName);
   } catch (error) {
-    response(res, 500, 'error', { error: error.message });
+    return response(res, 500, 'error', { error: error.message });
   }
 };
 

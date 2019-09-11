@@ -3,17 +3,17 @@ import {
 } from '../testHelpers/config';
 import mockData from '../mockData';
 import models from '../../models';
-import authHelper from '../../utils/authHelper';
+import { generateToken } from '../../utils/authHelper';
 import roles from '../../utils/roles';
 
 const {
   Comment, Request, User, Notification
 } = models;
-const { generateToken } = authHelper;
 const { commentMock } = mockData;
 const {
   managerId, unAuthorizedManagerId, requesterId, unAuthorizedRequesterId,
-  superAdminId, requestId, invalidRequestId, content, invalidContent, requestWithNoCommentId,
+  superAdminId, requestId, invalidRequestId, content, invalidContent,
+  requestWithNoCommentId, commentId
 } = commentMock;
 const { REQUESTER, MANAGER, SUPER_ADMIN } = roles;
 
@@ -232,6 +232,43 @@ describe('COMMENTS', () => {
         .end((err, res) => {
           expect(res.status).to.equal(200);
           expect(res.body).to.have.property('status').that.equals('success');
+          done(err);
+        });
+    });
+  });
+
+  describe('PATCH /comments/:requestId', () => {
+    it('should be able to delete a comment if owner', (done) => {
+      chai
+        .request(app)
+        .patch(`${endpoint}/${commentId}`)
+        .set('authorization', requesterToken)
+        .end((err, res) => {
+          expect(res.status).to.equal(201);
+          expect(res.body).to.have.property('status').that.equal('success');
+          done(err);
+        });
+    });
+
+    it('should not be able to delete a comment if not owner', (done) => {
+      chai
+        .request(app)
+        .patch(`${endpoint}/${commentId}`)
+        .set('authorization', unAuthorizedRequesterToken)
+        .end((err, res) => {
+          expect(res.status).to.equal(409);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+        });
+    });
+    it('should not be able to delete an already deleted comment', (done) => {
+      chai
+        .request(app)
+        .patch(`${endpoint}/${commentId}`)
+        .set('authorization', requesterToken)
+        .end((err, res) => {
+          expect(res.status).to.equal(409);
+          expect(res.body).to.have.property('status').that.equal('error');
           done(err);
         });
     });

@@ -17,6 +17,12 @@ export default (sequelize, DataTypes) => {
     content: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      values: ['show', 'deleted'],
+      defaultValue: 'show'
     }
   }, {});
 

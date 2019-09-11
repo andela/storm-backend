@@ -7,6 +7,7 @@ export default {
   requestId: 'ba94c67b-1d18-4628-ab12-ce2efe46f00b',
   requestWithNoCommentId: 'b2092fb0-502a-4105-961f-2d310d340168',
   invalidRequestId: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+  commentId: '72fc67c0-ce67-49fc-ac7c-21313f959a55',
   content: {
     content: 'What do you think?',
   },

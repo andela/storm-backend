@@ -7,7 +7,7 @@ import { checkRequestId, canAccessRequest } from '../../middlewares/requestMiddl
 import commentController from '../../controllers/commentController';
 import roles from '../../utils/roles';
 
-const { createComment, getComments } = commentController;
+const { createComment, getComments, deleteComment } = commentController;
 const { createCommentSchema, getCommentsSchema } = commentSchema;
 const { REQUESTER, MANAGER } = roles;
 
@@ -176,6 +176,71 @@ const commentRoute = (router) => {
     */
     .get(validate(getCommentsSchema), checkToken, checkBlacklist,
       authorize([REQUESTER, MANAGER]), checkRequestId, canAccessRequest, getComments);
+
+  router.route('/comments/:commentId')
+  /**
+             * @swagger
+             * components:
+             *  schemas:
+             *    Comment:
+             *      properties:
+             *        id:
+             *          type: string
+             *        content:
+             *          type: string
+             *        requestId:
+             *          type: string
+             *        ownerId:
+             *          type: string
+            */
+
+  /**
+             * @swagger
+             * /api/v1/comments/{commentId}:
+             *   patch:
+             *     tags:
+             *       - Comments
+             *     summary: Update a comment status to deleted
+             *     description: Change comment status to deleted so it wont show in the frontend
+             *     produces:
+             *       - application/json
+             *     parameters:
+             *      - in: path
+             *        name: commentId
+             *        schema:
+             *          type: string
+             *          format: uuid
+             *        required: true
+             *     responses:
+             *       201:
+             *         description: Comment deleted successfully
+             *         content:
+             *          application/json:
+             *            schema:
+             *              type: object
+             *              properties:
+             *                status:
+             *                  type: string
+             *                  example: success
+             *                data:
+             *                  type: string
+             *                  example: Comment deleted successfully
+             *       400:
+             *         description: Input validation error
+             *         content:
+             *          application/json:
+             *            schema:
+             *              $ref: '#/components/schemas/ErrorResponse'
+             *       500:
+             *         description: Internal Server error
+             *         content:
+             *          application/json:
+             *            schema:
+             *              $ref: '#/components/schemas/ErrorResponse'
+             *     security:
+             *       - bearerAuth: []
+            */
+    .patch(checkToken, checkBlacklist, authorize([REQUESTER, MANAGER]), deleteComment);
 };
 
 export default commentRoute;

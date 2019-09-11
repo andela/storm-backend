@@ -26,6 +26,12 @@ export default {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'show',
+        values: ['show', 'deleted']
+      },
       createdAt: {
         allowNull: true,
         type: Sequelize.DATE,

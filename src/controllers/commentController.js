@@ -8,7 +8,9 @@ import { createNotification } from '../services/notificationServices';
 import roles from '../utils/roles';
 
 const { Comment, User } = models;
-const { create, getAll, getById } = DbServices;
+const {
+  create, update, getAll, getByOptions, getById
+} = DbServices;
 const { serverError, noComment } = messages;
 const { NEW_COMMENT } = notificationTypes;
 
@@ -62,7 +64,7 @@ const getComments = async ({ params, query }, res) => {
     const options = {
       limit,
       offset,
-      where: { requestId },
+      where: { requestId, status: 'show' },
       order: [
         ['createdAt', 'ASC']
       ],
@@ -90,6 +92,38 @@ const getComments = async ({ params, query }, res) => {
   }
 };
 
+/**
+ * delete comment of a specific ID
+ * @param {Object} params - server request's params
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+ * @description delete comment of a specific ID
+ */
+const deleteComment = async ({ params, decoded }, res) => {
+  try {
+    const { commentId } = params;
+    const { id: ownerId } = decoded;
+    const verifyOwner = await getByOptions(Comment, {
+      where: {
+        id: commentId,
+        ownerId
+      }
+    });
+    const checkComment = await getByOptions(Comment, {
+      where: {
+        id: commentId,
+        status: 'deleted'
+      }
+    });
+    if (checkComment) return response(res, 409, 'error', { message: messages.commentAlreadyDeleted });
+    if (!verifyOwner) return response(res, 409, 'error', { message: messages.commentOwnerNotFound });
+    const options = { returning: false, where: { id: commentId } };
+    await update(Comment, { status: 'deleted' }, options);
+    return response(res, 201, 'success', messages.commentDeleted);
+  } catch (error) {
+    return response(res, 500, 'error', error.message);
+  }
+};
 export default {
-  createComment, getComments,
+  createComment, getComments, deleteComment
 };
