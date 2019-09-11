@@ -4,7 +4,7 @@ import DbServices from '../services/dbServices';
 import models from '../models';
 import roles from '../utils/roles';
 
-const { User, Request } = models;
+const { User, Request, Subrequest } = models;
 const { findOneIncludeModel, getById } = DbServices;
 const { serverError, forbidden } = messages;
 
@@ -84,5 +84,33 @@ export const canAccessRequest = async (req, res, next) => {
     return response(res, 403, 'error', { message: forbidden });
   } catch (error) {
     return response(res, 500, 'error', { message: serverError });
+  }
+};
+
+export const verifyEditRequestAuthorization = async (req, res, next) => {
+  try {
+    const { params: { requestId }, decoded: { id: loggedInUserId } } = req;
+    const [, requestType] = req.url.match(/\/([a-z]+)\/edit\/*/);
+    let requestInfo, subrequestInfo;
+    switch (requestType) {
+      case 'requests':
+        requestInfo = await getById(Request, requestId, { attributes: ['userId', 'approvalStatus'] });
+        break;
+      case 'subrequests':
+        subrequestInfo = await getById(Subrequest, requestId, { attributes: ['requestId'] });
+        requestInfo = await getById(Request, subrequestInfo.requestId, { attributes: ['userId', 'approvalStatus'] });
+        break;
+      default:
+        break;
+    }
+    const authorizedUser = loggedInUserId === requestInfo.userId;
+    const openRequest = requestInfo.approvalStatus === 'pending';
+    if (!authorizedUser || !openRequest) return response(res, 401, 'error', { message: messages.unauthorized });
+    req.requestType = requestType;
+    next();
+  } catch (error) {
+    return response(res, 500, 'error', {
+      errors: error.message
+    });
   }
 };

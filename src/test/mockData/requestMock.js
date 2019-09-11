@@ -94,7 +94,19 @@ export default {
   requestToBeAccepted: {
     requestId: 'b2092fb0-502a-4105-961f-2d310d340168'
   },
-  requestToBeAccepted: {
-    requestId: 'b2092fb0-502a-4105-961f-2d310d340168'
+  requestToBeEdited: {
+    requestBody: {
+      type: 'return',
+      originCity: 'Gotham City',
+      destinationCity: 'Central City',
+      departureDate: '2019-10-09 08:11:20',
+      returnDate: '2019-12-09 08:11:20',
+      reason: 'Meet barry allen',
+      accommodation: 'Star Labs'
+    },
+    requestId: '0fcda9b7-e17f-4162-88ed-ded031063e53'
+  },
+  acceptedRequest: {
+    requestId: '707969c1-a4c1-4f58-a683-b86f01a94e31'
   }
 };

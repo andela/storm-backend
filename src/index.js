@@ -20,7 +20,7 @@ const app = express();
 const infoLog = debug('http:info');
 const router = express.Router();
 
-// Log http information to console
+// Log http information
 morganBody(app, { prettify: false });
 
 // Pass router to routes

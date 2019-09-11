@@ -65,7 +65,8 @@ export default {
         lineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
         roleId: roles.REQUESTER,
         verified: true
-      }, {
+      }, 
+      {
         id: '3e747d71-4fa1-4934-af9d-13926eb2d063',
         firstName: 'Mrs',
         lastName: 'Somebody',
@@ -77,7 +78,6 @@ export default {
         verified: true,
         roleId: roles.REQUESTER,
       },
-
       {
         id: '98686f96-3452-4420-a093-8f2fbba1ff05',
         firstName: 'Kazeem',
@@ -89,7 +89,6 @@ export default {
         verified: true,
         roleId: roles.TRAVEL_ADMIN,
       },
-
       {
         id: 'a2ff3c34-4b2b-449e-aa35-6587f56fdff3',
         firstName: 'Kazeem',
@@ -101,6 +100,16 @@ export default {
         lineManager: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
         roleId: roles.ACCOMMODATION_SUPPLIER,
       },
+      {
+        id: 'c1b0a0fc-7536-4152-8837-6a5348ba9566',
+        firstName: 'bruce',
+        lastName: 'wayne',
+        email: 'brucewayne@gmail.com',
+        password: hashPassword('brucewayne'),
+        phoneNo: '2347032444332',
+        lineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+        verified: true
+      }
     ], {});
   },
   down: (queryInterface, Sequelize) => {

@@ -57,5 +57,7 @@ export default {
   managerId: 'fb94de4d-47ff-4079-89e8-b0186c0a3be8',
   anotherManagerId: '0ce36391-2c08-4703-bddb-a4ea8cccbbc5',
   requesterId: '83b2a3e7-9ba4-4d3f-b3a3-d31940ee2edc',
-  noLineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c'
+  noLineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+  validLineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
+  editRequesterUserId: 'c1b0a0fc-7536-4152-8837-6a5348ba9566'
 };

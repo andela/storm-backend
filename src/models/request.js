@@ -36,9 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     approvalStatus: {
       type: DataTypes.ENUM,
-      allowNull: false,
+      allowNull: true,
       values: ['accepted', 'rejected', 'pending'],
-      defaultValue: 'pending'
+      defaultValue: 'pending',
     },
     multiCity: {
       type: DataTypes.BOOLEAN,
