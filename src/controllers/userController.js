@@ -13,9 +13,8 @@ import roleEmailMessage from '../utils/templates/roleEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 import DbServices from '../services/dbServices';
-import redis from '../config/redis';
 
-const { User, Role } = models;
+const { User, Role, Tokenblacklist } = models;
 const { getById, update, getByOptions } = DbServices;
 const {
   unauthorizedUserProfile, serverError, phoneExists, roleChanged, unauthorizedUserRequest
@@ -90,9 +89,11 @@ const signIn = async (req, res) => {
  */
 
 const logout = async (req, res) => {
+  const { id, exp } = req.decoded;
   const token = req.headers.authorization.split(' ')[1];
   try {
-    await redis.set(token, token, 'EX', 604800000);
+    const blacklistData = { userId: id, expiresIn: exp, token };
+    await Tokenblacklist.create(blacklistData);
     return response(res, 200, 'success', { message: messages.loggedOut });
   } catch (e) {
     return response(res, 500, 'error', {

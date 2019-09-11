@@ -1,7 +1,9 @@
 import response from '../utils/response';
 import messages from '../utils/messages';
 import stripBearerToken from '../utils/stripBearerToken';
-import redis from '../config/redis';
+import models from '../models';
+
+const { Tokenblacklist } = models;
 
 /**
  * Token Blacklist Middleware
@@ -11,17 +13,12 @@ import redis from '../config/redis';
  * @returns {Object} - Returns Object
  */
 const checkBlacklist = async (req, res, next) => {
+  const { id } = req.decoded;
   let token = req.headers.authorization;
   token = stripBearerToken(token);
 
-  if (!token) {
-    return response(res, 401, 'error', {
-      message: messages.noToken
-    });
-  }
-
   try {
-    const checkedToken = await redis.get(token);
+    const checkedToken = await Tokenblacklist.findOne({ where: { userId: id, token } });
     if (checkedToken) {
       return response(res, 500, 'error', {
         message: messages.blacklisted
