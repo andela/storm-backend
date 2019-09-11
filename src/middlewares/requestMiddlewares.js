@@ -47,7 +47,7 @@ export const checkRequestId = async (req, res, next) => {
       if (!request) {
         return response(res, 404, 'error', { message: messages.requestNotFoundId });
       }
-      req.payload = { request };
+      req.payload = { ...req.payload, request };
       return next();
     }
     return next();

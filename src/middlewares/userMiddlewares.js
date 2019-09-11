@@ -51,6 +51,7 @@ export const checkToken = async (req, res, next) => {
       if (!user) {
         return response(res, 401, 'error', { message: invalidToken });
       }
+      req.payload = { ...req.payload, user };
       req.decoded = decoded;
       return next();
     }

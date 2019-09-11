@@ -3,10 +3,14 @@ import response from '../utils/response';
 import DbServices from '../services/dbServices';
 import messages from '../utils/messages';
 import { calculateLimitAndOffset, paginate } from '../utils/pagination';
+import notificationTypes from '../utils/notificationTypes';
+import { createNotification } from '../services/notificationServices';
+import roles from '../utils/roles';
 
 const { Comment, User } = models;
-const { create, getAll } = DbServices;
+const { create, getAll, getById } = DbServices;
 const { serverError, noComment } = messages;
+const { NEW_COMMENT } = notificationTypes;
 
 /**
  * create a comment
@@ -15,11 +19,13 @@ const { serverError, noComment } = messages;
  * @returns {Object} - custom response
  * @description create a comment
  */
-const createComment = async ({ params, body, decoded }, res) => {
+const createComment = async ({
+  params, body, decoded, payload,
+}, res) => {
   try {
     const { requestId } = params;
     const { content } = body;
-    const { id: ownerId } = decoded;
+    const { id: ownerId, roleId } = decoded;
 
     const createdComment = await create(Comment, {
       content,
@@ -27,9 +33,17 @@ const createComment = async ({ params, body, decoded }, res) => {
       requestId,
     });
 
+    const { user, request } = payload;
+    const receiverId = (roleId === roles.REQUESTER) ? user.lineManager : request.userId;
+    const receiver = await getById(User, receiverId);
+
+    await createNotification({
+      receiver, sender: user, type: NEW_COMMENT, ref: request.id,
+    }, true);
+
     return response(res, 201, 'success', createdComment);
   } catch (error) {
-    return response(res, 500, 'error', serverError);
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 

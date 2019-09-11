@@ -12,11 +12,6 @@ const swaggerDefinition = {
       email: 'kolaakindoju@gmail.com'
     }
   },
-  servers: [
-    {
-      url: process.env.DOC_BASE_URL || 'http://localhost:3000'
-    }
-  ],
   components: {
     securitySchemes: {
       bearerAuth: {

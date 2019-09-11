@@ -1,3 +1,5 @@
+import notificationTypes from '../utils/notificationTypes';
+
 export default (sequelize, DataTypes) => {
   const Notification = sequelize.define('Notification', {
     id: {
@@ -9,7 +11,7 @@ export default (sequelize, DataTypes) => {
     type: {
       type: DataTypes.ENUM,
       allowNull: false,
-      values: ['newRequest', 'modifiedRequest', 'approvedRequest', 'rejectedRequest']
+      values: Object.values(notificationTypes),
     },
     ref: {
       type: DataTypes.UUID,

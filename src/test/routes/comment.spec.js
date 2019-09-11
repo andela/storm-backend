@@ -6,7 +6,9 @@ import models from '../../models';
 import authHelper from '../../utils/authHelper';
 import roles from '../../utils/roles';
 
-const { Comment, Request, User } = models;
+const {
+  Comment, Request, User, Notification
+} = models;
 const { generateToken } = authHelper;
 const { commentMock } = mockData;
 const {
@@ -154,6 +156,21 @@ describe('COMMENTS', () => {
 
     it('should return internal server error if a problem occurs while fetching the managerId from the db', (done) => {
       const stub = sinon.stub(User, 'findByPk').callsFake(() => Promise.reject(new Error('Internal server error')));
+      chai
+        .request(app)
+        .post(`${endpoint}/${requestId}`)
+        .send(content)
+        .set('authorization', managerToken)
+        .end((err, res) => {
+          expect(res.status).to.equal(500);
+          expect(res.body).to.have.property('status').that.equal('error');
+          done(err);
+          stub.restore();
+        });
+    });
+
+    it('should return internal server error if a problem occurs while adding the new notification to the db', (done) => {
+      const stub = sinon.stub(Notification, 'create').callsFake(() => Promise.reject(new Error('Internal server error')));
       chai
         .request(app)
         .post(`${endpoint}/${requestId}`)

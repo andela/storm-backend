@@ -1,5 +1,6 @@
-'use strict';
-module.exports = {
+import notificationTypes from '../../utils/notificationTypes';
+
+export default {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Notifications', {
       id: {
@@ -26,7 +27,7 @@ module.exports = {
       type: {
         type: Sequelize.ENUM,
         allowNull: false,
-        values: ['newRequest', 'modifiedRequest', 'approvedRequest', 'rejectedRequest']
+        values: Object.values(notificationTypes),
       },
       ref: {
         type: Sequelize.UUID,
