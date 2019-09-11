@@ -3,6 +3,7 @@ FROM node:10.14.1
 # Set ENV to Production
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
+ENV DATABASE_URL=${DATABASE_URL}
 # Set working directory
 WORKDIR /src/app/backend
 # Copy source code into the working directory

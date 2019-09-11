@@ -2,8 +2,10 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: docker-compose up
+  web: npm run prestart && docker-compose up
 setup:
   addons:
   - plan: heroku-postgresql
     as: DATABASE
+  config:
+    DATABASE_URL: ${DATABASE_URL}
