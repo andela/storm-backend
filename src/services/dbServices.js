@@ -66,6 +66,16 @@ const DbServices = {
   },
 
   /**
+   * @param {object} model model /table
+   * @param {object} options query options
+   * @returns {Promise} Promise resolved or rejected
+   * @description gets all items that fit the criteria and returns rows and count
+   */
+  getOrCreate(model, options) {
+    return model.findOrCreate(options);
+  },
+
+  /**
    * Database create service funcion
    * @param {Object} model - Defined model
    * @param {Array} data - Data to be created

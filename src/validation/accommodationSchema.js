@@ -56,7 +56,12 @@ const bookAccommodationSchema = Joi.object({
   children: JoiValidator.validateNumber().min(0)
 });
 
+const accommodationIdSchema = Joi.object({
+  accommodationId: JoiValidator.validateString().uuid().required()
+});
+
 export {
   accommodationSchema,
-  bookAccommodationSchema
+  bookAccommodationSchema,
+  accommodationIdSchema
 };

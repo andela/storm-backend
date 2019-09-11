@@ -68,6 +68,8 @@ const inValidBookingDate = {
   checkIn: '2019-09-09',
   checkOut: '2019-09-06'
 };
+const accommodationId = '122a0d86-8b78-4bb8-b28f-8e5f7811c452';
+const wrongAccommodationId = '127a0d86-8b78-4bb8-b28f-8e5f7811c452';
 
 export {
   validAccommodationDetail,
@@ -77,4 +79,6 @@ export {
   inValidBookingDate,
   travelAdmin,
   inValidRoomType,
+  accommodationId,
+  wrongAccommodationId
 };

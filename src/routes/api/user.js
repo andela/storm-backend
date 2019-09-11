@@ -185,7 +185,7 @@ const userRoute = (router) => {
      *     security:
      *       - bearerAuth: [ ]
     */
-    .get(checkToken, validate(getUserSchema), checkUserId, getUserDetailsById);
+    .get(checkToken, checkBlacklist, validate(getUserSchema), checkUserId, getUserDetailsById);
   router.route('/users/:userId')
     /**
      * @swagger
@@ -358,7 +358,7 @@ const userRoute = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .patch(checkToken, validate(setUserRoleSchema),
+    .patch(checkToken, checkBlacklist, validate(setUserRoleSchema),
       authorize([roles.SUPER_ADMIN]), checkUserId, setUserRole);
 };
 

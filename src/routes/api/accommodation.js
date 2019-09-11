@@ -1,9 +1,11 @@
-import { createAccommodation, bookAccommodation } from '../../controllers/accommodationController';
+import { createAccommodation, bookAccommodation, likeAccommodation } from '../../controllers/accommodationController';
 import { checkToken } from '../../middlewares/userMiddlewares';
-import validate from '../../middlewares/validator';
-import { accommodationSchema, bookAccommodationSchema } from '../../validation/accommodationSchema';
+import validator from '../../middlewares/validator';
+import { accommodationSchema, bookAccommodationSchema, accommodationIdSchema } from '../../validation/accommodationSchema';
+import { checkAccommodationId } from '../../middlewares/accommodationMiddlewares';
 import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
 
 const { TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER } = roles;
 
@@ -100,8 +102,9 @@ const accommodationRoute = (router) => {
    *     security:
    *       - bearerAuth: []
   */
-    .post(checkToken, authorize([TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER]),
-      validate(accommodationSchema), createAccommodation);
+    .post(checkToken, checkBlacklist,
+      authorize([TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER]),
+      validator(accommodationSchema), createAccommodation);
 };
 
 
@@ -209,7 +212,81 @@ const bookAccommodationRoute = (router) => {
    *     security:
    *       - bearerAuth: []
   */
-    .post(checkToken, validate(bookAccommodationSchema), bookAccommodation);
+    .post(checkToken, checkBlacklist, validator(bookAccommodationSchema), bookAccommodation);
+
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    AccommodationLike:
+   *      properties:
+   *        id:
+   *          type: string
+   *          readOnly: true
+   *        liked:
+   *          type: boolean
+   *        createdAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *        updateAt:
+   *          type: string
+   *          format: date-time
+   *          readOnly: true
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+  router.route('/accommodations/:accommodationId/like')
+  /**
+   * @swagger
+   * /api/v1/accommodations/{accommodationId}/like:
+   *   patch:
+   *     tags:
+   *       - Accommodation
+   *     description: Users like and unlike
+   *     parameters:
+   *       - in: path
+   *         name: accommodationId
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *         required: true
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Feedback recorded
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: object
+   *                data:
+   *                  $ref: '#/components/schemas/AccommodationLike'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+  */
+    .patch(checkToken, checkBlacklist, validator(accommodationIdSchema),
+      checkAccommodationId, likeAccommodation);
 };
 
 export {

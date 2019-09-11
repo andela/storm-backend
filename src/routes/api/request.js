@@ -264,7 +264,7 @@ const requestRoute = (router) => {
    *       - bearerAuth: []
   */
     .get(
-      checkToken, authorize([MANAGER, SUPER_ADMIN]),
+      checkToken, checkBlacklist, authorize([MANAGER, SUPER_ADMIN]),
       validate(getUserRequestSchema), checkUserId, getManagerRequest
     );
 };
@@ -367,7 +367,7 @@ const searchRequestRoute = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .post(checkToken, validate(searchRequestTripSchema), searchRequest);
+    .post(checkToken, checkBlacklist, validate(searchRequestTripSchema), searchRequest);
 
   router.route('/requests/reject/:requestId')
   /**
@@ -437,7 +437,7 @@ const searchRequestRoute = (router) => {
    *     security:
    *       - bearerAuth: []
    */
-    .patch(checkToken, validate(requestIdSchema), checkRequestId,
+    .patch(checkToken, checkBlacklist, validate(requestIdSchema), checkRequestId,
       verifyRequestLineManager, requestConfirmation, updateApprovalStatus);
 
   router.route('/requests/accept/:requestId')
@@ -508,7 +508,7 @@ const searchRequestRoute = (router) => {
    *     security:
    *       - bearerAuth: []
    */
-    .patch(checkToken, validate(requestIdSchema), checkRequestId,
+    .patch(checkToken, checkBlacklist, validate(requestIdSchema), checkRequestId,
       verifyRequestLineManager, requestConfirmation, updateApprovalStatus);
 
   router.route('/requests/edit/:requestId')

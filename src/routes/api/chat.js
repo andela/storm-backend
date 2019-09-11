@@ -1,4 +1,5 @@
 import chatController from '../../controllers/chatController';
+import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import { checkToken } from '../../middlewares/userMiddlewares';
 import validate from '../../middlewares/validator';
 import chatSchema from '../../validation/chatSchema';
@@ -88,7 +89,7 @@ const chatRoutes = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .get(checkToken, getAllChat);
+    .get(checkToken, checkBlacklist, getAllChat);
 
   router.route('/chat')
   /**
@@ -125,7 +126,7 @@ const chatRoutes = (router) => {
    *     security:
    *      - bearerAuth: []
    */
-    .post(checkToken, validate(chatPostSchema), postChat);
+    .post(checkToken, checkBlacklist, validate(chatPostSchema), postChat);
 };
 
 export default chatRoutes;
