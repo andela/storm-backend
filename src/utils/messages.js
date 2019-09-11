@@ -41,7 +41,8 @@ const messages = {
   unAuthorized: 'You are not authorized to create accommodation',
   commentOwnerNotFound: 'You can only delete your own comment',
   commentAlreadyDeleted: 'Comment already deleted',
-  commentDeleted: 'Comment deleted successfully'
+  commentDeleted: 'Comment deleted successfully',
+  accommodationFeedbackPosted: 'Your feedback has been posted successfully'
 };
 
 export default messages;

@@ -5,7 +5,7 @@ import { requestRoute, searchRequestRoute } from './api/request';
 import notificationRoutes from './api/notification';
 import authRoute from './api/auth';
 import chatRoutes from './api/chat';
-import { accommodationRoute, bookAccommodationRoute } from './api/accommodation';
+import { accommodationRoute, bookAccommodationRoute, accomodationFeedbackRoute } from './api/accommodation';
 import mostDestinationRoutes from './api/mostdestination';
 import commentRoute from './api/comment';
 
@@ -62,6 +62,8 @@ const routes = (router) => {
   searchRequestRoute(router);
   // book accommodation facility
   bookAccommodationRoute(router);
+  // feedback accomodation routes
+  accomodationFeedbackRoute(router);
   // comment routes
   commentRoute(router);
 };

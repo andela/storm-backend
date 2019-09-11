@@ -1,3 +1,7 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=d0051a4ea0ce6c7292a3d87c0f8b793775122ba9b4f341dccbccfd45ee9ff5a2 
+
 sudo: false
 
 language: node_js
@@ -7,10 +11,13 @@ node_js:
 
 services:
   - postgresql
-  - redis-server
+
 
 before_script:
   - psql -c 'create database test;' -U postgres
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
 install:
   # install deps
@@ -22,3 +29,8 @@ script:
 
 after_success:
   - npm run coverage
+  - npm install codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/lcov.info
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

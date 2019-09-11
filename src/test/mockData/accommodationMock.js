@@ -71,6 +71,10 @@ const inValidBookingDate = {
 const accommodationId = '122a0d86-8b78-4bb8-b28f-8e5f7811c452';
 const wrongAccommodationId = '127a0d86-8b78-4bb8-b28f-8e5f7811c452';
 
+const validFeedbackmessage = {
+  message: 'The toilet was bad and the kitchen sink'
+};
+
 export {
   validAccommodationDetail,
   inValidAccommodationDetail,
@@ -78,6 +82,7 @@ export {
   inValidBookingDetails,
   inValidBookingDate,
   travelAdmin,
+  validFeedbackmessage,
   inValidRoomType,
   accommodationId,
   wrongAccommodationId
