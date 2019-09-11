@@ -16,8 +16,14 @@ export default {
     actionText: 'View'
   }),
   rejectedRequest: (_, __, ref) => ({
-    title: 'Request reejcted',
+    title: 'Request rejected',
     body: 'Request rejected by Line Manager, click to view.',
+    actionLink: `/request/${ref}`,
+    actionText: 'View'
+  }),
+  editedRequest: (sender, _, ref) => ({
+    title: 'Request edited',
+    body: `Request edited by ${sender.firstName} ${sender.lastName}, click to view.`,
     actionLink: `/request/${ref}`,
     actionText: 'View'
   }),

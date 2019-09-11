@@ -1,6 +1,6 @@
 const notificationTypes = {
   NEW_REQUEST: 'newRequest',
-  MODIFIED_REQUEST: 'modifiedRequest',
+  EDITED_REQUEST: 'editedRequest',
   APPROVED_REQUEST: 'approvedRequest',
   REJECTED_REQUEST: 'rejectedRequest',
   NEW_COMMENT: 'newComment',
