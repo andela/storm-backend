@@ -42,7 +42,10 @@ const messages = {
   commentOwnerNotFound: 'You can only delete your own comment',
   commentAlreadyDeleted: 'Comment already deleted',
   commentDeleted: 'Comment deleted successfully',
-  accommodationFeedbackPosted: 'Your feedback has been posted successfully'
+  accommodationFeedbackPosted: 'Your feedback has been posted successfully',
+  optinEmailNotification: 'You will now receive email notifications',
+  optoutEmailNotification: 'You will no longer receive email notifications',
+  notificationsCleared: 'Notifications cleared!',
 };
 
 export default messages;
