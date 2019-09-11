@@ -3,6 +3,7 @@ import JoiValidator from './JoiValidator';
 
 const validateRequiredString = JoiValidator.validateString().required();
 const tripTypeSchema = JoiValidator.validateString().valid('one-way', 'return');
+const validNum = JoiValidator.validateNumber().min(1);
 
 const requestTripSchema = Joi.object({
   type: tripTypeSchema.required(),
@@ -30,14 +31,14 @@ const subrequestTripSchema = Joi.object({
 
 const getUserRequestSchema = Joi.object({
   userId: JoiValidator.validateUuidV4(),
-  page: JoiValidator.validateNumber().min(1),
-  perPage: JoiValidator.validateNumber().min(1),
   approvalStatus: JoiValidator.validateString().valid('accepted', 'rejected', 'pending'),
+  page: validNum,
+  perPage: validNum
 });
 
 const searchRequestTripSchema = Joi.object({
-  page: JoiValidator.validateNumber().min(1),
-  perPage: JoiValidator.validateNumber().min(1),
+  page: validNum,
+  perPage: validNum,
   approvalStatus: JoiValidator.validateString().valid('accepted', 'rejected'),
   multiCity: JoiValidator.validateBoolean(),
   type: tripTypeSchema,
@@ -52,11 +53,10 @@ const requestIdSchema = Joi.object({
   requestId: JoiValidator.validateString().uuid().required()
 });
 
-
 export default {
   requestTripSchema,
   subrequestTripSchema,
   getUserRequestSchema,
   searchRequestTripSchema,
-  requestIdSchema
+  requestIdSchema,
 };

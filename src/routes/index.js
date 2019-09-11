@@ -8,6 +8,7 @@ import chatRoutes from './api/chat';
 import { accommodationRoute, bookAccommodationRoute, accomodationFeedbackRoute } from './api/accommodation';
 import mostDestinationRoutes from './api/mostdestination';
 import commentRoute from './api/comment';
+import tripStats from './api/tripStats';
 
 const routes = (router) => {
   router
@@ -66,6 +67,8 @@ const routes = (router) => {
   accomodationFeedbackRoute(router);
   // comment routes
   commentRoute(router);
+  // get user request stats
+  tripStats(router);
 };
 
 export default routes;

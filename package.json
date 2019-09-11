@@ -45,6 +45,7 @@
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
     "mock-req-res": "^1.1.1",
+    "moment": "^2.24.0",
     "morgan-body": "^2.4.7",
     "multer": "^1.4.2",
     "multer-storage-cloudinary": "^2.2.1",
