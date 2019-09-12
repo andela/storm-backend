@@ -19,6 +19,7 @@ const {
   forgotPassword,
   resetPassword,
   setUserRole,
+  rememberUserProfile,
 } = userController;
 
 const {
@@ -360,6 +361,7 @@ const userRoute = (router) => {
     */
     .patch(checkToken, checkBlacklist, validate(setUserRoleSchema),
       authorize([roles.SUPER_ADMIN]), checkUserId, setUserRole);
+  router.patch('/remember/profile', rememberUserProfile);
 };
 
 export default userRoute;

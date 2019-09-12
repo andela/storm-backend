@@ -140,7 +140,7 @@ const updateUserDetails = async (req, res) => {
     }
     const {
       firstName, lastName, phoneNo, birthDate, preferredLanguage,
-      preferredCurrency, gender, lineManager, currentLocation
+      preferredCurrency, gender, lineManager, currentLocation, rememberProfile
     } = req.body;
     const phoneNoExists = await getByOptions(User, {
       where: {
@@ -158,7 +158,8 @@ const updateUserDetails = async (req, res) => {
       preferredCurrency,
       gender,
       lineManager,
-      currentLocation
+      currentLocation,
+      rememberProfile
     };
     const options = {
       returning: true,
@@ -270,7 +271,24 @@ const resetPassword = async (req, res) => {
     return response(res, 500, 'error', { error: error.message });
   }
 };
-
+/**
+   * @param {object} req request object
+   * @param {object} res response object
+   * @return {object} message
+   */
+const rememberUserProfile = async (req, res) => {
+  try {
+    const { rememberProfile } = req.body;
+    const { id } = req.user;
+    const user = await User.findByPk(id);
+    if (!user) return response(res, 404, 'error', { message: messages.userNotFound });
+    const options = { returning: true, where: { id } };
+    const updatedUser = await update(User, { rememberProfile }, options);
+    return response(res, 200, 'success', { message: 'Remember Profile Information Successfully Updated' }, updatedUser.firstName);
+  } catch (error) {
+    return response(res, 500, 'error', { error: error.message });
+  }
+};
 export default {
   signUp,
   socialAuth,
@@ -280,5 +298,6 @@ export default {
   updateUserDetails,
   forgotPassword,
   resetPassword,
-  setUserRole
+  setUserRole,
+  rememberUserProfile
 };

@@ -84,7 +84,12 @@ module.exports = {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true
-      }
+      },
+      rememberProfile: {
+        allowNull: true,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
         })
   },
   down: (queryInterface, Sequelize) => {
