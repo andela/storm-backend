@@ -316,7 +316,7 @@ const searchRequestRoute = (router) => {
     /**
      * @swagger
      * /api/v1/search/requests:
-     *   post:
+     *   get:
      *     tags:
      *       - Requests
      *     description: search request
@@ -367,7 +367,7 @@ const searchRequestRoute = (router) => {
      *     security:
      *       - bearerAuth: []
     */
-    .post(checkToken, checkBlacklist, validate(searchRequestTripSchema), searchRequest);
+    .get(checkToken, checkBlacklist, validate(searchRequestTripSchema), searchRequest);
 
   router.route('/requests/reject/:requestId')
   /**

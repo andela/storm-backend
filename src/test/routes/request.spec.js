@@ -216,7 +216,7 @@ describe('REQUESTS', () => {
   describe('GET /requests', () => {
     it('should able to search for request successfully', (done) => {
       chai.request(app)
-        .post(searchRequestTripEndpoint)
+        .get(searchRequestTripEndpoint)
         .set('authorization', token)
         .send({ type: 'return' })
         .end((err, res) => {
@@ -227,7 +227,7 @@ describe('REQUESTS', () => {
 
     it('should able to search for request successfully using origin and destination', (done) => {
       chai.request(app)
-        .post(searchRequestTripEndpoint)
+        .get(searchRequestTripEndpoint)
         .set('authorization', token)
         .send({ originCity: 'lagos', destinationCity: 'Istanbul' })
         .end((err, res) => {
@@ -238,7 +238,7 @@ describe('REQUESTS', () => {
 
     it('should able to search for request successfully using approvalstatus', (done) => {
       chai.request(app)
-        .post(searchRequestTripEndpoint)
+        .get(searchRequestTripEndpoint)
         .set('authorization', token)
         .send({ originCity: 'Lagos', approvalStatus: 'accepted' })
         .end((err, res) => {
@@ -249,7 +249,7 @@ describe('REQUESTS', () => {
 
     it('should able to search for request successfully using multiCity', (done) => {
       chai.request(app)
-        .post(searchRequestTripEndpoint)
+        .get(searchRequestTripEndpoint)
         .set('authorization', token)
         .send({ originCity: 'Lagos', multiCity: true })
         .end((err, res) => {
@@ -260,7 +260,7 @@ describe('REQUESTS', () => {
 
     it('should return 200 for ilike search', (done) => {
       chai.request(app)
-        .post('/api/v1/search/requests/?originCity=LAGOS')
+        .get('/api/v1/search/requests/?originCity=LAGOS')
         .set('authorization', token)
         .end((err, res) => {
           expect(res.status).to.equal(200);
