@@ -1,4 +1,5 @@
 import response from '../utils/response';
+import messages from '../utils/messages';
 import '../config/env';
 import {
   markAsRead,
@@ -15,13 +16,15 @@ import {
  * @param {Object} req - express req object
  * @param {Object} res - express res object
  * @param {Function} method - method to be called
+ * @param {String} message - success message to show to the users
  * @returns {void}
  */
-const handleMethodById = async (req, res, method) => {
+const handleMethodById = async (req, res, method, message) => {
   try {
     const { id } = req.decoded;
     const data = await method(id);
-    response(res, 200, 'success', data);
+    const payload = message ? { message } : data;
+    response(res, 200, 'success', payload);
   } catch (error) {
     response(res, 500, 'error', { message: error.message });
   }
@@ -41,7 +44,9 @@ export const getAllNotifications = (req, res) => handleMethodById(req, res, find
  * @param {Object} res - server response
  * @returns {Object} - custom response
 */
-export const handleOptInEmail = (req, res) => handleMethodById(req, res, optInEmail);
+export const handleOptInEmail = (req, res) => {
+  return handleMethodById(req, res, optInEmail, messages.optinEmailNotification);
+};
 
 /**
  * notification controller
@@ -49,7 +54,9 @@ export const handleOptInEmail = (req, res) => handleMethodById(req, res, optInEm
  * @param {Object} res - server response
  * @returns {Object} - custom response
  */
-export const handleOptOutEmail = (req, res) => handleMethodById(req, res, optOutEmail);
+export const handleOptOutEmail = (req, res) => {
+  return handleMethodById(req, res, optOutEmail, messages.optoutEmailNotification);
+};
 
 /**
  * notification controller
@@ -62,7 +69,7 @@ export const handleMarkAsRead = async (req, res) => {
     const { id } = req.params;
     const { id: userId } = req.decoded;
     const notification = await findOneNotification(id);
-    if (notification.receiver !== userId) return response(res, 403, 'error', { message: 'Forbidden' });
+    if (notification.receiver !== userId) return response(res, 403, 'error', { message: messages.forbidden });
     const update = await markAsRead(id, { isRead: true, readDate: Date.now() });
     response(res, 200, 'success', update);
   } catch (e) {
@@ -92,4 +99,6 @@ export const handleMarkAllAsRead = async (req, res) => {
  * @param {Object} res - server response
  * @returns {Object} - custom response
 */
-export const clearNotifications = (req, res) => handleMethodById(req, res, deleteAllNotifications);
+export const clearNotifications = (req, res) => {
+  return handleMethodById(req, res, deleteAllNotifications, messages.notificationsCleared);
+};
