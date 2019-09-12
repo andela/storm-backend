@@ -8,6 +8,7 @@ import messages from '../utils/messages';
 import { findById } from '../services/userServices';
 import { createNotification } from '../services/notificationServices';
 import addOrCreateCounter from '../services/mostDestinationServices';
+import notificationTypes from '../utils/notificationTypes';
 
 const { Request, Subrequest, User } = models;
 const {
@@ -73,7 +74,10 @@ const requestTrip = async (req, res) => {
 
     const receiver = await findById(sender.lineManager);
     await createNotification({
-      sender, receiver, type: 'newRequest', ref: subRequest ? trip.requestedTrip.id : trip.id
+      sender,
+      receiver,
+      type: notificationTypes.NEW_REQUEST,
+      ref: subRequest ? trip.requestedTrip.id : trip.id
     });
 
     return response(res, 201, 'success', trip);
@@ -122,6 +126,7 @@ const searchRequest = async (req, res) => {
     return response(res, 400, 'error', { message: messages.error });
   }
 };
+
 /**
  * @function getManagerRequest
  * @param {Object} req - server request
@@ -186,7 +191,7 @@ const updateApprovalStatus = async (req, res) => {
     await createNotification({
       sender: manager,
       receiver: req.requester,
-      type: action === 'accept' ? 'approvedRequest' : 'rejectedRequest',
+      type: action === 'accept' ? notificationTypes.APPROVED_REQUEST : notificationTypes.REJECTED_REQUEST,
       ref: requestId
     });
     if (approvalStatusValue === 'accepted') {
@@ -206,12 +211,22 @@ const updateApprovalStatus = async (req, res) => {
 */
 const updateTripRequest = async (req, res) => {
   try {
-    const { requestType, body, params: { requestId } } = req;
+    const {
+      request, requestType, body, params: { requestId }
+    } = req;
     const data = body;
     const model = (requestType === 'requests') ? Request : Subrequest;
     const options = { where: { id: requestId }, returning: true };
     const updatedRequest = await update(model, data, options);
     const [, [updatedRow]] = updatedRequest;
+
+    const sender = await findById(request.userId);
+    const receiver = await findById(sender.lineManager);
+
+    await createNotification({
+      sender, receiver, type: notificationTypes.EDITED_REQUEST, ref: requestId
+    });
+
     return response(res, 201, 'success', updatedRow);
   } catch (error) {
     return response(res, 500, 'error', { message: error.message });

@@ -107,6 +107,7 @@ export const verifyEditRequestAuthorization = async (req, res, next) => {
     const openRequest = requestInfo.approvalStatus === 'pending';
     if (!authorizedUser || !openRequest) return response(res, 401, 'error', { message: messages.unauthorized });
     req.requestType = requestType;
+    req.request = requestInfo;
     next();
   } catch (error) {
     return response(res, 500, 'error', {
