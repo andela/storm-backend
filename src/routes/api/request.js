@@ -161,6 +161,11 @@ const requestRoute = (router) => {
    *           format: uuid
    *         required: false
    *       - in: query
+   *         name: approvalStatus
+   *         schema:
+   *           type: string
+   *         required: false
+   *       - in: query
    *         name: page
    *         schema:
    *           type: number
