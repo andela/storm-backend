@@ -94,12 +94,15 @@ const requestTrip = async (req, res) => {
 */
 const getUserRequest = async (req, res) => {
   try {
-    const { decoded: { id, roleId }, query: { page, perPage, userId } } = req;
+    const { decoded: { id, roleId }, query: { page, perPage, userId, approvalStatus } } = req;
     if (userId && (userId !== id && roleId !== roles.SUPER_ADMIN)) {
       return response(res, 403, 'error', { message: unauthorizedUserRequest });
     }
     const { limit, offset } = calculateLimitAndOffset(page, perPage);
-    const options = { where: { userId: userId || id }, limit, offset };
+    const options = { where: { userId: userId || id }, order: [['updatedAt', 'ASC']], limit, offset };
+    if (approvalStatus) {
+      options.where.approvalStatus = approvalStatus;
+    }
     const { rows, count } = await getAll(Request, options);
     if (rows.length === 0) return response(res, 200, 'success', { message: noRequests });
     const meta = paginate(page, perPage, count, rows);

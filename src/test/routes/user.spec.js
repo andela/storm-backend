@@ -24,7 +24,7 @@ before(async () => {
 describe('User route', () => {
   describe('GET /users/:userId', () => {
     it('should get user details', async () => {
-      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/?user=${userMock.userId}`)
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/?userId=${userMock.userId}`)
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');

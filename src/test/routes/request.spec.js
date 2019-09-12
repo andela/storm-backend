@@ -175,7 +175,7 @@ describe('REQUESTS', () => {
     });
   });
 
-  describe('GET /requests/user/:userId', () => {
+  describe('GET /requests/user', () => {
     it('should get a users requests', async () => {
       const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}`)
         .set('authorization', token);
@@ -196,6 +196,15 @@ describe('REQUESTS', () => {
 
     it('should get a users requests when "page" and "perPage" are passed to the req.query', async () => {
       const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}&page=2&perPage=1`)
+        .set('authorization', token);
+      const { body: { data, status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+      expect(data).to.have.property('meta');
+    });
+
+    it('should get a users requests when "approvalStatus" is passed to the req.query', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/user/?userId=${requesterId}&page=1&perPage=1&approvalStatus=accepted`)
         .set('authorization', token);
       const { body: { data, status } } = response;
       expect(response.status).to.equal(200);
@@ -310,7 +319,7 @@ describe('REQUESTS', () => {
     });
   });
 
-  describe('GET /requests/manager/:userId', () => {
+  describe('GET /requests/manager', () => {
     it('should get a managers requests', async () => {
       const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/manager/?userId=${anotherManagerId}`)
         .set('authorization', managerToken);

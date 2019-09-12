@@ -31,7 +31,8 @@ const subrequestTripSchema = Joi.object({
 const getUserRequestSchema = Joi.object({
   userId: JoiValidator.validateUuidV4(),
   page: JoiValidator.validateNumber().min(1),
-  perPage: JoiValidator.validateNumber().min(1)
+  perPage: JoiValidator.validateNumber().min(1),
+  approvalStatus: JoiValidator.validateString().valid('accepted', 'rejected', 'pending'),
 });
 
 const searchRequestTripSchema = Joi.object({
