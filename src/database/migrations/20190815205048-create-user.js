@@ -1,5 +1,4 @@
-'use strict';
-module.exports = {
+export default {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('Users', {
       id: {
@@ -84,8 +83,12 @@ module.exports = {
         allowNull: true,
         type: Sequelize.BOOLEAN,
         defaultValue: true
-      }
-        })
+      },
+      profileImageUrl: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+    })
   },
   down: (queryInterface, Sequelize) => {
     return queryInterface.dropTable('Users');

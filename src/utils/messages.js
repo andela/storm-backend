@@ -47,6 +47,7 @@ const messages = {
   optoutEmailNotification: 'You will no longer receive email notifications',
   notificationsCleared: 'Notifications cleared!',
   noLocation: 'Office Location not found',
+  imageError: 'Error proccessing image',
 };
 
 export default messages;

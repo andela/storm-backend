@@ -1,6 +1,6 @@
 import multer from 'multer';
-import storage from '../utils/cloudinaryStorage';
 
+const storage = multer.memoryStorage();
 const multerUploads = multer({ storage }).array('images', 10);
 
 export default multerUploads;

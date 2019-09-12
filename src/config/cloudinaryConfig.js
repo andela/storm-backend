@@ -1,4 +1,4 @@
-import { config, uploader } from 'cloudinary';
+import { config, v2 } from 'cloudinary';
 import './env';
 
 const cloudinaryConfig = (req, res, next) => {
@@ -10,4 +10,5 @@ const cloudinaryConfig = (req, res, next) => {
   next();
 };
 
+const { uploader } = v2;
 export { cloudinaryConfig, uploader };

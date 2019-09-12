@@ -149,6 +149,8 @@ const updateUserDetails = async (req, res) => {
       }
     });
     if (phoneNoExists) return response(res, 409, 'error', { message: phoneExists });
+
+    const [profileImageUrl] = req.imageUrls;
     const userInfo = {
       firstName,
       lastName,
@@ -157,7 +159,8 @@ const updateUserDetails = async (req, res) => {
       preferredLanguage,
       preferredCurrency,
       gender,
-      currentLocation
+      currentLocation,
+      profileImageUrl: profileImageUrl || process.env.DEFAULT_PROFILE_PIC,
     };
     const options = {
       returning: true,
