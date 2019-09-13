@@ -6,6 +6,8 @@ import mockData from '../mockData';
 import { generateToken } from '../../utils/authHelper';
 import roles from '../../utils/roles';
 
+import { travelAdmin } from '../mockData/accommodationMock';
+
 const { Request } = models;
 const {
   userMock: {
@@ -26,8 +28,12 @@ describe('REQUESTS', () => {
   const rejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.requestId}`;
   const acceptRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/accept/${requestToBeRejected.requestId}`;
   const invalidRejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.wrongRequestId}`;
+  const xTripStatEndpoint = `${BACKEND_BASE_URL}/stats/requests`;
+  const signinEndpoint = `${BACKEND_BASE_URL}/user/signin`;
   const { REQUESTER, SUPER_ADMIN, MANAGER } = roles;
   const editRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/edit/${requestToBeEdited.requestId}`;
+
+  let token1;
 
   before(async () => {
     token = `Bearer ${generateToken({ id: requesterId, roleId: REQUESTER })}`;
@@ -363,6 +369,29 @@ describe('REQUESTS', () => {
       expect(response.status).to.equal(200);
       expect(status).to.equal('success');
       expect(message).to.equal(messages.noRequests);
+    });
+  });
+
+  describe('GET /stats/requests', () => {
+    it('should generate travel admin token', (done) => {
+      chai
+        .request(app)
+        .post(signinEndpoint)
+        .send(travelAdmin)
+        .end((err, res) => {
+          const { data } = res.body;
+          token1 = data.token;
+          expect(data).to.have.property('token');
+          done(err);
+        });
+    });
+
+    it('should get all user trip requests stats', async () => {
+      const response = await chai.request(app).get(`${xTripStatEndpoint}`)
+        .set('authorization', token1);
+      const { body: { status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
     });
   });
 });
