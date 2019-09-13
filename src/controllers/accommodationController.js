@@ -145,6 +145,29 @@ const accomodationFeedback = async (req, res) => {
   }
 };
 
+/* user can get accomodation by its ID
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const getAccomodation = async (req, res) => {
+  try {
+    const { accommodationId } = req.params;
+    let accommodation = [];
+    if (accommodationId) {
+      accommodation = await getById(Accommodation, accommodationId, {});
+      if (!accommodation) return response(res, 404, 'error', { message: messages.notExistAccommodation });
+    } else {
+      accommodation = await getAllRecord(Accommodation);
+    }
+    return response(res, 200, 'success', accommodation);
+  } catch (error) {
+    return response(res, 500, 'error', {
+      message: serverError,
+    });
+  }
+};
+
 /* user can get accomodation by destination city
  * @param {Object} req - server request
  * @param {Object} res - server response
@@ -155,7 +178,6 @@ const getByDestinationCity = async (req, res) => {
     const { destinationCity } = req.params;
     const options = { where: { city: { [Op.iLike]: `%${destinationCity}%` } } };
     let accommodations = await getAllRecord(Accommodation, options);
-
     accommodations = await Promise.all(
       accommodations.map(async (accommodation) => {
         accommodation.dataValues.rating = await getAverageRatingByAccommodation(accommodation);
@@ -194,5 +216,5 @@ const rateAccommodation = async (req, res) => {
 
 export {
   createAccommodation, bookAccommodation, accomodationFeedback,
-  likeAccommodation, getByDestinationCity, rateAccommodation
+  likeAccommodation, getByDestinationCity, rateAccommodation, getAccomodation
 };

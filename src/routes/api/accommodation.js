@@ -3,7 +3,7 @@ import validator from '../../middlewares/validator';
 import { checkAccommodationId } from '../../middlewares/accommodationMiddlewares';
 import {
   createAccommodation, bookAccommodation, accomodationFeedback,
-  likeAccommodation, getByDestinationCity, rateAccommodation
+  likeAccommodation, getByDestinationCity, rateAccommodation, getAccomodation
 } from '../../controllers/accommodationController';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import {
@@ -114,7 +114,92 @@ const accommodationRoute = (router) => {
       authorize([TRAVEL_ADMIN, SUPER_ADMIN, ACCOMMODATION_SUPPLIER]),
       validator(accommodationSchema), createAccommodation);
 
-  router.route('/accommodation/:destinationCity')
+  router.route('/accommodation')
+  /**
+           * @swagger
+           * /api/v1/accommodation/:
+           *   get:
+           *     tags:
+           *       - Accommodation
+           *     description: Get all accomodations
+           *     produces:
+           *       - application/json
+           *     responses:
+           *       201:
+           *         description: Accomodation Details
+           *         content:
+           *          application/json:
+           *            schema:
+           *              type: object
+           *              properties:
+           *                status:
+           *                  type: object
+           *                data:
+           *                  $ref: '#/components/schemas/accommodation'
+           *       400:
+           *         description: Input validation error
+           *         content:
+           *          application/json:
+           *            schema:
+           *              $ref: '#/components/schemas/ErrorResponse'
+           *       500:
+           *         description: Internal Server error
+           *         content:
+           *          application/json:
+           *            schema:
+           *              $ref: '#/components/schemas/ErrorResponse'
+           *     security:
+           *       - bearerAuth: []
+          */
+    .get(checkToken, checkBlacklist, getAccomodation);
+
+  router.route('/accommodation/:accommodationId')
+  /**
+       * @swagger
+       * /api/v1/accommodation/{accommodationId}:
+       *   get:
+       *     tags:
+       *       - Accommodation
+       *     description: Get an accomodation detail
+       *     produces:
+       *       - application/json
+       *     parameters:
+       *      - in: path
+       *        name: accomodationId
+       *        schema:
+       *          type: string
+       *          format: uuid
+       *        required: true
+       *     responses:
+       *       201:
+       *         description: Accomodation Details
+       *         content:
+       *          application/json:
+       *            schema:
+       *              type: object
+       *              properties:
+       *                status:
+       *                  type: object
+       *                data:
+       *                  $ref: '#/components/schemas/accommodation'
+       *       400:
+       *         description: Input validation error
+       *         content:
+       *          application/json:
+       *            schema:
+       *              $ref: '#/components/schemas/ErrorResponse'
+       *       500:
+       *         description: Internal Server error
+       *         content:
+       *          application/json:
+       *            schema:
+       *              $ref: '#/components/schemas/ErrorResponse'
+       *     security:
+       *       - bearerAuth: []
+      */
+    .get(checkToken, checkBlacklist, getAccomodation);
+
+  router.route('/accommodation/destination/:destinationCity')
   /**
    * @swagger
    * components:
@@ -165,7 +250,7 @@ const accommodationRoute = (router) => {
 
   /**
    * @swagger
-   * /api/v1/accommodation/{destinationCity}:
+   * /api/v1/accommodation/destination/{destinationCity}:
    *   get:
    *     tags:
    *       - Accommodation

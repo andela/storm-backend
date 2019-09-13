@@ -94,12 +94,18 @@ const requestTrip = async (req, res) => {
 */
 const getUserRequest = async (req, res) => {
   try {
-    const { decoded: { id, roleId }, query: { page, perPage, userId, approvalStatus } } = req;
+    const {
+      decoded: { id, roleId }, query: {
+        page, perPage, userId, approvalStatus
+      }
+    } = req;
     if (userId && (userId !== id && roleId !== roles.SUPER_ADMIN)) {
       return response(res, 403, 'error', { message: unauthorizedUserRequest });
     }
     const { limit, offset } = calculateLimitAndOffset(page, perPage);
-    const options = { where: { userId: userId || id }, order: [['updatedAt', 'ASC']], limit, offset };
+    const options = {
+      where: { userId: userId || id }, order: [['updatedAt', 'ASC']], limit, offset
+    };
     if (approvalStatus) {
       options.where.approvalStatus = approvalStatus;
     }
