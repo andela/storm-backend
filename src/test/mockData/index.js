@@ -3,6 +3,7 @@ import requestMock from './requestMock';
 import roleMock from './roleMock';
 import chatMock from './chatMock';
 import commentMock from './commentMock';
+import officelocationMock from './officelocationMock';
 
 export default {
   userMock,
@@ -10,4 +11,5 @@ export default {
   roleMock,
   chatMock,
   commentMock,
+  officelocationMock
 };
