@@ -3,6 +3,7 @@ import models from '../models';
 import response from '../utils/response';
 import messages from '../utils/messages';
 import DbServices from '../services/dbServices';
+import { createRating, getAverageRatingByAccommodation } from '../services/ratingService';
 
 const {
   Accommodation, BookAccomodation, User, Request, AccomodationFeedback, AccommodationLike
@@ -137,14 +138,10 @@ const accomodationFeedback = async (req, res) => {
     const {
       message
     } = req.body;
-    const accommodation = await getById(Accommodation, accommodationId, {});
-    if (!accommodation) return response(res, 404, 'error', { message: messages.notExistAccommodation });
     await create(AccomodationFeedback, { accommodationId, userId, message });
     return response(res, 200, 'success', { message: accommodationFeedbackPosted });
   } catch (error) {
-    return response(res, 500, 'error', {
-      message: serverError,
-    });
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 
@@ -157,16 +154,45 @@ const getByDestinationCity = async (req, res) => {
   try {
     const { destinationCity } = req.params;
     const options = { where: { city: { [Op.iLike]: `%${destinationCity}%` } } };
-    const accommodation = await getAllRecord(Accommodation, options);
+    let accommodations = await getAllRecord(Accommodation, options);
+
+    accommodations = await Promise.all(
+      accommodations.map(async (accommodation) => {
+        accommodation.dataValues.rating = await getAverageRatingByAccommodation(accommodation);
+        return accommodation;
+      })
+    );
+
+    return response(res, 200, 'success', accommodations);
+  } catch (error) {
+    return response(res, 500, 'error', { message: error.message });
+  }
+};
+
+/**
+ * @method rateAccommodation
+ * @param {object} req request object
+ * @param {object} res request object
+ * @returns {object} custom response
+ * @description rates an accomodation
+*/
+const rateAccommodation = async (req, res) => {
+  try {
+    const {
+      params: { accommodationId },
+      body: { value },
+      decoded: { id: userId },
+      accommodation
+    } = req;
+    await createRating(userId, accommodationId, value);
+    accommodation.dataValues.rating = await getAverageRatingByAccommodation(accommodation);
     return response(res, 201, 'success', accommodation);
   } catch (error) {
-    return response(res, 500, 'error', {
-      message: serverError,
-    });
+    return response(res, 500, 'error', { message: error.message });
   }
 };
 
 export {
   createAccommodation, bookAccommodation, accomodationFeedback,
-  likeAccommodation, getByDestinationCity
+  likeAccommodation, getByDestinationCity, rateAccommodation
 };

@@ -3,6 +3,11 @@ const travelAdmin = {
   password: 'Kazeem27'
 };
 
+const unverifiedTravelAdmin = {
+  email: 'unverifiedsupplier@gmail.com',
+  password: 'password'
+};
+
 const validAccommodationDetail = {
   country: 'Nigeria',
   city: 'lagos',
@@ -85,5 +90,6 @@ export {
   validFeedbackmessage,
   inValidRoomType,
   accommodationId,
-  wrongAccommodationId
+  wrongAccommodationId,
+  unverifiedTravelAdmin
 };

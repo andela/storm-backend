@@ -73,5 +73,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+  Accommodation.associate = (models) => {
+    Accommodation.hasMany(models.Rating, {
+      foreignKey: 'accommodationId'
+    });
+  };
+
   return Accommodation;
 };
