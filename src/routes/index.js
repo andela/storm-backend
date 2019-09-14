@@ -9,6 +9,7 @@ import { accommodationRoute, bookAccommodationRoute, accomodationFeedbackRoute }
 import mostDestinationRoutes from './api/mostdestination';
 import commentRoute from './api/comment';
 import tripStats from './api/tripStats';
+import officeLocationRoutes from './api/officeLocation';
 
 const routes = (router) => {
   router
@@ -69,6 +70,8 @@ const routes = (router) => {
   commentRoute(router);
   // get user request stats
   tripStats(router);
+  // offfice locations routes
+  officeLocationRoutes(router);
 };
 
 export default routes;

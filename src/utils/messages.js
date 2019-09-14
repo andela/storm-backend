@@ -46,6 +46,7 @@ const messages = {
   optinEmailNotification: 'You will now receive email notifications',
   optoutEmailNotification: 'You will no longer receive email notifications',
   notificationsCleared: 'Notifications cleared!',
+  noLocation: 'Office Location not found',
 };
 
 export default messages;
