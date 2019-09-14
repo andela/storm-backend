@@ -13,11 +13,14 @@ import roleEmailMessage from '../utils/templates/roleEmailMessage';
 import createTemplate from '../utils/createTemplate';
 import sendMail from '../utils/sendMail';
 import DbServices from '../services/dbServices';
+import { calculateLimitAndOffset, paginate } from '../utils/pagination';
 
 const { User, Role, Tokenblacklist } = models;
-const { getById, update, getByOptions } = DbServices;
 const {
-  unauthorizedUserProfile, serverError, phoneExists, roleChanged, unauthorizedUserRequest
+  getById, update, getByOptions, getAll
+} = DbServices;
+const {
+  unauthorizedUserProfile, serverError, phoneExists, roleChanged, unauthorizedUserRequest, noUser
 } = messages;
 const { FRONTEND_BASE_URL } = process.env;
 
@@ -273,6 +276,23 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const getEmployeeList = async (req, res) => {
+  try {
+    const { decoded: { id, roleId }, query: { page, perPage } } = req;
+    const { limit, offset } = calculateLimitAndOffset(page, perPage);
+    const options = { limit, offset };
+    if (roleId === roles.MANAGER) {
+      options.where = { lineManager: id };
+    }
+    const { rows, count } = await getAll(User, options);
+    if (rows.length === 0) return response(res, 200, 'success', { message: noUser });
+    const meta = paginate(page, perPage, count, rows);
+    return response(res, 200, 'success', { employees: rows, meta });
+  } catch (error) {
+    return response(res, 500, 'error', { message: serverError });
+  }
+};
+
 export default {
   signUp,
   socialAuth,
@@ -282,5 +302,6 @@ export default {
   updateUserDetails,
   forgotPassword,
   resetPassword,
-  setUserRole
+  setUserRole,
+  getEmployeeList
 };

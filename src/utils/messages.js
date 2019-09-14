@@ -48,6 +48,7 @@ const messages = {
   notificationsCleared: 'Notifications cleared!',
   noLocation: 'Office Location not found',
   imageError: 'Error proccessing image',
+  noUser: 'No user to display',
 };
 
 export default messages;

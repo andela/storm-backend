@@ -13,13 +13,15 @@ const { User } = models;
 
 const BACKEND_BASE_URL = '/api/v1';
 
-let token, invalidToken, managerToken;
+let token, invalidToken, managerToken, newManagerToken, requesterToken;
 
 before(async () => {
   const jwtToken = generateToken({ id: userMock.userId, roleId: roles.SUPER_ADMIN });
   token = jwtToken;
   invalidToken = generateToken({ id: userMock.wrongId });
-  managerToken = generateToken({ id: userMock.anotherUserId });
+  requesterToken = generateToken({ id: userMock.requesterId, roleId: roles.REQUESTER });
+  managerToken = generateToken({ id: userMock.anotherUserId, roleId: roles.MANAGER });
+  newManagerToken = generateToken({ id: userMock.newManager, roleId: roles.MANAGER });
 });
 
 describe('User route', () => {
@@ -29,6 +31,20 @@ describe('User route', () => {
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
+    });
+
+    it('should get user details', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users`)
+        .set('authorization', token);
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+    });
+
+    it('should return 403 for unauthorized access', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/users/?userId=${userMock.userId}`)
+        .set('authorization', requesterToken);
+      expect(response.status).to.equal(403);
+      expect(response.body.status).to.equal('error');
     });
   });
 
@@ -215,6 +231,36 @@ describe('User route', () => {
       expect(response.status).to.equal(500);
       expect(response.body).to.have.property('status').that.equal('error');
       stub.restore();
+    });
+  });
+  describe('GET: /employees', () => {
+    it('should get list of employees for a manager', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/employees`)
+        .set('Content-Type', 'application/json')
+        .set('authorization', managerToken);
+      expect(response.status).to.equal(200);
+    });
+
+    it('should get list of employees for a super admin', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/employees`)
+        .set('Content-Type', 'application/json')
+        .set('authorization', token);
+      expect(response.status).to.equal(200);
+    });
+
+    it('should return a message if list of employees is empty', async () => {
+      const { status, body: { data: { message } } } = await chai.request(app).get(`${BACKEND_BASE_URL}/employees`)
+        .set('Content-Type', 'application/json')
+        .set('authorization', newManagerToken);
+      expect(status).to.equal(200);
+      expect(message).to.equal(messages.noUser);
+    });
+
+    it('should get list of employees for a super admin paginated', async () => {
+      const { status } = await chai.request(app).get(`${BACKEND_BASE_URL}/employees?page=2&perPage=2`)
+        .set('Content-Type', 'application/json')
+        .set('authorization', token);
+      expect(status).to.equal(200);
     });
   });
 });

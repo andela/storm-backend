@@ -2,7 +2,7 @@ import userController from '../../controllers/userController';
 import validate from '../../middlewares/validator';
 import {
   signUpSchema, signInSchema, updateUserSchema, getUserSchema,
-  setUserRoleSchema, emailSchema, passwordSchema
+  setUserRoleSchema, emailSchema, passwordSchema, getEmployeesSchema
 } from '../../validation/userSchema';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import verifyEmailController from '../../controllers/emailVerificationController';
@@ -11,6 +11,8 @@ import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
 import multerUploads from '../../middlewares/multer';
 import uploadImage from '../../middlewares/imageUploader';
+
+const { MANAGER, SUPER_ADMIN } = roles;
 
 const {
   signUp,
@@ -21,6 +23,7 @@ const {
   forgotPassword,
   resetPassword,
   setUserRole,
+  getEmployeeList
 } = userController;
 
 const {
@@ -459,7 +462,40 @@ const userRoute = (router) => {
      *       - bearerAuth: []
     */
     .patch(checkToken, checkBlacklist, validate(setUserRoleSchema),
-      authorize([roles.SUPER_ADMIN]), checkUserId, setUserRole);
+      authorize([SUPER_ADMIN]), checkUserId, setUserRole);
+
+  router.route('/employees')
+  /**
+   * @swagger
+   * paths:
+   *  /api/v1/employees:
+   *    get:
+   *     tags:
+   *       - Users
+   *     summary: Get list of employees
+   *     parameters:
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: number
+   *         required: false
+   *       - in: query
+   *         name: perPage
+   *         schema:
+   *           type: number
+   *         required: false
+   *     responses:
+   *       200:
+   *         description: employees fetched successfully
+   *       404:
+   *         description: User not found
+   *       500:
+   *         description: Internal Server error
+   *     security:
+   *       - bearerAuth: [ ]
+  */
+    .get(checkToken, checkBlacklist, authorize([SUPER_ADMIN, MANAGER]),
+      validate(getEmployeesSchema), getEmployeeList);
 };
 
 export default userRoute;

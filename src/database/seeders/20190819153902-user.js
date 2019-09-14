@@ -15,6 +15,16 @@ export default {
         roleId: roles.MANAGER,
       },
       {
+        id: '68eb202e-3f67-4eed-b7ac-9c31bc226e0c',
+        firstName: 'manna',
+        lastName: 'from',
+        email: 'mannafrom@heaven.com',
+        password: hashPassword('Password'),
+        phoneNo: '2347033510645',
+        verified: true,
+        roleId: roles.MANAGER,
+      },
+      {
         id: '122a0d86-8b78-4bb8-b28f-8e5f7811c456',
         firstName: 'James',
         lastName: 'Williams',

@@ -1,6 +1,7 @@
 import Joi from '@hapi/joi';
 import JoiValidator from './JoiValidator';
 
+const validNum = JoiValidator.validateNumber().min(1);
 
 const signUpSchema = Joi.object({
   email: JoiValidator.validateEmail().required(),
@@ -41,6 +42,11 @@ const getUserSchema = Joi.object({
   userId: JoiValidator.validateUuidV4(),
 });
 
+const getEmployeesSchema = Joi.object({
+  page: validNum,
+  perPage: validNum
+});
+
 const setUserRoleSchema = Joi.object({
   userId: JoiValidator.validateUuidV4().required(),
   role: JoiValidator.validateString()
@@ -49,5 +55,5 @@ const setUserRoleSchema = Joi.object({
 
 export {
   signUpSchema, signInSchema, updateUserSchema, getUserSchema,
-  setUserRoleSchema, emailSchema, passwordSchema
+  setUserRoleSchema, emailSchema, passwordSchema, getEmployeesSchema
 };

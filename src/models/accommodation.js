@@ -72,6 +72,13 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: ['https://res.cloudinary.com/kola-c-1/image/upload/v1568114881/barefootnomad-images/default-accomodation-image_iqbuvj.svg']
     }
   });
+  Accommodation.associate = (models) => {
+    // associations can be defined here
+    Accommodation.hasMany(models.AccommodationLike, {
+      foreignKey: 'accommodationId',
+      as: 'likes'
+    });
+  };
 
   Accommodation.associate = (models) => {
     Accommodation.hasMany(models.Rating, {
