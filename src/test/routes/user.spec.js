@@ -1,18 +1,19 @@
 import {
-  app, chai, expect, messages, sinon
+  app, chai, expect, messages, sinon, testImage,
 } from '../testHelpers/config';
 import models from '../../models';
 import mockData from '../mockData';
 import { generateToken } from '../../utils/authHelper';
 import roles from '../../utils/roles';
+import { uploader } from '../../config/cloudinaryConfig';
 
-const { userMock, roleMock } = mockData;
+const { userMock, roleMock, cloudinaryMock } = mockData;
 
 const { User } = models;
 
 const BACKEND_BASE_URL = '/api/v1';
 
-let token, invalidToken, user, managerToken;
+let token, invalidToken, managerToken;
 
 before(async () => {
   const jwtToken = generateToken({ id: userMock.userId, roleId: roles.SUPER_ADMIN });
@@ -28,20 +29,49 @@ describe('User route', () => {
         .set('authorization', token);
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
-      user = response.body.data.user;
     });
   });
 
   describe('PUT /users/:userId', () => {
     it('should update user details', async () => {
+      const stub = sinon.stub(uploader, 'upload').callsFake(() => Promise.resolve(cloudinaryMock.response));
+
       const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
-        .type('form')
-        .set('Content-Type', 'application/json')
         .set('authorization', token)
-        .send({ ...userMock.updateUser, lineManager: user.id });
+        .set('Content-Type', 'multipart/form-data')
+        .attach('images', testImage, 'test.png')
+        .field('firstName', 'Kunle')
+        .field('lastName', 'Afolayan')
+        .field('phoneNo', '08075489632')
+        .field('gender', 'Male')
+        .field('birthDate', '1983-08-08')
+        .field('preferredCurrency', 'Naira')
+        .field('preferredLanguage', 'Yoruba')
+        .field('currentLocation', 'Lagos');
+
       expect(response.status).to.equal(202);
       expect(response.body.status).to.equal('success');
-      expect(response.body.data.updatedUser.firstName).to.equal(userMock.updateUser.firstName);
+      expect(response.body.data.updatedUser.firstName).to.equal('Kunle');
+
+      stub.restore();
+    });
+
+    it('should update user details with no image attached', async () => {
+      const response = await chai.request(app).put(`${BACKEND_BASE_URL}/users/${userMock.userId}`)
+        .set('authorization', token)
+        .set('Content-Type', 'multipart/form-data')
+        .field('firstName', 'Kunle')
+        .field('lastName', 'Afolayan')
+        .field('phoneNo', '08075489632')
+        .field('gender', 'Male')
+        .field('birthDate', '1983-08-08')
+        .field('preferredCurrency', 'Naira')
+        .field('preferredLanguage', 'Yoruba')
+        .field('currentLocation', 'Lagos');
+
+      expect(response.status).to.equal(202);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.data.updatedUser.firstName).to.equal('Kunle');
     });
 
     it('should return an error if user tries to update another users profile', async () => {

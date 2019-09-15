@@ -78,7 +78,11 @@ export default (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.BOOLEAN,
       defaultValue: true
-    }
+    },
+    profileImageUrl: {
+      allowNull: true,
+      type: DataTypes.STRING,
+    },
   }, {});
 
   User.associate = (models) => {

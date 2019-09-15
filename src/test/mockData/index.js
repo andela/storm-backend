@@ -4,6 +4,8 @@ import roleMock from './roleMock';
 import chatMock from './chatMock';
 import commentMock from './commentMock';
 import officelocationMock from './officelocationMock';
+import cloudinaryMock from './cloudinaryMock';
+import fileMock from './fileMock';
 
 export default {
   userMock,
@@ -11,5 +13,7 @@ export default {
   roleMock,
   chatMock,
   commentMock,
-  officelocationMock
+  officelocationMock,
+  cloudinaryMock,
+  fileMock,
 };
