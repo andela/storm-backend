@@ -3,12 +3,12 @@ import validator from '../../middlewares/validator';
 import { checkAccommodationId } from '../../middlewares/accommodationMiddlewares';
 import {
   createAccommodation, bookAccommodation, accomodationFeedback,
-  likeAccommodation, getByDestinationCity
+  likeAccommodation, getByDestinationCity, rateAccommodation
 } from '../../controllers/accommodationController';
 import checkBlacklist from '../../middlewares/blacklistMiddleware';
 import {
   accommodationSchema, bookAccommodationSchema, accomodationFeedbackSchema,
-  accommodationIdSchema, destinationCitySchema
+  accommodationIdSchema, destinationCitySchema, accommodationRatingSchema
 } from '../../validation/accommodationSchema';
 import authorize from '../../middlewares/authorizer';
 import roles from '../../utils/roles';
@@ -48,6 +48,8 @@ const accommodationRoute = (router) => {
    *          type: array
    *          items:
    *           type: string
+   *        rating:
+   *          type: integer
    *        createdAt:
    *          type: string
    *          format: date-time
@@ -389,6 +391,76 @@ const bookAccommodationRoute = (router) => {
   */
     .patch(checkToken, checkBlacklist, validator(accommodationIdSchema),
       checkAccommodationId, likeAccommodation);
+
+  router.route('/accommodations/:accommodationId/rate')
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    Rating:
+   *      properties:
+   *        value:
+   *          type: integer
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+    /**
+     * @swagger
+     * /api/v1/accommodations/{accommodationId}/rate:
+     *   post:
+     *     tags:
+     *       - Accommodation
+     *     description: Rate an accomodation
+     *     parameters:
+     *       - in: path
+     *         name: accommodationId
+     *         schema:
+     *           type: string
+     *           format: uuid
+     *         required: true
+     *     requestBody:
+     *      description: Rating value
+     *      required: true
+     *      content:
+     *       application/json:
+     *          schema:
+     *            $ref: '#/components/schemas/Rating'
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Rating recorded successfully
+     *         content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: object
+     *                data:
+     *                  $ref: '#/components/schemas/accommodation'
+     *       404:
+     *         description: Accommodation not found
+     *         content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/ErrorResponse'
+     *       500:
+     *         description: Internal Server error
+     *         content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/ErrorResponse'
+     *     security:
+     *       - bearerAuth: []
+    */
+    .post(checkToken, checkBlacklist, validator(accommodationRatingSchema),
+      checkAccommodationId, rateAccommodation);
 };
 
 const accomodationFeedbackRoute = (router) => {
@@ -476,7 +548,8 @@ const accomodationFeedbackRoute = (router) => {
        *     security:
        *       - bearerAuth: []
       */
-    .post(checkToken, checkBlacklist, validator(accomodationFeedbackSchema), accomodationFeedback);
+    .post(checkToken, checkBlacklist, validator(accomodationFeedbackSchema),
+      checkAccommodationId, accomodationFeedback);
 };
 
 export {

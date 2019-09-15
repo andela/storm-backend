@@ -26,13 +26,6 @@ export const findByEmail = (email) => User.findOne({ where: { email } });
 export const findById = (id) => User.findOne({ where: { id } });
 
 /**
- * Helper function to find a user by phone
- * @param {String} phoneNo - user's phone number
- * @returns {Promise} - sequelize response
- */
-export const findByPhone = (phoneNo) => User.findOne({ where: { phoneNo } });
-
-/**
  * Helper function to find a user by either email or phone
  * @param {String} email - user's email address
  * @param {String} phoneNo - user's phone number

@@ -17,15 +17,13 @@ const { getById } = DbServices;
 export const checkAccommodationId = async (req, res, next) => {
   try {
     const { accommodationId } = req.params;
-    if (accommodationId) {
-      const accommodation = await getById(Accommodation, accommodationId, {});
-      if (!accommodation) {
-        return response(res, 404, 'error', { message: messages.notExistAccommodation });
-      }
-      return next();
+    const accommodation = await getById(Accommodation, accommodationId, {});
+    if (!accommodation) {
+      return response(res, 404, 'error', { message: messages.notExistAccommodation });
     }
+    req.accommodation = accommodation;
     return next();
   } catch (error) {
-    return response(res, 500, 'error', { message: messages.serverError });
+    return response(res, 500, 'error', { message: error.message });
   }
 };

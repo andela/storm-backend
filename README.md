@@ -1,4 +1,5 @@
 [![Reviewed by Hound](http://img.shields.io/badge/Reviewed%20By-Hound-%23a874d1)](https://houndci.com) [![Maintainability](https://api.codeclimate.com/v1/badges/b9d017718c7824fa2fc0/maintainability)](https://codeclimate.com/github/andela/storm-backend/maintainability) [![Build Status](https://travis-ci.org/andela/storm-backend.svg?branch=develop)](https://travis-ci.org/andela/storm-backend) [![Test Coverage](https://api.codeclimate.com/v1/badges/b9d017718c7824fa2fc0/test_coverage)](https://codeclimate.com/github/andela/storm-backend/test_coverage)
+
 Barefoot Nomad - Making company travel and accomodation easy and convinient.
 =======
 

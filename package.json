@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@babel/node": "^7.5.5",
+    "babel-plugin-istanbul": "^5.2.0",
     "bcrypt": "^3.0.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
@@ -104,6 +105,8 @@
     ],
     "exclude": [
       "src/test/**"
-    ]
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }
