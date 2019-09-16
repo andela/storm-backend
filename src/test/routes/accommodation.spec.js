@@ -121,7 +121,46 @@ describe('Create Accommodation', () => {
         });
     });
   });
+  describe('GET /accommodation', () => {
+    it('should be able to get an accomodation', (done) => {
+      chai
+        .request(app)
+        .get(`${accommodationEndpoint}/${accommodationId}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(200);
+          expect(data).to.have.property('id');
+          done(err);
+        });
+    });
+    it('should error on wrong accomodation ID', (done) => {
+      chai
+        .request(app)
+        .get(`${accommodationEndpoint}/${wrongAccommodationId}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          done(err);
+        });
+    });
 
+    it('should be able to get all accomodation', (done) => {
+      chai
+        .request(app)
+        .get(`${accommodationEndpoint}`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`)
+        .end((err, res) => {
+          const { data } = res.body;
+          expect(res.status).to.equal(200);
+          expect(data).to.be.an('array');
+          done(err);
+        });
+    });
+  });
 
   describe('POST /book/accommodation', () => {
     it('should book accommodation successfully', (done) => {
@@ -317,8 +356,9 @@ describe('Create Accommodation', () => {
   describe('GET /accommodation/:destinationCity', () => {
     it('should return 200 when an accommodation is successfully gotten by destination city', async () => {
       const response = await chai.request(app)
-        .get(`${accommodationEndpoint}/lagos`)
-        .set('authorization', token);
+        .get(`${accommodationEndpoint}/destination/lagos`)
+        .set('authorization', token)
+        .set('Authorization', `Bearer ${token}`);
       const { status } = response;
       expect(status).to.equal(200);
     });
@@ -327,7 +367,7 @@ describe('Create Accommodation', () => {
       const stub = sinon.stub(Accommodation, 'findAll').callsFake(() => Promise.reject(new Error('Internal server error')));
       chai
         .request(app)
-        .get(`${accommodationEndpoint}/lagos`)
+        .get(`${accommodationEndpoint}/destination/lagos`)
         .set('authorization', token)
         .end((err, res) => {
           expect(res.status).to.equal(500);
