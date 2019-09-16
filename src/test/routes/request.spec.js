@@ -11,7 +11,8 @@ import { travelAdmin } from '../mockData/accommodationMock';
 const { Request } = models;
 const {
   userMock: {
-    userId, anotherManagerId, requesterId, noLineManager, editRequesterUserId
+    userId, anotherManagerId, requesterId, noLineManager,
+    editRequesterUserId, lineManager2, unauthorizedUser
   }, requestMock
 } = mockData;
 const {
@@ -22,7 +23,8 @@ const {
 
 
 describe('REQUESTS', () => {
-  let token, unassignedUserToken, managerToken, superAdmin, editRequesterIdToken;
+  let token, unassignedUserToken, managerToken, superAdmin,
+    editRequesterIdToken, manager2Token, unauthorizedUserToken;
   const requestTripEndpoint = `${BACKEND_BASE_URL}/requests`;
   const searchRequestTripEndpoint = `${BACKEND_BASE_URL}/search/requests`;
   const rejectRequestTripEndpoint = `${BACKEND_BASE_URL}/requests/reject/${requestToBeRejected.requestId}`;
@@ -41,6 +43,8 @@ describe('REQUESTS', () => {
     superAdmin = `Bearer ${generateToken({ id: userId, roleId: SUPER_ADMIN })}`;
     unassignedUserToken = `Bearer ${generateToken({ id: noLineManager, roleId: REQUESTER })}`;
     editRequesterIdToken = generateToken({ id: `${editRequesterUserId}` });
+    manager2Token = `Bearer ${generateToken({ id: lineManager2, roleId: MANAGER })}`;
+    unauthorizedUserToken = `Bearer ${generateToken({ id: unauthorizedUser, roleId: MANAGER })}`;
   });
 
   describe('POST /requests', () => {
@@ -389,6 +393,32 @@ describe('REQUESTS', () => {
     it('should get all user trip requests stats', async () => {
       const response = await chai.request(app).get(`${xTripStatEndpoint}`)
         .set('authorization', token1);
+      const { body: { status } } = response;
+      expect(response.status).to.equal(200);
+      expect(status).to.equal('success');
+    });
+  });
+
+  describe('GET SPECIFIC REQUEST (/requests/:requestId)', () => {
+    it('should respond with 401 when line manager is not authorized', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/${requestToBeEdited.requestId}`)
+        .set('authorization', manager2Token);
+      const { body: { status } } = response;
+      expect(response.status).to.equal(401);
+      expect(status).to.equal('error');
+    });
+
+    it('should respond with 401 when user is not authorized', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/${requestToBeEdited.requestId}`)
+        .set('authorization', unauthorizedUserToken);
+      const { body: { status } } = response;
+      expect(response.status).to.equal(401);
+      expect(status).to.equal('error');
+    });
+
+    it('should respond with 200 when user is a SUPER ADMIN', async () => {
+      const response = await chai.request(app).get(`${BACKEND_BASE_URL}/requests/${requestToBeEdited.requestId}`)
+        .set('authorization', superAdmin);
       const { body: { status } } = response;
       expect(response.status).to.equal(200);
       expect(status).to.equal('success');

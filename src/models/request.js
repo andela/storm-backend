@@ -52,7 +52,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'User',
     });
-    Request.hasMany(models.Subrequest);
+    Request.hasMany(models.Subrequest, {
+      foreignKey: 'requestId',
+      as: 'Subrequests',
+    });
   };
 
   return Request;

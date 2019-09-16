@@ -15,7 +15,7 @@ const {
   serverError, unauthorizedUserRequest, noRequests, acceptedTripRequest, rejectedTripRequest
 } = messages;
 const {
-  create, getAll, bulkCreate, update
+  create, getAll, bulkCreate, update, getByOptions, getById
 } = DbServices;
 
 /**
@@ -94,12 +94,18 @@ const requestTrip = async (req, res) => {
 */
 const getUserRequest = async (req, res) => {
   try {
-    const { decoded: { id, roleId }, query: { page, perPage, userId, approvalStatus } } = req;
+    const {
+      decoded: { id, roleId }, query: {
+        page, perPage, userId, approvalStatus
+      }
+    } = req;
     if (userId && (userId !== id && roleId !== roles.SUPER_ADMIN)) {
       return response(res, 403, 'error', { message: unauthorizedUserRequest });
     }
     const { limit, offset } = calculateLimitAndOffset(page, perPage);
-    const options = { where: { userId: userId || id }, order: [['updatedAt', 'ASC']], limit, offset };
+    const options = {
+      where: { userId: userId || id }, order: [['updatedAt', 'ASC']], limit, offset
+    };
     if (approvalStatus) {
       options.where.approvalStatus = approvalStatus;
     }
@@ -236,11 +242,51 @@ const updateTripRequest = async (req, res) => {
   }
 };
 
+/**
+ * @function getSpecificRequest
+ * @param {Object} req - server request
+ * @param {Object} res - server response
+ * @returns {Object} - custom response
+*/
+const getSpecificRequest = async (req, res) => {
+  try {
+    const {
+      decoded: { id, roleId }, params: { requestId }
+    } = req;
+
+    const options = {
+      where: { id: requestId },
+      include: [{
+        model: Subrequest,
+        as: 'Subrequests'
+      }]
+    };
+    const { dataValues, dataValues: { userId } } = await getByOptions(Request, options);
+    const data = dataValues;
+
+    const authorizedUser = id === userId;
+    const superAdmin = roleId === roles.SUPER_ADMIN;
+    const manager = roleId === roles.MANAGER;
+
+    if (!(authorizedUser || superAdmin || manager)) return response(res, 401, 'error', { message: messages.unauthorized });
+
+    if (manager) {
+      const { dataValues: { lineManager } } = await getById(User, userId, { attributes: ['lineManager'] });
+      if (id !== lineManager) return response(res, 401, 'error', { message: messages.unauthorized });
+    }
+    return response(res, 200, 'success', data);
+  } catch (error) {
+    return response(res, 500, 'error', serverError);
+  }
+};
+
+
 export default {
   requestTrip,
   getUserRequest,
   searchRequest,
   updateApprovalStatus,
   getManagerRequest,
-  updateTripRequest
+  updateTripRequest,
+  getSpecificRequest
 };
