@@ -120,6 +120,16 @@ export default {
         phoneNo: '2347032444332',
         lineManager: '38eb202c-3f67-4eed-b7ac-9c31bc226e0c',
         verified: true
+      },
+      {
+        id: '942d754a-e723-4f28-9238-402559925135',
+        firstName: 'line',
+        lastName: 'manager2',
+        email: 'linemanager2@gmail.com',
+        password: hashPassword('linemanager2'),
+        phoneNo: '2347033553727',
+        verified: true,
+        roleId: roles.MANAGER,
       }
     ], {});
   },

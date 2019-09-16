@@ -14,7 +14,8 @@ const {
   searchRequest,
   updateApprovalStatus,
   updateTripRequest,
-  getManagerRequest
+  getManagerRequest,
+  getSpecificRequest
 } = requestController;
 
 const {
@@ -272,107 +273,6 @@ const requestRoute = (router) => {
       checkToken, checkBlacklist, authorize([MANAGER, SUPER_ADMIN]),
       validate(getUserRequestSchema), checkUserId, getManagerRequest
     );
-};
-
-const searchRequestRoute = (router) => {
-  router.route('/search/requests')
-  /**
-       * @swagger
-       * components:
-       *  schemas:
-       *    Search:
-       *      properties:
-       *        page:
-       *          type: number
-       *        perPage:
-       *          type: number
-       *        approvalStatus:
-       *          type: boolean
-       *        multiCity:
-       *          type: boolean
-       *        type:
-       *          type: string
-       *        originCity:
-       *          type: string
-       *        destinationCity:
-       *          type: string
-       *        departureDate:
-       *          type: string
-       *        returnDate:
-       *          type: string
-       *        reason:
-       *          type: string
-       *        accommodation:
-       *          type: string
-       *        createdAt:
-       *          type: string
-       *          readOnly: true
-       *        updateAt:
-       *          type: string
-       *          readOnly: true
-       *    ErrorResponse:
-       *      properties:
-       *        status:
-       *          type: string
-       *        data:
-       *          type: string
-       */
-
-    /**
-     * @swagger
-     * /api/v1/search/requests:
-     *   get:
-     *     tags:
-     *       - Requests
-     *     description: search request
-     *     parameters:
-     *       - in: query
-     *         name: page
-     *         schema:
-     *           type: number
-     *         required: false
-     *       - in: query
-     *         name: perPage
-     *         schema:
-     *           type: number
-     *         required: false
-     *     produces:
-     *       - application/json
-     *     requestBody:
-     *          description: Search data object
-     *          required: false
-     *          content:
-     *            application/json:
-     *              schema:
-     *                $ref: '#/components/schemas/Search'
-     *     responses:
-     *       200:
-     *         description: success
-     *         content:
-     *          application/json:
-     *            schema:
-     *              type: object
-     *              properties:
-     *                status:
-     *                  type: object
-     *                data:
-     *                  $ref: '#/components/schemas/RequestTrip'
-     *       404:
-     *         description: No request result found
-     *         content:
-     *          application/json:
-     *            schema:
-     *              $ref: '#/components/schemas/ErrorResponse'
-     *       400:
-     *         description: An unexpected error occur
-     *         content:
-     *          application/json:
-     *            schema:
-     *              $ref: '#/components/schemas/ErrorResponse'
-     *     security:
-     *       - bearerAuth: []
-    */
-    .get(checkToken, checkBlacklist, validate(searchRequestTripSchema), searchRequest);
 
   router.route('/requests/reject/:requestId')
   /**
@@ -704,6 +604,208 @@ const searchRequestRoute = (router) => {
       verifyEditRequestAuthorization,
       updateTripRequest
     ]);
+
+  router.route('/requests/:requestId')
+  /**
+   *
+   * @swagger
+   * components:
+   *  schemas:
+   *    Request:
+   *      properties:
+   *        id:
+   *          type: integer
+   *        userId:
+   *          type: string
+   *        type:
+   *          type: string
+   *        originCity:
+   *          type: string
+   *        destinationCity:
+   *          type: string
+   *        departureDate:
+   *          type: string
+   *          example: 1 Sep 2020 21:03:25
+   *        retunDate:
+   *          type: string
+   *          example: 25 Sep 2020 21:03:25
+   *        reason:
+   *          type: string
+   *        accommodation:
+   *          type: string
+   *        approvalStatus:
+   *          type: string
+   *        multiCity:
+   *          type: boolean
+   *        createdAt:
+   *          type: string
+   *          example: 25 Sep 2020 21:03:25
+   *        updatedAt:
+   *          type: string
+   *          example: 26 Sep 2020 21:03:25
+   *        subRequest:
+   *          type: array
+   *          items:
+   *            $ref: '#/components/schemas/SubRequest'
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *          example: error
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/requests/{requestId}:
+   *   get:
+   *     tags:
+   *       - Requests
+   *     description: Get a particular request
+   *     parameters:
+   *       - in: path
+   *         name: requestId
+   *         schema:
+   *           type: string
+   *         required: true
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Get request operation successful
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: success
+   *                data:
+   *                  $ref: '#/components/schemas/Request'
+   *       400:
+   *         description: Input validation error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       500:
+   *         description: Internal Server error
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+   */
+    .get([
+      checkToken,
+      checkBlacklist,
+      validate(requestIdSchema),
+      getSpecificRequest
+    ]);
+};
+
+const searchRequestRoute = (router) => {
+  router.route('/search/requests')
+  /**
+   * @swagger
+   * components:
+   *  schemas:
+   *    Search:
+   *      properties:
+   *        page:
+   *          type: number
+   *        perPage:
+   *          type: number
+   *        approvalStatus:
+   *          type: boolean
+   *        multiCity:
+   *          type: boolean
+   *        type:
+   *          type: string
+   *        originCity:
+   *          type: string
+   *        destinationCity:
+   *          type: string
+   *        departureDate:
+   *          type: string
+   *        returnDate:
+   *          type: string
+   *        reason:
+   *          type: string
+   *        accommodation:
+   *          type: string
+   *        createdAt:
+   *          type: string
+   *          readOnly: true
+   *        updateAt:
+   *          type: string
+   *          readOnly: true
+   *    ErrorResponse:
+   *      properties:
+   *        status:
+   *          type: string
+   *        data:
+   *          type: string
+   */
+
+  /**
+   * @swagger
+   * /api/v1/search/requests:
+   *   get:
+   *     tags:
+   *       - Requests
+   *     description: search request
+   *     parameters:
+   *       - in: query
+   *         name: page
+   *         schema:
+   *           type: number
+   *         required: false
+   *       - in: query
+   *         name: perPage
+   *         schema:
+   *           type: number
+   *         required: false
+   *     produces:
+   *       - application/json
+   *     requestBody:
+   *          description: Search data object
+   *          required: false
+   *          content:
+   *            application/json:
+   *              schema:
+   *                $ref: '#/components/schemas/Search'
+   *     responses:
+   *       200:
+   *         description: success
+   *         content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: object
+   *                data:
+   *                  $ref: '#/components/schemas/RequestTrip'
+   *       404:
+   *         description: No request result found
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *       400:
+   *         description: An unexpected error occur
+   *         content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/ErrorResponse'
+   *     security:
+   *       - bearerAuth: []
+   */
+    .get(checkToken, checkBlacklist, validate(searchRequestTripSchema), searchRequest);
 };
 
 export { requestRoute, searchRequestRoute };
