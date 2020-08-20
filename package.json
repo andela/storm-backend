@@ -36,7 +36,7 @@
     "@babel/runtime": "^7.5.5",
     "@hapi/joi": "^15.1.1",
     "@sendgrid/mail": "^6.4.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "cloudinary": "^1.14.0",
     "cors": "^2.8.5",
     "datauri": "^2.0.0",
